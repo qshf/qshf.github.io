@@ -6,14 +6,7 @@
     <description>Recent content in 论文笔记 on qshf&#39;s Blog</description>
     <generator>Hugo</generator>
     <language>zh-cn</language>
-    <lastBuildDate>Sun, 10 May 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate></lastBuildDate>
     <atom:link href="https://qshf.github.io/papers/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>MemGPT: Towards LLMs as Operating Systems</title>
-      <link>https://qshf.github.io/papers/nlp/memgpt/</link>
-      <pubDate>Sun, 10 May 2026 00:00:00 +0000</pubDate>
-      <guid>https://qshf.github.io/papers/nlp/memgpt/</guid>
-      <description>MemGPT 借鉴操作系统虚拟内存分页机制，用函数调用让 LLM 在有限上下文窗口与外部存储之间自主分页，实现近乎无限的上下文管理。</description>
-    </item>
   </channel>
 </rss>

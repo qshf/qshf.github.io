@@ -171,16 +171,64 @@
 
 <article class="post-entry"> 
   <header class="entry-header">
-    <h2 class="entry-hint-parent">MemGPT: Towards LLMs as Operating Systems
+    <h2 class="entry-hint-parent">Abstract &#43; Introduction
     </h2>
   </header>
   <div class="entry-content">
-    <p>MemGPT 借鉴操作系统虚拟内存分页机制，用函数调用让 LLM 在有限上下文窗口与外部存储之间自主分页，实现近乎无限的上下文管理。</p>
+    <p>MemGPT 论文总结（Abstract &#43; Introduction） 来源：arXiv:2310.08560v2
+一、核心问题 大语言模型（LLM）受限于固定长度的上下文窗口，在长对话、长文档分析等任务中表现受限：
+主流开源 LLM 通常只能处理几十轮对话或一篇短文档，超过最大输入长度后便失效。 直接扩展 Transformer 上下文长度会因自注意力机制带来计算与显存的平方级增长。 即便训练出更长上下文的模型，研究也表明它们难以有效利用额外上下文（“lost in the middle” 现象）。 训练 SOTA LLM 资源巨大，上下文扩展收益递减，亟需替代方案。 二、核心思想：虚拟上下文管理（Virtual Context Management） 论文借鉴操作系统的虚拟内存分页机制：OS 通过在物理内存与磁盘之间换页，给应用&#34;无限内存&#34;的错觉。
+类比映射：
+操作系统 MemGPT 物理内存（main memory） LLM 上下文窗口（main context） 磁盘 / 外部存储 外部存储（archival &amp; recall storage） 分页、缺页中断 函数调用驱动的数据换入换出 进程与系统调用 LLM agent 与函数调用 通过这种层次化记忆设计，让固定上下文的 LLM 也能获得&#34;无限上下文&#34;的使用体验。
+图 1：MemGPT 收到上下文空间不足的系统告警后，将数据写入持久化记忆。
+三、MemGPT 系统设计要点 LLM OS 架构：把 LLM 当作 CPU，外层包裹一个类 OS 的调度器，统一管理上下文、存储、事件。 分层记忆（Memory Hierarchy）： Main context：系统指令 &#43; working context &#43; FIFO 队列，即 LLM 真正看到的 prompt。 External context：archival storage（归档）和 recall storage（检索历史），位于上下文窗口之外。 函数调用作为&#34;系统调用&#34;：LLM 通过生成函数调用来读写外部存储、修改自身上下文、决定是否回复用户。 事件驱动的控制流：上下文快满时收到系统告警，触发写入持久化记忆；需要旧信息时主动检索换入。 函数链（Function Chaining）：LLM 在输出中附带 request_heartbeat=true，即可触发下一轮推理，从而完成多步检索 / 多步推理。 示意：Figure 1 展示上下文不足时写入持久记忆；Figure 2 展示检索外部数据换入上下文；Figure 3 给出完整系统流程。
+...</p>
   </div>
   <footer class="entry-footer">
 
-<span title='2026-05-10 00:00:00 +0000 UTC'>May 10, 2026</span>&nbsp;·&nbsp;<span>2 min</span>&nbsp;·&nbsp;<span>qshf</span></footer>
-  <a class="entry-link" aria-label="post link to MemGPT: Towards LLMs as Operating Systems" href="https://qshf.github.io/papers/nlp/memgpt/"></a>
+<span title='2026-05-10 00:00:00 +0000 UTC'>May 10, 2026</span>&nbsp;·&nbsp;<span>1 min</span>&nbsp;·&nbsp;<span>qshf</span></footer>
+  <a class="entry-link" aria-label="post link to Abstract &#43; Introduction" href="https://qshf.github.io/papers/nlp/memgpt/abstract/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">Method
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>MemGPT 论文总结（Method / 方法章节） 来源：arXiv:2310.08560v2
+一、总体思路：OS 风格的多级记忆架构 MemGPT 借鉴操作系统的存储层次，把 LLM 的记忆切分成两类：
+记忆类型 OS 类比 含义 Main context（主上下文） 主存 / RAM LLM 的 prompt tokens，in-context，可直接被 LLM 在推理时访问 External context（外部上下文） 磁盘 / 外存 位于 LLM 固定上下文窗口之外的 out-of-context 数据，必须显式搬入 main context 才能被 LLM 看到 关键点：MemGPT 通过函数调用让 LLM 在没有用户介入的情况下自主管理自己的记忆。
+二、Main Context：prompt tokens 的三段结构 main context 是一段连续的 prompt，由三块组成：
+System instructions（系统指令）：只读、静态；包含 MemGPT 的控制流说明 各级记忆的用途 所有可用函数的用法（如何检索 out-of-context 数据等） Working context（工作上下文）：定长、可读写，仅能通过 MemGPT 函数调用修改。 在对话场景下用来保存用户关键事实、偏好、以及 agent 当前所扮演人设的核心信息，使对话更连贯。 FIFO queue（先进先出队列）：滚动的消息历史，包含 agent ↔ 用户消息 系统消息（如记忆压力告警） 函数调用的输入/输出 队首第一个位置专门放一条系统消息：对已被 evict 出队列的历史消息的递归摘要（recursive summary）。 三、Queue Manager：消息入队、落盘与淘汰 Queue Manager 负责管理 recall storage（MemGPT 消息数据库）和 FIFO queue。
+...</p>
+  </div>
+  <footer class="entry-footer">
+
+<span title='2026-05-10 00:00:00 +0000 UTC'>May 10, 2026</span>&nbsp;·&nbsp;<span>4 min</span>&nbsp;·&nbsp;<span>qshf</span></footer>
+  <a class="entry-link" aria-label="post link to Method" href="https://qshf.github.io/papers/nlp/memgpt/method/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">Appendix
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>MemGPT 论文附录整理（Appendix / Prompts &amp; Instructions） 来源：arXiv:2310.08560v2 说明：本页按&#34;原文 &#43; 中文翻译&#34;整理附录中的 prompt 与 instruction。
+一、附录总览 这一附录主要给出实验中实际使用的若干 prompt / system instruction / judge instruction，对应三类任务：
+对话记忆任务（DMR / opener） 文档分析任务（document analysis） 嵌套键值检索任务（nested K/V） 它的作用不是提出新方法，而是补齐实验可复现所需的提示词细节。
+二、Prompts and Instructions 2.1 附录说明 原文
+The \ours prompts have been edited for brevity. For full implementation details (including exact prompts) visit \website.
+翻译
+文中的 \ours（即 MemGPT）提示词为了简洁起见做了删改。若要查看完整实现细节（包括精确 prompt），请访问项目主页 \website。
+三、对话记忆任务（DMR / opener） 3.1 \ours instructions (DMR) 这一段是 MemGPT 在聊天/对话类任务中的角色指令示例。
+...</p>
+  </div>
+  <footer class="entry-footer">
+
+<span title='2026-05-10 00:00:00 +0000 UTC'>May 10, 2026</span>&nbsp;·&nbsp;<span>8 min</span>&nbsp;·&nbsp;<span>qshf</span></footer>
+  <a class="entry-link" aria-label="post link to Appendix" href="https://qshf.github.io/papers/nlp/memgpt/appendix/"></a>
 </article>
     </main>
     

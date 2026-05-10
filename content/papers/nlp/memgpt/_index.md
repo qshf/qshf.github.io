@@ -1,0 +1,20 @@
+---
+title: "MemGPT: Towards LLMs as Operating Systems"
+date: 2026-05-10
+tags: ["Agent", "Memory", "LLM"]
+categories: ["论文笔记"]
+draft: false
+summary: "MemGPT 借鉴操作系统虚拟内存分页机制，用函数调用让 LLM 在有限上下文窗口与外部存储之间自主分页，实现近乎无限的上下文管理。"
+---
+
+> 来源：arXiv:2310.08560v2
+
+## 章节导航
+
+- [Abstract + Introduction](abstract/)
+- [Method](method/)
+- [Appendix](appendix/)
+
+## 一句话概括
+
+MemGPT 把 LLM 的上下文窗口当作"物理内存"，用函数调用当作"系统调用"，在外部存储与上下文之间自主分页，从而让固定窗口的 LLM 处理近乎无限长度的文档与对话。
