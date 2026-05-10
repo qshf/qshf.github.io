@@ -1,0 +1,51 @@
+baseURL: "https://qshf.github.io/"
+languageCode: zh-cn
+title: "qshf's Blog"
+theme: "PaperMod"
+pagination:
+  pagerSize: 10
+
+params:
+  author: qshf
+  description: "论文笔记 & 生活随笔"
+  defaultTheme: auto
+  ShowToc: true
+  TocOpen: false
+  ShowReadingTime: true
+  ShowPostNavLinks: true
+  ShowBreadCrumbs: true
+  math: true
+
+  homeInfoParams:
+    Title: "Hi, I'm qshf"
+    Content: "分享论文阅读笔记与生活思考"
+
+  socialIcons:
+    - name: github
+      url: "https://github.com/qshf"
+
+menu:
+  main:
+    - name: 论文笔记
+      url: /papers/
+      weight: 1
+    - name: 生活
+      url: /life/
+      weight: 2
+    - name: 标签
+      url: /tags/
+      weight: 3
+    - name: 分类
+      url: /categories/
+      weight: 4
+
+taxonomies:
+  tag: tags
+  category: categories
+
+markup:
+  goldmark:
+    renderer:
+      unsafe: true
+  highlight:
+    style: github
