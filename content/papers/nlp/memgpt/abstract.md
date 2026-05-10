@@ -33,7 +33,7 @@ weight: 1
 
 通过这种层次化记忆设计，让**固定上下文**的 LLM 也能获得"无限上下文"的使用体验。
 
-![MemGPT 在上下文不足时写入持久记忆](memgpt_diagrams_wide_memory_creation.png)
+![MemGPT 在上下文不足时写入持久记忆](/images/memgpt/memgpt_diagrams_wide_memory_creation.png)
 
 *图 1：MemGPT 收到上下文空间不足的系统告警后，将数据写入持久化记忆。*
 
@@ -49,11 +49,11 @@ weight: 1
 
 > 示意：Figure 1 展示上下文不足时写入持久记忆；Figure 2 展示检索外部数据换入上下文；Figure 3 给出完整系统流程。
 
-![MemGPT 检索外部数据换入当前上下文](memgpt_diagrams_wide_memory_search.png)
+![MemGPT 检索外部数据换入当前上下文](/images/memgpt/memgpt_diagrams_wide_memory_search.png)
 
 *图 2：MemGPT 可以搜索上下文外的数据，把相关信息换入当前上下文窗口。*
 
-![MemGPT 系统总体流程](memgpt_system_flow_2.png)
+![MemGPT 系统总体流程](/images/memgpt/memgpt_system_flow_2.png)
 
 *图 3：固定上下文的 LLM 处理器被分层记忆系统与一组"系统调用"函数扩展。main context = 系统指令 + working context + FIFO 队列；LLM 输出被 function executor 解析为函数调用，在 main context 与 external context（archival / recall 存储）之间搬运数据；`request_heartbeat=true` 触发链式调用以完成多步检索。*
 

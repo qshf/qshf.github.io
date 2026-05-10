@@ -54,7 +54,7 @@
   &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;通过这种层次化记忆设计，让&lt;strong&gt;固定上下文&lt;/strong&gt;的 LLM 也能获得&amp;quot;无限上下文&amp;quot;的使用体验。&lt;/p&gt;
-&lt;p&gt;&lt;img alt=&#34;MemGPT 在上下文不足时写入持久记忆&#34; loading=&#34;lazy&#34; src=&#34;memgpt_diagrams_wide_memory_creation.png&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt=&#34;MemGPT 在上下文不足时写入持久记忆&#34; loading=&#34;lazy&#34; src=&#34;https://qshf.github.io/images/memgpt/memgpt_diagrams_wide_memory_creation.png&#34;&gt;&lt;/p&gt;
 &lt;p&gt;&lt;em&gt;图 1：MemGPT 收到上下文空间不足的系统告警后，将数据写入持久化记忆。&lt;/em&gt;&lt;/p&gt;
 &lt;h2 id=&#34;三memgpt-系统设计要点&#34;&gt;三、MemGPT 系统设计要点&lt;/h2&gt;
 &lt;ol&gt;
@@ -161,6 +161,74 @@
 &lt;h2 id=&#34;三对话记忆任务dmr--opener&#34;&gt;三、对话记忆任务（DMR / opener）&lt;/h2&gt;
 &lt;h3 id=&#34;31-ours-instructions-dmr&#34;&gt;3.1 &lt;code&gt;\ours&lt;/code&gt; instructions (DMR)&lt;/h3&gt;
 &lt;p&gt;这一段是 MemGPT 在聊天/对话类任务中的角色指令示例。&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Experiments</title>
+      <link>https://qshf.github.io/papers/nlp/memgpt/experiments/</link>
+      <pubDate>Sun, 10 May 2026 00:00:00 +0000</pubDate>
+      <guid>https://qshf.github.io/papers/nlp/memgpt/experiments/</guid>
+      <description>&lt;h1 id=&#34;memgpt-论文总结experiments--实验章节&#34;&gt;MemGPT 论文总结（Experiments / 实验章节）&lt;/h1&gt;
+&lt;blockquote&gt;
+&lt;p&gt;来源：arXiv:2310.08560v2&lt;/p&gt;&lt;/blockquote&gt;
+&lt;h2 id=&#34;一实验总览&#34;&gt;一、实验总览&lt;/h2&gt;
+&lt;p&gt;MemGPT 在两个&lt;strong&gt;长上下文&lt;/strong&gt;领域上做评估：&lt;/p&gt;
+&lt;table&gt;
+  &lt;thead&gt;
+      &lt;tr&gt;
+          &lt;th&gt;领域&lt;/th&gt;
+          &lt;th&gt;核心挑战&lt;/th&gt;
+          &lt;th&gt;本文任务&lt;/th&gt;
+      &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+      &lt;tr&gt;
+          &lt;td&gt;&lt;strong&gt;对话 agent&lt;/strong&gt;（§5.1）&lt;/td&gt;
+          &lt;td&gt;跨多轮/多会话保持一致性与吸引力&lt;/td&gt;
+          &lt;td&gt;Deep Memory Retrieval (DMR)；Conversation Opener&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;&lt;strong&gt;文档分析&lt;/strong&gt;（§5.2）&lt;/td&gt;
+          &lt;td&gt;单/多文档远超上下文窗口&lt;/td&gt;
+          &lt;td&gt;Multi-doc QA（基于 NaturalQuestions-Open）；Nested KV Retrieval（新任务，多跳）&lt;/td&gt;
+      &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;作者公开发布三份资源：扩展版 MSC 数据集、Nested KV 数据集、以及 20M 维基文档的预计算 embedding。&lt;/p&gt;
+&lt;h3 id=&#34;实现细节模型版本&#34;&gt;实现细节（模型版本）&lt;/h3&gt;
+&lt;table&gt;
+  &lt;thead&gt;
+      &lt;tr&gt;
+          &lt;th&gt;别名&lt;/th&gt;
+          &lt;th&gt;对应 endpoint&lt;/th&gt;
+          &lt;th&gt;上下文窗口&lt;/th&gt;
+      &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+      &lt;tr&gt;
+          &lt;td&gt;GPT-4 Turbo&lt;/td&gt;
+          &lt;td&gt;&lt;code&gt;gpt-4-1106-preview&lt;/code&gt;&lt;/td&gt;
+          &lt;td&gt;128k&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;GPT-4&lt;/td&gt;
+          &lt;td&gt;&lt;code&gt;gpt-4-0613&lt;/code&gt;&lt;/td&gt;
+          &lt;td&gt;8k&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;GPT-3.5 Turbo&lt;/td&gt;
+          &lt;td&gt;&lt;code&gt;gpt-3.5-turbo-1106&lt;/code&gt;&lt;/td&gt;
+          &lt;td&gt;16k&lt;/td&gt;
+      &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2 id=&#34;二对话-agent-实验&#34;&gt;二、对话 Agent 实验&lt;/h2&gt;
+&lt;h3 id=&#34;21-评测目标一致性--参与度&#34;&gt;2.1 评测目标：一致性 + 参与度&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Consistency（一致性）&lt;/strong&gt;：新事实/偏好/事件要与历史陈述一致，不能自相矛盾。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Engagement（参与度）&lt;/strong&gt;：主动调用长期知识，让对话更自然、更个性化。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;22-数据集multi-session-chat-msc&#34;&gt;2.2 数据集：Multi-Session Chat (MSC)&lt;/h3&gt;
+&lt;p&gt;Xu et al. 2021 提出的多会话闲聊数据，每段由&lt;strong&gt;同一组人物设定&lt;/strong&gt;下的 5 个 session 组成。作者额外构造了第 6 session 用于一致性实验。&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

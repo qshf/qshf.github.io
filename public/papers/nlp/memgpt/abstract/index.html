@@ -358,7 +358,7 @@ External context：archival storage（归档）和 recall storage（检索历史
   </tbody>
 </table>
 <p>通过这种层次化记忆设计，让<strong>固定上下文</strong>的 LLM 也能获得&quot;无限上下文&quot;的使用体验。</p>
-<p><img alt="MemGPT 在上下文不足时写入持久记忆" loading="lazy" src="memgpt_diagrams_wide_memory_creation.png"></p>
+<p><img alt="MemGPT 在上下文不足时写入持久记忆" loading="lazy" src="/images/memgpt/memgpt_diagrams_wide_memory_creation.png"></p>
 <p><em>图 1：MemGPT 收到上下文空间不足的系统告警后，将数据写入持久化记忆。</em></p>
 <h2 id="三memgpt-系统设计要点">三、MemGPT 系统设计要点<a hidden class="anchor" aria-hidden="true" href="#三memgpt-系统设计要点">#</a></h2>
 <ol>
@@ -375,9 +375,9 @@ External context：archival storage（归档）和 recall storage（检索历史
 </ol>
 <blockquote>
 <p>示意：Figure 1 展示上下文不足时写入持久记忆；Figure 2 展示检索外部数据换入上下文；Figure 3 给出完整系统流程。</p></blockquote>
-<p><img alt="MemGPT 检索外部数据换入当前上下文" loading="lazy" src="memgpt_diagrams_wide_memory_search.png"></p>
+<p><img alt="MemGPT 检索外部数据换入当前上下文" loading="lazy" src="/images/memgpt/memgpt_diagrams_wide_memory_search.png"></p>
 <p><em>图 2：MemGPT 可以搜索上下文外的数据，把相关信息换入当前上下文窗口。</em></p>
-<p><img alt="MemGPT 系统总体流程" loading="lazy" src="memgpt_system_flow_2.png"></p>
+<p><img alt="MemGPT 系统总体流程" loading="lazy" src="/images/memgpt/memgpt_system_flow_2.png"></p>
 <p><em>图 3：固定上下文的 LLM 处理器被分层记忆系统与一组&quot;系统调用&quot;函数扩展。main context = 系统指令 + working context + FIFO 队列；LLM 输出被 function executor 解析为函数调用，在 main context 与 external context（archival / recall 存储）之间搬运数据；<code>request_heartbeat=true</code> 触发链式调用以完成多步检索。</em></p>
 <h2 id="四评估场景">四、评估场景<a hidden class="anchor" aria-hidden="true" href="#四评估场景">#</a></h2>
 <p>论文在两个典型的&quot;上下文瓶颈&quot;场景上验证 MemGPT：</p>

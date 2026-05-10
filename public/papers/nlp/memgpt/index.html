@@ -173,6 +173,7 @@
 <ul>
 <li><a href="abstract/">Abstract + Introduction</a></li>
 <li><a href="method/">Method</a></li>
+<li><a href="experiments/">Experiments</a></li>
 <li><a href="appendix/">Appendix</a></li>
 </ul>
 <h2 id="一句话概括">一句话概括<a hidden class="anchor" aria-hidden="true" href="#一句话概括">#</a></h2>
@@ -241,6 +242,24 @@ The \ours prompts have been edited for brevity. For full implementation details 
 
 <span title='2026-05-10 00:00:00 +0000 UTC'>May 10, 2026</span>&nbsp;·&nbsp;<span>8 min</span>&nbsp;·&nbsp;<span>qshf</span></footer>
   <a class="entry-link" aria-label="post link to Appendix" href="https://qshf.github.io/papers/nlp/memgpt/appendix/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">Experiments
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>MemGPT 论文总结（Experiments / 实验章节） 来源：arXiv:2310.08560v2
+一、实验总览 MemGPT 在两个长上下文领域上做评估：
+领域 核心挑战 本文任务 对话 agent（§5.1） 跨多轮/多会话保持一致性与吸引力 Deep Memory Retrieval (DMR)；Conversation Opener 文档分析（§5.2） 单/多文档远超上下文窗口 Multi-doc QA（基于 NaturalQuestions-Open）；Nested KV Retrieval（新任务，多跳） 作者公开发布三份资源：扩展版 MSC 数据集、Nested KV 数据集、以及 20M 维基文档的预计算 embedding。
+实现细节（模型版本） 别名 对应 endpoint 上下文窗口 GPT-4 Turbo gpt-4-1106-preview 128k GPT-4 gpt-4-0613 8k GPT-3.5 Turbo gpt-3.5-turbo-1106 16k 二、对话 Agent 实验 2.1 评测目标：一致性 &#43; 参与度 Consistency（一致性）：新事实/偏好/事件要与历史陈述一致，不能自相矛盾。 Engagement（参与度）：主动调用长期知识，让对话更自然、更个性化。 2.2 数据集：Multi-Session Chat (MSC) Xu et al. 2021 提出的多会话闲聊数据，每段由同一组人物设定下的 5 个 session 组成。作者额外构造了第 6 session 用于一致性实验。
+...</p>
+  </div>
+  <footer class="entry-footer">
+
+<span title='2026-05-10 00:00:00 +0000 UTC'>May 10, 2026</span>&nbsp;·&nbsp;<span>2 min</span>&nbsp;·&nbsp;<span>qshf</span></footer>
+  <a class="entry-link" aria-label="post link to Experiments" href="https://qshf.github.io/papers/nlp/memgpt/experiments/"></a>
 </article>
     </main>
     
