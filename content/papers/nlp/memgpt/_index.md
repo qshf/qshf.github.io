@@ -9,6 +9,14 @@ summary: "MemGPT 借鉴操作系统虚拟内存分页机制，用函数调用让
 
 > 来源：arXiv:2310.08560v2
 
+## 相关源码
+
+| 仓库 | 说明 |
+| --- | --- |
+| [MemGPT-mini](https://github.com/qshf/MemGPT-mini) | 参考 Letta 源码的精简实现版本 |
+| [letta (fork)](https://github.com/qshf/letta) | 修改版，支持 DeepSeek，附带文档 |
+| [letta-ai/letta](https://github.com/letta-ai/letta) | 原项目 |
+
 ## 章节导航
 
 - [Abstract + Introduction](abstract/)
