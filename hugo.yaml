@@ -1,6 +1,6 @@
 baseURL: "https://qshf.github.io/"
 languageCode: zh-cn
-title: "qshf's Blog"
+title: "撒手 >_O "
 theme: "PaperMod"
 pagination:
   pagerSize: 10
@@ -16,9 +16,15 @@ params:
   ShowBreadCrumbs: true
   math: true
 
-  homeInfoParams:
-    Title: "Hi, I'm qshf"
-    Content: "分享论文阅读笔记与生活思考"
+  profileMode:
+    enabled: true
+    title: "O_O"
+    subtitle: "聪明的墨菲特 · 分享论文阅读笔记与生活思考"
+    buttons:
+      - name: 论文笔记
+        url: /papers/
+      - name: 生活
+        url: /life/
 
   socialIcons:
     - name: github
@@ -32,12 +38,6 @@ menu:
     - name: 生活
       url: /life/
       weight: 2
-    - name: 标签
-      url: /tags/
-      weight: 3
-    - name: 分类
-      url: /categories/
-      weight: 4
 
 taxonomies:
   tag: tags
