@@ -1,0 +1,114 @@
+<!doctype html><html lang=en dir=auto data-theme=auto><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name=robots content="index, follow"><title>补充：UHGEval 数据集 | 撒手 >_O</title><meta name=keywords content><meta name=description content='UHGEval（Unconstrained Hallucination Generation Evaluation）是一个专门用于评估中文大语言模型幻觉问题的基准数据集。
+
+数据集主页：Ki-Seki/UHGEvalDataset
+
+
+字段说明
+
+  
+      
+          字段名
+          中文含义
+          说明
+      
+  
+  
+      
+          id
+          样本唯一编号
+          该条数据的唯一索引
+      
+      
+          headLine
+          新闻标题
+          提供新闻的核心事件概括
+      
+      
+          broadcastDate
+          发布时间
+          新闻发生的具体日期，是验证时间性、数字类事实的关键
+      
+      
+          type
+          任务类型
+          标记数据属于哪类密集型任务（如 doc 代表文档逻辑类）
+      
+      
+          newsBeginning
+          新闻开头（Prompt）
+          测试时的输入部分，模型需要基于此段落进行续写
+      
+      
+          hallucinatedContinuation
+          幻觉续写内容
+          由模型生成的包含错误（幻觉）的文本
+      
+      
+          generatedBy
+          生成模型
+          记录该幻觉文本是由哪个模型产生的
+      
+      
+          annotations
+          幻觉精细标注
+          对续写内容进行逐词/短语审计，标注哪些部分合理，哪些冲突
+      
+      
+          realContinuation
+          真实后续（GT）
+          真实新闻中的下一段话，作为判断事实对错的终极标准
+      
+      
+          newsRemainder
+          新闻全文余项
+          除去开头和续写外剩余的所有内容，提供最完整的背景资料
+      
+  
+
+
+数据样例
+{
+  "id": "doc_000004",
+  "headLine": "（国际）德法俄乌外长商讨和平解决乌克兰危机办法",
+  "broadcastDate": "2015-01-22 12:16:02",
+  "type": "doc",
+  "newsBeginning": "新华社柏林1月22日电...四国外长21日晚在柏林举行会晤...商讨和平解决乌克兰危机的途径。",
+  "hallucinatedContinuation": "德国外长弗拉德里希表示，各国将继续推进明斯克协议的执行...",
+  "generatedBy": "Baichuan2_13B_Chat",
+  "annotations": "德国外长弗拉德里希 <sep> 不合理，与事实冲突，应为德国外长施泰因迈尔",
+  "realContinuation": "四国外长在会后发表的联合声明中说，顿巴斯地区冲突近日严重升级..."
+}
+幻觉示例：模型生成了"德国外长弗拉德里希"，但真实人名是"施泰因迈尔"。annotations 字段精确标注了哪个词是幻觉以及原因。
+
+在 CRUD-RAG 中的用途
+CRUD-RAG 的幻觉修改任务（Update）直接基于 UHGEval 构建：
+
+利用 UHGEval 中已有的幻觉标注，用 GPT-4 将错误内容修正为正确版本，作为标准答案
+将 UHGEval 中的真实新闻后续内容加入检索数据库
+评测时，RAG 系统需要检索真实新闻信息，识别并修正输入文本中的幻觉
+'><meta name=author content="qshf"><link rel=canonical href=https://qshf.github.io/papers/dataset-eval/crud-rag/uhgeval/><link crossorigin=anonymous href=/assets/css/stylesheet.bcca78e30e00563ec4a9812492b47d0756c895778bbe4c86c1dd7c10ddd58b0f.css integrity="sha256-vMp44w4AVj7EqYEkkrR9B1bIlXeLvkyGwd18EN3Viw8=" rel="preload stylesheet" as=style><link rel=icon href=https://qshf.github.io/favicon.ico><link rel=icon type=image/png sizes=16x16 href=https://qshf.github.io/favicon-16x16.png><link rel=icon type=image/png sizes=32x32 href=https://qshf.github.io/favicon-32x32.png><link rel=apple-touch-icon href=https://qshf.github.io/apple-touch-icon.png><link rel=mask-icon href=https://qshf.github.io/safari-pinned-tab.svg><meta name=theme-color content="#2e2e33"><meta name=msapplication-TileColor content="#2e2e33"><link rel=alternate hreflang=en href=https://qshf.github.io/papers/dataset-eval/crud-rag/uhgeval/><noscript><style>#theme-toggle,.top-link{display:none}</style><style>@media(prefers-color-scheme:dark){:root{--theme:rgb(29, 30, 32);--entry:rgb(46, 46, 51);--primary:rgb(218, 218, 219);--secondary:rgb(155, 156, 157);--tertiary:rgb(65, 66, 68);--content:rgb(196, 196, 197);--code-block-bg:rgb(46, 46, 51);--code-bg:rgb(55, 56, 62);--border:rgb(51, 51, 51);color-scheme:dark}.list{background:var(--theme)}.toc{background:var(--entry)}}</style></noscript><script>localStorage.getItem("pref-theme")==="dark"?document.querySelector("html").dataset.theme="dark":localStorage.getItem("pref-theme")==="light"?document.querySelector("html").dataset.theme="light":window.matchMedia("(prefers-color-scheme: dark)").matches?document.querySelector("html").dataset.theme="dark":document.querySelector("html").dataset.theme="light"</script><script>document.addEventListener("DOMContentLoaded",function(){var e,t=document.querySelectorAll(".papers-toc a, .toc-sidebar a");if(!t.length)return;e=Array.from(t).map(function(e){var t=decodeURIComponent(e.getAttribute("href").slice(1));return document.getElementById(t)}).filter(Boolean);function n(){for(var o,i=window.scrollY+80,s=e[0],n=0;n<e.length;n++)e[n].offsetTop<=i&&(s=e[n]);t.forEach(function(e){e.classList.remove("active")}),o=document.querySelector('.papers-toc a[href="#'+CSS.escape(s.id)+'"], .toc-sidebar a[href="#'+CSS.escape(s.id)+'"]'),o&&o.classList.add("active")}window.addEventListener("scroll",n,{passive:!0}),n()})</script><meta property="og:url" content="https://qshf.github.io/papers/dataset-eval/crud-rag/uhgeval/"><meta property="og:site_name" content="撒手 >_O "><meta property="og:title" content="补充：UHGEval 数据集"><meta property="og:description" content='UHGEval（Unconstrained Hallucination Generation Evaluation）是一个专门用于评估中文大语言模型幻觉问题的基准数据集。
+数据集主页：Ki-Seki/UHGEvalDataset 字段说明 字段名 中文含义 说明 id 样本唯一编号 该条数据的唯一索引 headLine 新闻标题 提供新闻的核心事件概括 broadcastDate 发布时间 新闻发生的具体日期，是验证时间性、数字类事实的关键 type 任务类型 标记数据属于哪类密集型任务（如 doc 代表文档逻辑类） newsBeginning 新闻开头（Prompt） 测试时的输入部分，模型需要基于此段落进行续写 hallucinatedContinuation 幻觉续写内容 由模型生成的包含错误（幻觉）的文本 generatedBy 生成模型 记录该幻觉文本是由哪个模型产生的 annotations 幻觉精细标注 对续写内容进行逐词/短语审计，标注哪些部分合理，哪些冲突 realContinuation 真实后续（GT） 真实新闻中的下一段话，作为判断事实对错的终极标准 newsRemainder 新闻全文余项 除去开头和续写外剩余的所有内容，提供最完整的背景资料 数据样例 { "id": "doc_000004", "headLine": "（国际）德法俄乌外长商讨和平解决乌克兰危机办法", "broadcastDate": "2015-01-22 12:16:02", "type": "doc", "newsBeginning": "新华社柏林1月22日电...四国外长21日晚在柏林举行会晤...商讨和平解决乌克兰危机的途径。", "hallucinatedContinuation": "德国外长弗拉德里希表示，各国将继续推进明斯克协议的执行...", "generatedBy": "Baichuan2_13B_Chat", "annotations": "德国外长弗拉德里希 <sep> 不合理，与事实冲突，应为德国外长施泰因迈尔", "realContinuation": "四国外长在会后发表的联合声明中说，顿巴斯地区冲突近日严重升级..." } 幻觉示例：模型生成了"德国外长弗拉德里希"，但真实人名是"施泰因迈尔"。annotations 字段精确标注了哪个词是幻觉以及原因。
+在 CRUD-RAG 中的用途 CRUD-RAG 的幻觉修改任务（Update）直接基于 UHGEval 构建：
+利用 UHGEval 中已有的幻觉标注，用 GPT-4 将错误内容修正为正确版本，作为标准答案 将 UHGEval 中的真实新闻后续内容加入检索数据库 评测时，RAG 系统需要检索真实新闻信息，识别并修正输入文本中的幻觉'><meta property="og:locale" content="zh_cn"><meta property="og:type" content="article"><meta property="article:section" content="papers"><meta property="article:published_time" content="2026-05-01T00:00:00+00:00"><meta property="article:modified_time" content="2026-05-01T00:00:00+00:00"><meta name=twitter:card content="summary"><meta name=twitter:title content="补充：UHGEval 数据集"><meta name=twitter:description content='UHGEval（Unconstrained Hallucination Generation Evaluation）是一个专门用于评估中文大语言模型幻觉问题的基准数据集。
+数据集主页：Ki-Seki/UHGEvalDataset 字段说明 字段名 中文含义 说明 id 样本唯一编号 该条数据的唯一索引 headLine 新闻标题 提供新闻的核心事件概括 broadcastDate 发布时间 新闻发生的具体日期，是验证时间性、数字类事实的关键 type 任务类型 标记数据属于哪类密集型任务（如 doc 代表文档逻辑类） newsBeginning 新闻开头（Prompt） 测试时的输入部分，模型需要基于此段落进行续写 hallucinatedContinuation 幻觉续写内容 由模型生成的包含错误（幻觉）的文本 generatedBy 生成模型 记录该幻觉文本是由哪个模型产生的 annotations 幻觉精细标注 对续写内容进行逐词/短语审计，标注哪些部分合理，哪些冲突 realContinuation 真实后续（GT） 真实新闻中的下一段话，作为判断事实对错的终极标准 newsRemainder 新闻全文余项 除去开头和续写外剩余的所有内容，提供最完整的背景资料 数据样例 { "id": "doc_000004", "headLine": "（国际）德法俄乌外长商讨和平解决乌克兰危机办法", "broadcastDate": "2015-01-22 12:16:02", "type": "doc", "newsBeginning": "新华社柏林1月22日电...四国外长21日晚在柏林举行会晤...商讨和平解决乌克兰危机的途径。", "hallucinatedContinuation": "德国外长弗拉德里希表示，各国将继续推进明斯克协议的执行...", "generatedBy": "Baichuan2_13B_Chat", "annotations": "德国外长弗拉德里希 <sep> 不合理，与事实冲突，应为德国外长施泰因迈尔", "realContinuation": "四国外长在会后发表的联合声明中说，顿巴斯地区冲突近日严重升级..." } 幻觉示例：模型生成了"德国外长弗拉德里希"，但真实人名是"施泰因迈尔"。annotations 字段精确标注了哪个词是幻觉以及原因。
+在 CRUD-RAG 中的用途 CRUD-RAG 的幻觉修改任务（Update）直接基于 UHGEval 构建：
+利用 UHGEval 中已有的幻觉标注，用 GPT-4 将错误内容修正为正确版本，作为标准答案 将 UHGEval 中的真实新闻后续内容加入检索数据库 评测时，RAG 系统需要检索真实新闻信息，识别并修正输入文本中的幻觉'><script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"论文笔记","item":"https://qshf.github.io/papers/"},{"@type":"ListItem","position":2,"name":"数据集评测","item":"https://qshf.github.io/papers/dataset-eval/"},{"@type":"ListItem","position":3,"name":"CRUD-RAG: A Comprehensive Chinese Benchmark for Retrieval-Augmented Generation","item":"https://qshf.github.io/papers/dataset-eval/crud-rag/"},{"@type":"ListItem","position":4,"name":"补充：UHGEval 数据集","item":"https://qshf.github.io/papers/dataset-eval/crud-rag/uhgeval/"}]}</script><script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","headline":"补充：UHGEval 数据集","name":"补充：UHGEval 数据集","description":"UHGEval（Unconstrained Hallucination Generation Evaluation）是一个专门用于评估中文大语言模型幻觉问题的基准数据集。\n数据集主页：Ki-Seki/UHGEvalDataset 字段说明 字段名 中文含义 说明 id 样本唯一编号 该条数据的唯一索引 headLine 新闻标题 提供新闻的核心事件概括 broadcastDate 发布时间 新闻发生的具体日期，是验证时间性、数字类事实的关键 type 任务类型 标记数据属于哪类密集型任务（如 doc 代表文档逻辑类） newsBeginning 新闻开头（Prompt） 测试时的输入部分，模型需要基于此段落进行续写 hallucinatedContinuation 幻觉续写内容 由模型生成的包含错误（幻觉）的文本 generatedBy 生成模型 记录该幻觉文本是由哪个模型产生的 annotations 幻觉精细标注 对续写内容进行逐词/短语审计，标注哪些部分合理，哪些冲突 realContinuation 真实后续（GT） 真实新闻中的下一段话，作为判断事实对错的终极标准 newsRemainder 新闻全文余项 除去开头和续写外剩余的所有内容，提供最完整的背景资料 数据样例 { \u0026#34;id\u0026#34;: \u0026#34;doc_000004\u0026#34;, \u0026#34;headLine\u0026#34;: \u0026#34;（国际）德法俄乌外长商讨和平解决乌克兰危机办法\u0026#34;, \u0026#34;broadcastDate\u0026#34;: \u0026#34;2015-01-22 12:16:02\u0026#34;, \u0026#34;type\u0026#34;: \u0026#34;doc\u0026#34;, \u0026#34;newsBeginning\u0026#34;: \u0026#34;新华社柏林1月22日电...四国外长21日晚在柏林举行会晤...商讨和平解决乌克兰危机的途径。\u0026#34;, \u0026#34;hallucinatedContinuation\u0026#34;: \u0026#34;德国外长弗拉德里希表示，各国将继续推进明斯克协议的执行...\u0026#34;, \u0026#34;generatedBy\u0026#34;: \u0026#34;Baichuan2_13B_Chat\u0026#34;, \u0026#34;annotations\u0026#34;: \u0026#34;德国外长弗拉德里希 \u0026lt;sep\u0026gt; 不合理，与事实冲突，应为德国外长施泰因迈尔\u0026#34;, \u0026#34;realContinuation\u0026#34;: \u0026#34;四国外长在会后发表的联合声明中说，顿巴斯地区冲突近日严重升级...\u0026#34; } 幻觉示例：模型生成了\u0026quot;德国外长弗拉德里希\u0026quot;，但真实人名是\u0026quot;施泰因迈尔\u0026quot;。annotations 字段精确标注了哪个词是幻觉以及原因。\n在 CRUD-RAG 中的用途 CRUD-RAG 的幻觉修改任务（Update）直接基于 UHGEval 构建：\n利用 UHGEval 中已有的幻觉标注，用 GPT-4 将错误内容修正为正确版本，作为标准答案 将 UHGEval 中的真实新闻后续内容加入检索数据库 评测时，RAG 系统需要检索真实新闻信息，识别并修正输入文本中的幻觉 ","keywords":[],"articleBody":"UHGEval（Unconstrained Hallucination Generation Evaluation）是一个专门用于评估中文大语言模型幻觉问题的基准数据集。\n数据集主页：Ki-Seki/UHGEvalDataset 字段说明 字段名 中文含义 说明 id 样本唯一编号 该条数据的唯一索引 headLine 新闻标题 提供新闻的核心事件概括 broadcastDate 发布时间 新闻发生的具体日期，是验证时间性、数字类事实的关键 type 任务类型 标记数据属于哪类密集型任务（如 doc 代表文档逻辑类） newsBeginning 新闻开头（Prompt） 测试时的输入部分，模型需要基于此段落进行续写 hallucinatedContinuation 幻觉续写内容 由模型生成的包含错误（幻觉）的文本 generatedBy 生成模型 记录该幻觉文本是由哪个模型产生的 annotations 幻觉精细标注 对续写内容进行逐词/短语审计，标注哪些部分合理，哪些冲突 realContinuation 真实后续（GT） 真实新闻中的下一段话，作为判断事实对错的终极标准 newsRemainder 新闻全文余项 除去开头和续写外剩余的所有内容，提供最完整的背景资料 数据样例 { \"id\": \"doc_000004\", \"headLine\": \"（国际）德法俄乌外长商讨和平解决乌克兰危机办法\", \"broadcastDate\": \"2015-01-22 12:16:02\", \"type\": \"doc\", \"newsBeginning\": \"新华社柏林1月22日电...四国外长21日晚在柏林举行会晤...商讨和平解决乌克兰危机的途径。\", \"hallucinatedContinuation\": \"德国外长弗拉德里希表示，各国将继续推进明斯克协议的执行...\", \"generatedBy\": \"Baichuan2_13B_Chat\", \"annotations\": \"德国外长弗拉德里希 不合理，与事实冲突，应为德国外长施泰因迈尔\", \"realContinuation\": \"四国外长在会后发表的联合声明中说，顿巴斯地区冲突近日严重升级...\" } 幻觉示例：模型生成了\"德国外长弗拉德里希\"，但真实人名是\"施泰因迈尔\"。annotations 字段精确标注了哪个词是幻觉以及原因。\n在 CRUD-RAG 中的用途 CRUD-RAG 的幻觉修改任务（Update）直接基于 UHGEval 构建：\n利用 UHGEval 中已有的幻觉标注，用 GPT-4 将错误内容修正为正确版本，作为标准答案 将 UHGEval 中的真实新闻后续内容加入检索数据库 评测时，RAG 系统需要检索真实新闻信息，识别并修正输入文本中的幻觉 ","wordCount":"84","inLanguage":"en","datePublished":"2026-05-01T00:00:00Z","dateModified":"2026-05-01T00:00:00Z","author":{"@type":"Person","name":"qshf"},"mainEntityOfPage":{"@type":"WebPage","@id":"https://qshf.github.io/papers/dataset-eval/crud-rag/uhgeval/"},"publisher":{"@type":"Organization","name":"撒手 \u003e_O ","logo":{"@type":"ImageObject","url":"https://qshf.github.io/favicon.ico"}}}</script></head><body id=top><header class=header><nav class=header-nav><div class=logo><a href=https://qshf.github.io/ accesskey=h title="撒手 >_O  (Alt + H)">撒手 >_O</a><div class=logo-switches><button id=theme-toggle class=theme-toggle accesskey=t title="(Alt + T)" aria-label="Toggle theme">
+<svg class="moon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+<svg class="sun" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button></div></div><ul id=menu class=menu><li><a href=https://qshf.github.io/papers/ title=论文笔记><span>论文笔记</span></a></li><li><a href=https://qshf.github.io/life/ title=生活><span>生活</span></a></li></ul></nav></header><main class=main><div class=papers-layout><aside class=papers-nav><details class=papers-nav-group><summary class=papers-nav-section>Agent Memory</summary><div class=papers-nav-paper><a href=/papers/agent-memory/memgpt/>MemGPT: Towards LLMs as Operating Systems</a></div></details><details class=papers-nav-group open><summary class="papers-nav-section active">数据集评测</summary><div class="papers-nav-paper open"><a class=active href=/papers/dataset-eval/crud-rag/>CRUD-RAG: A Comprehensive Chinese Benchmark for Retrieval-Augmented Generation</a><ul><li><a href=/papers/dataset-eval/crud-rag/abstract/>Abstract + 相关工作</a></li><li><a href=/papers/dataset-eval/crud-rag/method/>主要方法：数据集构建</a></li><li><a href=/papers/dataset-eval/crud-rag/tasks/>四类任务构造逻辑</a></li><li><a href=/papers/dataset-eval/crud-rag/experiments/>实验结论与调参逻辑</a></li><li><a class=current href=/papers/dataset-eval/crud-rag/uhgeval/>补充：UHGEval 数据集</a></li></ul></div></details></aside><article class="post-single papers-content"><header class=post-header><h1 class=post-title>补充：UHGEval 数据集</h1></header><div class="post-content md-content"><p><strong>UHGEval</strong>（Unconstrained Hallucination Generation Evaluation）是一个专门用于评估中文大语言模型幻觉问题的基准数据集。</p><ul><li>数据集主页：<a href=https://huggingface.co/datasets/Ki-Seki/UHGEvalDataset>Ki-Seki/UHGEvalDataset</a></li></ul><hr><h2 id=字段说明>字段说明<a hidden class=anchor aria-hidden=true href=#字段说明>#</a></h2><table><thead><tr><th>字段名</th><th>中文含义</th><th>说明</th></tr></thead><tbody><tr><td><code>id</code></td><td>样本唯一编号</td><td>该条数据的唯一索引</td></tr><tr><td><code>headLine</code></td><td>新闻标题</td><td>提供新闻的核心事件概括</td></tr><tr><td><code>broadcastDate</code></td><td>发布时间</td><td>新闻发生的具体日期，是验证时间性、数字类事实的关键</td></tr><tr><td><code>type</code></td><td>任务类型</td><td>标记数据属于哪类密集型任务（如 <code>doc</code> 代表文档逻辑类）</td></tr><tr><td><code>newsBeginning</code></td><td>新闻开头（Prompt）</td><td>测试时的输入部分，模型需要基于此段落进行续写</td></tr><tr><td><code>hallucinatedContinuation</code></td><td>幻觉续写内容</td><td>由模型生成的包含错误（幻觉）的文本</td></tr><tr><td><code>generatedBy</code></td><td>生成模型</td><td>记录该幻觉文本是由哪个模型产生的</td></tr><tr><td><code>annotations</code></td><td>幻觉精细标注</td><td>对续写内容进行逐词/短语审计，标注哪些部分合理，哪些冲突</td></tr><tr><td><code>realContinuation</code></td><td>真实后续（GT）</td><td>真实新闻中的下一段话，作为判断事实对错的终极标准</td></tr><tr><td><code>newsRemainder</code></td><td>新闻全文余项</td><td>除去开头和续写外剩余的所有内容，提供最完整的背景资料</td></tr></tbody></table><hr><h2 id=数据样例>数据样例<a hidden class=anchor aria-hidden=true href=#数据样例>#</a></h2><div class=highlight><pre tabindex=0 class=chroma><code class=language-json data-lang=json><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;id&#34;</span><span class=p>:</span> <span class=s2>&#34;doc_000004&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;headLine&#34;</span><span class=p>:</span> <span class=s2>&#34;（国际）德法俄乌外长商讨和平解决乌克兰危机办法&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;broadcastDate&#34;</span><span class=p>:</span> <span class=s2>&#34;2015-01-22 12:16:02&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;type&#34;</span><span class=p>:</span> <span class=s2>&#34;doc&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;newsBeginning&#34;</span><span class=p>:</span> <span class=s2>&#34;新华社柏林1月22日电...四国外长21日晚在柏林举行会晤...商讨和平解决乌克兰危机的途径。&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;hallucinatedContinuation&#34;</span><span class=p>:</span> <span class=s2>&#34;德国外长弗拉德里希表示，各国将继续推进明斯克协议的执行...&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;generatedBy&#34;</span><span class=p>:</span> <span class=s2>&#34;Baichuan2_13B_Chat&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;annotations&#34;</span><span class=p>:</span> <span class=s2>&#34;德国外长弗拉德里希 &lt;sep&gt; 不合理，与事实冲突，应为德国外长施泰因迈尔&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;realContinuation&#34;</span><span class=p>:</span> <span class=s2>&#34;四国外长在会后发表的联合声明中说，顿巴斯地区冲突近日严重升级...&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p>幻觉示例：模型生成了"德国外长<strong>弗拉德里希</strong>"，但真实人名是"施泰因迈尔"。<code>annotations</code> 字段精确标注了哪个词是幻觉以及原因。</p><hr><h2 id=在-crud-rag-中的用途>在 CRUD-RAG 中的用途<a hidden class=anchor aria-hidden=true href=#在-crud-rag-中的用途>#</a></h2><p>CRUD-RAG 的幻觉修改任务（Update）直接基于 UHGEval 构建：</p><ol><li>利用 UHGEval 中已有的幻觉标注，用 GPT-4 将错误内容修正为正确版本，作为标准答案</li><li>将 UHGEval 中的真实新闻后续内容加入检索数据库</li><li>评测时，RAG 系统需要检索真实新闻信息，识别并修正输入文本中的幻觉</li></ol></div><div class=post-meme-tail><button class=post-meme-trigger type=button aria-label=触发表情彩蛋>
+<img src=/images/memes/wave-fast.gif alt loading=lazy></button></div><style>.like-pop{position:fixed;pointer-events:none;z-index:1000;width:50px;animation:likeFloat .8s ease-out forwards}@keyframes likeFloat{0%{opacity:1;transform:translate(0,0)scale(1)}100%{opacity:0;transform:translate(var(--dx),-80px)scale(1.4)}}</style><script>var memeMode=!1;function spawnPop(e,t,n){var s=document.createElement("img");s.src=e,s.className="like-pop",s.style.left=t-25+"px",s.style.top=n-25+"px",document.body.appendChild(s),setTimeout(function(){s.remove()},800)}document.addEventListener("DOMContentLoaded",function(){document.querySelectorAll(".post-meme-trigger").forEach(function(e){e.addEventListener("click",function(t){t.stopPropagation(),memeMode=!memeMode,e.setAttribute("aria-pressed",memeMode?"true":"false"),e.classList.toggle("active",memeMode)})}),document.addEventListener("click",function(e){if(!memeMode)return;if(e.target.closest("a,button,input,textarea,select,label,summary,iframe,.giscus,.post-meme-tail"))return;spawnPop("/images/like.jpg",e.clientX,e.clientY);var t=window.innerWidth-e.clientX;setTimeout(function(){spawnPop("/images/like2.jpg",t,e.clientY)},200)})})</script><script src=https://giscus.app/client.js data-repo=qshf/qshf.github.io data-repo-id=R_kgDOOF9BTA data-category=Announcements data-category-id=DIC_kwDOOF9BTM4C8uBn data-mapping=pathname data-strict=0 data-reactions-enabled=0 data-emit-metadata=0 data-input-position=bottom data-theme=preferred_color_scheme data-lang=zh-CN crossorigin=anonymous async></script><footer class=post-footer><ul class=post-tags></ul><nav class=paginav><a class=prev href=https://qshf.github.io/papers/dataset-eval/crud-rag/experiments/><span class=title>« Prev</span>
+<span>实验结论与调参逻辑</span></a></nav></footer></article><aside class=papers-toc><details class=toc><summary accesskey=c title="(Alt + C)"><span class=title>Table of Contents</span></summary><div class=inner><ul><li><a href=#%e5%ad%97%e6%ae%b5%e8%af%b4%e6%98%8e aria-label=字段说明>字段说明</a></li><li><a href=#%e6%95%b0%e6%8d%ae%e6%a0%b7%e4%be%8b aria-label=数据样例>数据样例</a></li><li><a href=#%e5%9c%a8-crud-rag-%e4%b8%ad%e7%9a%84%e7%94%a8%e9%80%94 aria-label="在 CRUD-RAG 中的用途">在 CRUD-RAG 中的用途</a></li></ul></div></details></aside></div></main><footer class=footer><span>&copy; 2026 <a href=https://qshf.github.io/>撒手 >_O </a></span>·
+<span>Powered by
+<a href="https://gohugo.io/?utm_source=papermod" rel=noopener target=_blank>Hugo</a> &
+<a href=https://github.com/adityatelange/hugo-PaperMod/ rel=noopener target=_blank>PaperMod</a></span></footer><a href=#top id=top-link class="top-link hidden" aria-label="go to top" title="Go to Top (Alt + G)" accesskey=g><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevrons-up"><polyline points="17 11 12 6 7 11"/><polyline points="17 18 12 13 7 18"/></svg>
+</a><script>let menu=document.getElementById("menu");if(menu){const e=localStorage.getItem("menu-scroll-position");e&&(menu.scrollLeft=parseInt(e,10)),menu.onscroll=function(){localStorage.setItem("menu-scroll-position",menu.scrollLeft)}}document.querySelectorAll('a[href^="#"]').forEach(e=>{e.addEventListener("click",function(e){e.preventDefault();var t=this.getAttribute("href").substr(1);window.matchMedia("(prefers-reduced-motion: reduce)").matches?document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView():document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView({behavior:"smooth"}),t==="top"?history.replaceState(null,null," "):history.pushState(null,null,`#${t}`)})})</script><script>var toplink=document.getElementById("top-link");window.onscroll=function(){const e=window.innerHeight;document.body.scrollTop>e||document.documentElement.scrollTop>e?toplink.classList.remove("hidden"):toplink.classList.add("hidden")}</script><script>document.getElementById("theme-toggle").addEventListener("click",()=>{const e=document.querySelector("html");e.dataset.theme==="dark"?(e.dataset.theme="light",localStorage.setItem("pref-theme","light")):(e.dataset.theme="dark",localStorage.setItem("pref-theme","dark"))})</script></body></html>
