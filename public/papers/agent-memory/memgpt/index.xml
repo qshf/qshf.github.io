@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>MemGPT: Towards LLMs as Operating Systems on 撒手 &gt;_O </title>
+    <link>http://localhost:61927/papers/agent-memory/memgpt/</link>
+    <description>Recent content in MemGPT: Towards LLMs as Operating Systems on 撒手 &gt;_O </description>
+    <generator>Hugo</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Sun, 10 May 2026 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:61927/papers/agent-memory/memgpt/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Abstract &#43; Introduction</title>
+      <link>http://localhost:61927/papers/agent-memory/memgpt/abstract/</link>
+      <pubDate>Sun, 10 May 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:61927/papers/agent-memory/memgpt/abstract/</guid>
+      <description>&lt;blockquote&gt;
+&lt;p&gt;来源：arXiv:2310.08560v2&lt;/p&gt;&lt;/blockquote&gt;
+&lt;h2 id=&#34;一核心问题&#34;&gt;一、核心问题&lt;/h2&gt;
+&lt;p&gt;大语言模型（LLM）受限于&lt;strong&gt;固定长度的上下文窗口&lt;/strong&gt;，在长对话、长文档分析等任务中表现受限：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;主流开源 LLM 通常只能处理几十轮对话或一篇短文档，超过最大输入长度后便失效。&lt;/li&gt;
+&lt;li&gt;直接扩展 Transformer 上下文长度会因自注意力机制带来&lt;strong&gt;计算与显存的平方级增长&lt;/strong&gt;。&lt;/li&gt;
+&lt;li&gt;即便训练出更长上下文的模型，研究也表明它们&lt;strong&gt;难以有效利用额外上下文&lt;/strong&gt;（&amp;ldquo;lost in the middle&amp;rdquo; 现象）。&lt;/li&gt;
+&lt;li&gt;训练 SOTA LLM 资源巨大，上下文扩展收益递减，亟需替代方案。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;二核心思想虚拟上下文管理virtual-context-management&#34;&gt;二、核心思想：虚拟上下文管理（Virtual Context Management）&lt;/h2&gt;
+&lt;p&gt;论文借鉴&lt;strong&gt;操作系统的虚拟内存分页机制&lt;/strong&gt;：OS 通过在物理内存与磁盘之间换页，给应用&amp;quot;无限内存&amp;quot;的错觉。&lt;/p&gt;
+&lt;p&gt;类比映射：&lt;/p&gt;
+&lt;table&gt;
+  &lt;thead&gt;
+      &lt;tr&gt;
+          &lt;th&gt;操作系统&lt;/th&gt;
+          &lt;th&gt;MemGPT&lt;/th&gt;
+      &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+      &lt;tr&gt;
+          &lt;td&gt;物理内存（main memory）&lt;/td&gt;
+          &lt;td&gt;LLM 上下文窗口（main context）&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;磁盘 / 外部存储&lt;/td&gt;
+          &lt;td&gt;外部存储（archival &amp;amp; recall storage）&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;分页、缺页中断&lt;/td&gt;
+          &lt;td&gt;函数调用驱动的数据换入换出&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;进程与系统调用&lt;/td&gt;
+          &lt;td&gt;LLM agent 与函数调用&lt;/td&gt;
+      &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;通过这种层次化记忆设计，让&lt;strong&gt;固定上下文&lt;/strong&gt;的 LLM 也能获得&amp;quot;无限上下文&amp;quot;的使用体验。&lt;/p&gt;
+&lt;p&gt;&lt;img alt=&#34;MemGPT 在上下文不足时写入持久记忆&#34; loading=&#34;lazy&#34; src=&#34;http://localhost:61927/images/memgpt/memgpt_diagrams_wide_memory_creation.png&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;图 1：MemGPT 收到上下文空间不足的系统告警后，将数据写入持久化记忆。&lt;/em&gt;&lt;/p&gt;
+&lt;h2 id=&#34;三memgpt-系统设计要点&#34;&gt;三、MemGPT 系统设计要点&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;LLM OS 架构&lt;/strong&gt;：把 LLM 当作 CPU，外层包裹一个类 OS 的调度器，统一管理上下文、存储、事件。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;分层记忆（Memory Hierarchy）&lt;/strong&gt;：
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;Main context&lt;/em&gt;：系统指令 + working context + FIFO 队列，即 LLM 真正看到的 prompt。&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;External context&lt;/em&gt;：archival storage（归档）和 recall storage（检索历史），位于上下文窗口之外。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;函数调用作为&amp;quot;系统调用&amp;quot;&lt;/strong&gt;：LLM 通过生成函数调用来读写外部存储、修改自身上下文、决定是否回复用户。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;事件驱动的控制流&lt;/strong&gt;：上下文快满时收到系统告警，触发写入持久化记忆；需要旧信息时主动检索换入。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;函数链（Function Chaining）&lt;/strong&gt;：LLM 在输出中附带 &lt;code&gt;request_heartbeat=true&lt;/code&gt;，即可触发下一轮推理，从而完成&lt;strong&gt;多步检索 / 多步推理&lt;/strong&gt;。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;blockquote&gt;
+&lt;p&gt;示意：Figure 1 展示上下文不足时写入持久记忆；Figure 2 展示检索外部数据换入上下文；Figure 3 给出完整系统流程。&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Method</title>
+      <link>http://localhost:61927/papers/agent-memory/memgpt/method/</link>
+      <pubDate>Sun, 10 May 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:61927/papers/agent-memory/memgpt/method/</guid>
+      <description>&lt;blockquote&gt;
+&lt;p&gt;来源：arXiv:2310.08560v2&lt;/p&gt;&lt;/blockquote&gt;
+&lt;h2 id=&#34;一总体思路os-风格的多级记忆架构&#34;&gt;一、总体思路：OS 风格的多级记忆架构&lt;/h2&gt;
+&lt;p&gt;MemGPT 借鉴操作系统的存储层次，把 LLM 的记忆切分成两类：&lt;/p&gt;
+&lt;table&gt;
+  &lt;thead&gt;
+      &lt;tr&gt;
+          &lt;th&gt;记忆类型&lt;/th&gt;
+          &lt;th&gt;OS 类比&lt;/th&gt;
+          &lt;th&gt;含义&lt;/th&gt;
+      &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+      &lt;tr&gt;
+          &lt;td&gt;&lt;strong&gt;Main context&lt;/strong&gt;（主上下文）&lt;/td&gt;
+          &lt;td&gt;主存 / RAM&lt;/td&gt;
+          &lt;td&gt;LLM 的 &lt;strong&gt;prompt tokens&lt;/strong&gt;，&lt;em&gt;in-context&lt;/em&gt;，可直接被 LLM 在推理时访问&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;&lt;strong&gt;External context&lt;/strong&gt;（外部上下文）&lt;/td&gt;
+          &lt;td&gt;磁盘 / 外存&lt;/td&gt;
+          &lt;td&gt;位于 LLM 固定上下文窗口之外的 &lt;em&gt;out-of-context&lt;/em&gt; 数据，必须&lt;strong&gt;显式搬入&lt;/strong&gt; main context 才能被 LLM 看到&lt;/td&gt;
+      &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;关键点：MemGPT 通过&lt;strong&gt;函数调用&lt;/strong&gt;让 LLM 在&lt;strong&gt;没有用户介入&lt;/strong&gt;的情况下自主管理自己的记忆。&lt;/p&gt;
+&lt;h2 id=&#34;二main-contextprompt-tokens-的三段结构&#34;&gt;二、Main Context：prompt tokens 的三段结构&lt;/h2&gt;
+&lt;p&gt;main context 是一段连续的 prompt，由三块组成：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;System instructions（系统指令）&lt;/strong&gt;：只读、静态；包含
+&lt;ul&gt;
+&lt;li&gt;MemGPT 的控制流说明&lt;/li&gt;
+&lt;li&gt;各级记忆的用途&lt;/li&gt;
+&lt;li&gt;所有可用函数的用法（如何检索 out-of-context 数据等）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Working context（工作上下文）&lt;/strong&gt;：定长、可读写，&lt;strong&gt;仅能通过 MemGPT 函数调用修改&lt;/strong&gt;。
+&lt;ul&gt;
+&lt;li&gt;在对话场景下用来保存用户关键事实、偏好、以及 agent 当前所扮演人设的核心信息，使对话更连贯。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;FIFO queue（先进先出队列）&lt;/strong&gt;：滚动的消息历史，包含
+&lt;ul&gt;
+&lt;li&gt;agent ↔ 用户消息&lt;/li&gt;
+&lt;li&gt;系统消息（如记忆压力告警）&lt;/li&gt;
+&lt;li&gt;函数调用的输入/输出&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;队首第一个位置&lt;/strong&gt;专门放一条系统消息：对已被 evict 出队列的历史消息的&lt;strong&gt;递归摘要（recursive summary）&lt;/strong&gt;。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;三queue-manager消息入队落盘与淘汰&#34;&gt;三、Queue Manager：消息入队、落盘与淘汰&lt;/h2&gt;
+&lt;p&gt;Queue Manager 负责管理 &lt;strong&gt;recall storage&lt;/strong&gt;（MemGPT 消息数据库）和 &lt;strong&gt;FIFO queue&lt;/strong&gt;。&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Appendix</title>
+      <link>http://localhost:61927/papers/agent-memory/memgpt/appendix/</link>
+      <pubDate>Sun, 10 May 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:61927/papers/agent-memory/memgpt/appendix/</guid>
+      <description>&lt;blockquote&gt;
+&lt;p&gt;来源：arXiv:2310.08560v2
+说明：本页按&amp;quot;原文 + 中文翻译&amp;quot;整理附录中的 prompt 与 instruction。&lt;/p&gt;&lt;/blockquote&gt;
+&lt;h2 id=&#34;一附录总览&#34;&gt;一、附录总览&lt;/h2&gt;
+&lt;p&gt;这一附录主要给出实验中实际使用的若干 &lt;strong&gt;prompt / system instruction / judge instruction&lt;/strong&gt;，对应三类任务：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;对话记忆任务&lt;/strong&gt;（DMR / opener）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;文档分析任务&lt;/strong&gt;（document analysis）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;嵌套键值检索任务&lt;/strong&gt;（nested K/V）&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;它的作用不是提出新方法，而是补齐实验可复现所需的提示词细节。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;二prompts-and-instructions&#34;&gt;二、Prompts and Instructions&lt;/h2&gt;
+&lt;h3 id=&#34;21-附录说明&#34;&gt;2.1 附录说明&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;原文&lt;/strong&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;The \ours prompts have been edited for brevity. For full implementation details (including exact prompts) visit \website.&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;翻译&lt;/strong&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;文中的 &lt;code&gt;\ours&lt;/code&gt;（即 MemGPT）提示词为了简洁起见做了删改。若要查看完整实现细节（包括精确 prompt），请访问项目主页 &lt;code&gt;\website&lt;/code&gt;。&lt;/p&gt;&lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;三对话记忆任务dmr--opener&#34;&gt;三、对话记忆任务（DMR / opener）&lt;/h2&gt;
+&lt;h3 id=&#34;31-ours-instructions-dmr&#34;&gt;3.1 &lt;code&gt;\ours&lt;/code&gt; instructions (DMR)&lt;/h3&gt;
+&lt;p&gt;这一段是 MemGPT 在聊天/对话类任务中的角色指令示例。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;原文&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;The following is information about myself. My task is to completely immerse myself in this role (I should never say that I am an AI, and should reply as if I am playing this role). If the user asks me a question, I should reply with a best guess using the information in core memory and conversation_search.
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;翻译&lt;/strong&gt;&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Experiments</title>
+      <link>http://localhost:61927/papers/agent-memory/memgpt/experiments/</link>
+      <pubDate>Sun, 10 May 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:61927/papers/agent-memory/memgpt/experiments/</guid>
+      <description>&lt;blockquote&gt;
+&lt;p&gt;来源：arXiv:2310.08560v2&lt;/p&gt;&lt;/blockquote&gt;
+&lt;h2 id=&#34;一实验总览&#34;&gt;一、实验总览&lt;/h2&gt;
+&lt;p&gt;MemGPT 在两个&lt;strong&gt;长上下文&lt;/strong&gt;领域上做评估：&lt;/p&gt;
+&lt;table&gt;
+  &lt;thead&gt;
+      &lt;tr&gt;
+          &lt;th&gt;领域&lt;/th&gt;
+          &lt;th&gt;核心挑战&lt;/th&gt;
+          &lt;th&gt;本文任务&lt;/th&gt;
+      &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+      &lt;tr&gt;
+          &lt;td&gt;&lt;strong&gt;对话 agent&lt;/strong&gt;（§5.1）&lt;/td&gt;
+          &lt;td&gt;跨多轮/多会话保持一致性与吸引力&lt;/td&gt;
+          &lt;td&gt;Deep Memory Retrieval (DMR)；Conversation Opener&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;&lt;strong&gt;文档分析&lt;/strong&gt;（§5.2）&lt;/td&gt;
+          &lt;td&gt;单/多文档远超上下文窗口&lt;/td&gt;
+          &lt;td&gt;Multi-doc QA（基于 NaturalQuestions-Open）；Nested KV Retrieval（新任务，多跳）&lt;/td&gt;
+      &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;作者公开发布三份资源：扩展版 MSC 数据集、Nested KV 数据集、以及 20M 维基文档的预计算 embedding。&lt;/p&gt;
+&lt;h3 id=&#34;实现细节模型版本&#34;&gt;实现细节（模型版本）&lt;/h3&gt;
+&lt;table&gt;
+  &lt;thead&gt;
+      &lt;tr&gt;
+          &lt;th&gt;别名&lt;/th&gt;
+          &lt;th&gt;对应 endpoint&lt;/th&gt;
+          &lt;th&gt;上下文窗口&lt;/th&gt;
+      &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+      &lt;tr&gt;
+          &lt;td&gt;GPT-4 Turbo&lt;/td&gt;
+          &lt;td&gt;&lt;code&gt;gpt-4-1106-preview&lt;/code&gt;&lt;/td&gt;
+          &lt;td&gt;128k&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;GPT-4&lt;/td&gt;
+          &lt;td&gt;&lt;code&gt;gpt-4-0613&lt;/code&gt;&lt;/td&gt;
+          &lt;td&gt;8k&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;GPT-3.5 Turbo&lt;/td&gt;
+          &lt;td&gt;&lt;code&gt;gpt-3.5-turbo-1106&lt;/code&gt;&lt;/td&gt;
+          &lt;td&gt;16k&lt;/td&gt;
+      &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2 id=&#34;二对话-agent-实验&#34;&gt;二、对话 Agent 实验&lt;/h2&gt;
+&lt;h3 id=&#34;21-评测目标一致性--参与度&#34;&gt;2.1 评测目标：一致性 + 参与度&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Consistency（一致性）&lt;/strong&gt;：新事实/偏好/事件要与历史陈述一致，不能自相矛盾。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Engagement（参与度）&lt;/strong&gt;：主动调用长期知识，让对话更自然、更个性化。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;22-数据集multi-session-chat-msc&#34;&gt;2.2 数据集：Multi-Session Chat (MSC)&lt;/h3&gt;
+&lt;p&gt;Xu et al. 2021 提出的多会话闲聊数据，每段由&lt;strong&gt;同一组人物设定&lt;/strong&gt;下的 5 个 session 组成。作者额外构造了第 6 session 用于一致性实验。&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

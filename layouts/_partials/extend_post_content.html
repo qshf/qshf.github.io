@@ -1,9 +1,16 @@
 {{ if .IsPage }}
+<div class="post-meme-tail">
+  <button class="post-meme-trigger" type="button" aria-label="触发表情彩蛋">
+    <img src="/images/memes/wave-fast.gif" alt="" loading="lazy">
+  </button>
+</div>
+
 <style>
 .like-pop{position:fixed;pointer-events:none;z-index:1000;width:50px;animation:likeFloat .8s ease-out forwards}
 @keyframes likeFloat{0%{opacity:1;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(var(--dx),-80px) scale(1.4)}}
 </style>
 <script>
+var memeMode=false;
 function spawnPop(src,x,y){
   var pop=document.createElement('img');
   pop.src=src;
@@ -13,10 +20,23 @@ function spawnPop(src,x,y){
   document.body.appendChild(pop);
   setTimeout(function(){pop.remove()},800);
 }
-document.addEventListener('click',function(e){
-  spawnPop('/images/like.jpg',e.clientX,e.clientY);
-  var mirrorX=window.innerWidth-e.clientX;
-  setTimeout(function(){spawnPop('/images/like2.jpg',mirrorX,e.clientY);},200);
+document.addEventListener('DOMContentLoaded',function(){
+  document.querySelectorAll('.post-meme-trigger').forEach(function(trigger){
+    trigger.addEventListener('click',function(e){
+      e.stopPropagation();
+      memeMode=!memeMode;
+      trigger.setAttribute('aria-pressed',memeMode?'true':'false');
+      trigger.classList.toggle('active',memeMode);
+    });
+  });
+
+  document.addEventListener('click',function(e){
+    if(!memeMode){return;}
+    if(e.target.closest('a,button,input,textarea,select,label,summary,iframe,.giscus,.post-meme-tail')){return;}
+    spawnPop('/images/like.jpg',e.clientX,e.clientY);
+    var mirrorX=window.innerWidth-e.clientX;
+    setTimeout(function(){spawnPop('/images/like2.jpg',mirrorX,e.clientY);},200);
+  });
 });
 </script>
 
@@ -27,7 +47,7 @@ document.addEventListener('click',function(e){
         data-category-id="DIC_kwDOOF9BTM4C8uBn"
         data-mapping="pathname"
         data-strict="0"
-        data-reactions-enabled="1"
+        data-reactions-enabled="0"
         data-emit-metadata="0"
         data-input-position="bottom"
         data-theme="preferred_color_scheme"

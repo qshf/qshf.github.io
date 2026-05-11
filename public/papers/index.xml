@@ -2,11 +2,11 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>论文笔记 on 撒手 &gt;_O </title>
-    <link>http://localhost:1313/papers/</link>
+    <link>http://localhost:61927/papers/</link>
     <description>Recent content in 论文笔记 on 撒手 &gt;_O </description>
     <generator>Hugo</generator>
     <language>zh-cn</language>
     <lastBuildDate></lastBuildDate>
-    <atom:link href="http://localhost:1313/papers/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://localhost:61927/papers/index.xml" rel="self" type="application/rss+xml" />
   </channel>
 </rss>

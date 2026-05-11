@@ -1,0 +1,76 @@
+{{- define "main" }}
+
+<div class="papers-layout">
+
+  {{/* ── 左侧论文导航 ── */}}
+  <aside class="papers-nav">
+    {{- $papersSection := site.GetPage "/papers" }}
+    {{- range $papersSection.Sections }}
+    {{- $isActive := hasPrefix $.RelPermalink .RelPermalink }}
+    <details class="papers-nav-group"{{ if $isActive }} open{{ end }}>
+      <summary class="papers-nav-section{{ if $isActive }} active{{ end }}">{{ .Title }}</summary>
+      {{- range .Sections }}
+      {{- $isPaperActive := hasPrefix $.RelPermalink .RelPermalink }}
+      <div class="papers-nav-paper{{ if $isPaperActive }} open{{ end }}">
+        <a class="{{ if $isPaperActive }}active{{ end }}" href="{{ .RelPermalink }}">{{ .Title }}</a>
+        {{- if $isPaperActive }}
+        <ul>
+          {{- range .Pages.ByWeight }}
+          <li><a class="{{ if eq $.RelPermalink .RelPermalink }}current{{ end }}" href="{{ .RelPermalink }}">{{ .Title }}</a></li>
+          {{- end }}
+        </ul>
+        {{- end }}
+      </div>
+      {{- end }}
+    </details>
+    {{- end }}
+  </aside>
+
+  {{/* ── 主内容 ── */}}
+  <article class="post-single papers-content">
+    <header class="post-header">
+      <h1 class="post-title">{{ .Title }}</h1>
+      {{- if .Description }}
+      <div class="post-description">{{ .Description }}</div>
+      {{- end }}
+    </header>
+
+    {{- $isHidden := (.Param "cover.hiddenInSingle") | default (.Param "cover.hidden") | default false }}
+    {{- partial "cover.html" (dict "cxt" . "IsSingle" true "isHidden" $isHidden) }}
+
+    {{- if .Content }}
+    <div class="post-content md-content">
+      {{- partial "anchored_headings.html" .Content -}}
+    </div>
+    {{- end }}
+
+    {{- partial "extend_post_content.html" . }}
+
+    <footer class="post-footer">
+      {{- $tags := .Language.Params.Taxonomies.tag | default "tags" }}
+      <ul class="post-tags">
+        {{- range ($.GetTerms $tags) }}
+        <li><a href="{{ .Permalink }}">{{ .LinkTitle }}</a></li>
+        {{- end }}
+      </ul>
+      {{- if (.Param "ShowPostNavLinks") }}
+      {{- partial "post_nav_links.html" . }}
+      {{- end }}
+    </footer>
+
+    {{- if (.Param "comments") }}
+    {{- partial "comments.html" . }}
+    {{- end }}
+  </article>
+
+  {{/* ── 右侧 TOC ── */}}
+  {{- $hasToc := findRE "<h[1-6]" .Content 1 }}
+  {{- if $hasToc }}
+  <aside class="papers-toc">
+    {{- partial "toc.html" . }}
+  </aside>
+  {{- end }}
+
+</div>
+
+{{- end }}

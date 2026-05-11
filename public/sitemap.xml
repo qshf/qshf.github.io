@@ -2,45 +2,81 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>http://localhost:1313/papers/nlp/memgpt/abstract/</loc>
+    <loc>http://localhost:61927/papers/agent-memory/memgpt/abstract/</loc>
     <lastmod>2026-05-10T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/papers/nlp/memgpt/method/</loc>
+    <loc>http://localhost:61927/papers/dataset-eval/crud-rag/abstract/</loc>
+    <lastmod>2026-05-01T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:61927/papers/agent-memory/memgpt/method/</loc>
     <lastmod>2026-05-10T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/papers/nlp/memgpt/appendix/</loc>
+    <loc>http://localhost:61927/papers/dataset-eval/crud-rag/method/</loc>
+    <lastmod>2026-05-01T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:61927/papers/agent-memory/memgpt/appendix/</loc>
     <lastmod>2026-05-10T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/papers/nlp/memgpt/experiments/</loc>
+    <loc>http://localhost:61927/papers/agent-memory/memgpt/experiments/</loc>
     <lastmod>2026-05-10T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/agent/</loc>
+    <loc>http://localhost:61927/papers/dataset-eval/crud-rag/tasks/</loc>
+    <lastmod>2026-05-01T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:61927/papers/dataset-eval/crud-rag/experiments/</loc>
+    <lastmod>2026-05-01T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:61927/papers/dataset-eval/crud-rag/uhgeval/</loc>
+    <lastmod>2026-05-01T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:61927/tags/agent/</loc>
     <lastmod>2026-05-10T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/categories/</loc>
+    <loc>http://localhost:61927/papers/agent-memory/</loc>
     <lastmod>2026-05-10T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/llm/</loc>
+    <loc>http://localhost:61927/categories/</loc>
     <lastmod>2026-05-10T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/papers/nlp/memgpt/</loc>
+    <loc>http://localhost:61927/tags/llm/</loc>
     <lastmod>2026-05-10T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/memory/</loc>
+    <loc>http://localhost:61927/papers/agent-memory/memgpt/</loc>
     <lastmod>2026-05-10T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/</loc>
+    <loc>http://localhost:61927/tags/memory/</loc>
     <lastmod>2026-05-10T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/</loc>
+    <loc>http://localhost:61927/tags/</loc>
     <lastmod>2026-05-10T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/categories/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/</loc>
+    <loc>http://localhost:61927/</loc>
     <lastmod>2026-05-10T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/papers/</loc>
+    <loc>http://localhost:61927/categories/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/</loc>
     <lastmod>2026-05-10T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/life/</loc>
+    <loc>http://localhost:61927/papers/</loc>
+    <lastmod>2026-05-10T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:61927/tags/benchmark/</loc>
+    <lastmod>2026-05-01T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:61927/tags/chinese-nlp/</loc>
+    <lastmod>2026-05-01T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:61927/papers/dataset-eval/crud-rag/</loc>
+    <lastmod>2026-05-01T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:61927/tags/dataset/</loc>
+    <lastmod>2026-05-01T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:61927/tags/rag/</loc>
+    <lastmod>2026-05-01T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:61927/papers/dataset-eval/</loc>
+    <lastmod>2026-05-01T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:61927/life/</loc>
   </url>
 </urlset>

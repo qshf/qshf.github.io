@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto" data-theme="auto">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=61927&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="noindex, nofollow">
+<title>Experiments | 撒手 &gt;_O </title>
+<meta name="keywords" content="">
+<meta name="description" content="
+来源：arXiv:2310.08560v2
+一、实验总览
+MemGPT 在两个长上下文领域上做评估：
+
+  
+      
+          领域
+          核心挑战
+          本文任务
+      
+  
+  
+      
+          对话 agent（§5.1）
+          跨多轮/多会话保持一致性与吸引力
+          Deep Memory Retrieval (DMR)；Conversation Opener
+      
+      
+          文档分析（§5.2）
+          单/多文档远超上下文窗口
+          Multi-doc QA（基于 NaturalQuestions-Open）；Nested KV Retrieval（新任务，多跳）
+      
+  
+
+作者公开发布三份资源：扩展版 MSC 数据集、Nested KV 数据集、以及 20M 维基文档的预计算 embedding。
+实现细节（模型版本）
+
+  
+      
+          别名
+          对应 endpoint
+          上下文窗口
+      
+  
+  
+      
+          GPT-4 Turbo
+          gpt-4-1106-preview
+          128k
+      
+      
+          GPT-4
+          gpt-4-0613
+          8k
+      
+      
+          GPT-3.5 Turbo
+          gpt-3.5-turbo-1106
+          16k
+      
+  
+
+二、对话 Agent 实验
+2.1 评测目标：一致性 &#43; 参与度
+
+Consistency（一致性）：新事实/偏好/事件要与历史陈述一致，不能自相矛盾。
+Engagement（参与度）：主动调用长期知识，让对话更自然、更个性化。
+
+2.2 数据集：Multi-Session Chat (MSC)
+Xu et al. 2021 提出的多会话闲聊数据，每段由同一组人物设定下的 5 个 session 组成。作者额外构造了第 6 session 用于一致性实验。">
+<meta name="author" content="qshf">
+<link rel="canonical" href="http://localhost:61927/papers/agent-memory/memgpt/experiments/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.a5335217ac89600fae9e66fa8b1fa02c5cb480e273de49cfca71b60e23d5d25c.css" integrity="sha256-pTNSF6yJYA&#43;unmb6ix&#43;gLFy0gOJz3knPynG2DiPV0lw=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:61927/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:61927/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:61927/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:61927/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:61927/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="http://localhost:61927/papers/agent-memory/memgpt/experiments/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+                color-scheme: dark;
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .toc {
+                background: var(--entry);
+            }
+        }
+
+    </style>
+</noscript>
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.querySelector("html").dataset.theme = 'dark';
+    } else if (localStorage.getItem("pref-theme") === "light") {
+       document.querySelector("html").dataset.theme = 'light';
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.querySelector("html").dataset.theme = 'dark';
+    } else {
+        document.querySelector("html").dataset.theme = 'light';
+    }
+
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var tocLinks = document.querySelectorAll('.papers-toc a, .toc-sidebar a');
+  if (!tocLinks.length) return;
+
+  var headings = Array.from(tocLinks).map(function (a) {
+    var id = decodeURIComponent(a.getAttribute('href').slice(1));
+    return document.getElementById(id);
+  }).filter(Boolean);
+
+  function onScroll() {
+    var scrollY = window.scrollY + 80;
+    var current = headings[0];
+    for (var i = 0; i < headings.length; i++) {
+      if (headings[i].offsetTop <= scrollY) current = headings[i];
+    }
+    tocLinks.forEach(function (a) { a.classList.remove('active'); });
+    var activeLink = document.querySelector('.papers-toc a[href="#' + CSS.escape(current.id) + '"], .toc-sidebar a[href="#' + CSS.escape(current.id) + '"]');
+    if (activeLink) activeLink.classList.add('active');
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+});
+</script>
+
+
+</head>
+<body id="top">
+    <header class="header">
+    <nav class="header-nav">
+        <div class="logo">
+            <a href="http://localhost:61927/" accesskey="h" title="撒手 &gt;_O  (Alt + H)">撒手 &gt;_O </a>
+            <div class="logo-switches">
+                <button id="theme-toggle" class="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu" class="menu">
+            <li>
+                <a href="http://localhost:61927/papers/" title="论文笔记">
+                    <span>论文笔记</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:61927/life/" title="生活">
+                    <span>生活</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<div class="papers-layout">
+
+  
+  <aside class="papers-nav">
+    <details class="papers-nav-group" open>
+      <summary class="papers-nav-section active">Agent Memory</summary>
+      <div class="papers-nav-paper open">
+        <a class="active" href="/papers/agent-memory/memgpt/">MemGPT: Towards LLMs as Operating Systems</a>
+        <ul>
+          <li><a class="" href="/papers/agent-memory/memgpt/abstract/">Abstract &#43; Introduction</a></li>
+          <li><a class="" href="/papers/agent-memory/memgpt/method/">Method</a></li>
+          <li><a class="" href="/papers/agent-memory/memgpt/appendix/">Appendix</a></li>
+          <li><a class="current" href="/papers/agent-memory/memgpt/experiments/">Experiments</a></li>
+        </ul>
+      </div>
+    </details>
+    <details class="papers-nav-group">
+      <summary class="papers-nav-section">数据集评测</summary>
+      <div class="papers-nav-paper">
+        <a class="" href="/papers/dataset-eval/crud-rag/">CRUD-RAG: A Comprehensive Chinese Benchmark for Retrieval-Augmented Generation</a>
+      </div>
+    </details>
+  </aside>
+
+  
+  <article class="post-single papers-content">
+    <header class="post-header">
+      <h1 class="post-title">Experiments</h1>
+    </header> 
+    <div class="post-content md-content"><blockquote>
+<p>来源：arXiv:2310.08560v2</p></blockquote>
+<h2 id="一实验总览">一、实验总览<a hidden class="anchor" aria-hidden="true" href="#一实验总览">#</a></h2>
+<p>MemGPT 在两个<strong>长上下文</strong>领域上做评估：</p>
+<table>
+  <thead>
+      <tr>
+          <th>领域</th>
+          <th>核心挑战</th>
+          <th>本文任务</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>对话 agent</strong>（§5.1）</td>
+          <td>跨多轮/多会话保持一致性与吸引力</td>
+          <td>Deep Memory Retrieval (DMR)；Conversation Opener</td>
+      </tr>
+      <tr>
+          <td><strong>文档分析</strong>（§5.2）</td>
+          <td>单/多文档远超上下文窗口</td>
+          <td>Multi-doc QA（基于 NaturalQuestions-Open）；Nested KV Retrieval（新任务，多跳）</td>
+      </tr>
+  </tbody>
+</table>
+<p>作者公开发布三份资源：扩展版 MSC 数据集、Nested KV 数据集、以及 20M 维基文档的预计算 embedding。</p>
+<h3 id="实现细节模型版本">实现细节（模型版本）<a hidden class="anchor" aria-hidden="true" href="#实现细节模型版本">#</a></h3>
+<table>
+  <thead>
+      <tr>
+          <th>别名</th>
+          <th>对应 endpoint</th>
+          <th>上下文窗口</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>GPT-4 Turbo</td>
+          <td><code>gpt-4-1106-preview</code></td>
+          <td>128k</td>
+      </tr>
+      <tr>
+          <td>GPT-4</td>
+          <td><code>gpt-4-0613</code></td>
+          <td>8k</td>
+      </tr>
+      <tr>
+          <td>GPT-3.5 Turbo</td>
+          <td><code>gpt-3.5-turbo-1106</code></td>
+          <td>16k</td>
+      </tr>
+  </tbody>
+</table>
+<h2 id="二对话-agent-实验">二、对话 Agent 实验<a hidden class="anchor" aria-hidden="true" href="#二对话-agent-实验">#</a></h2>
+<h3 id="21-评测目标一致性--参与度">2.1 评测目标：一致性 + 参与度<a hidden class="anchor" aria-hidden="true" href="#21-评测目标一致性--参与度">#</a></h3>
+<ol>
+<li><strong>Consistency（一致性）</strong>：新事实/偏好/事件要与历史陈述一致，不能自相矛盾。</li>
+<li><strong>Engagement（参与度）</strong>：主动调用长期知识，让对话更自然、更个性化。</li>
+</ol>
+<h3 id="22-数据集multi-session-chat-msc">2.2 数据集：Multi-Session Chat (MSC)<a hidden class="anchor" aria-hidden="true" href="#22-数据集multi-session-chat-msc">#</a></h3>
+<p>Xu et al. 2021 提出的多会话闲聊数据，每段由<strong>同一组人物设定</strong>下的 5 个 session 组成。作者额外构造了第 6 session 用于一致性实验。</p>
+<h3 id="23-任务-adeep-memory-retrieval-dmr--一致性">2.3 任务 A：Deep Memory Retrieval (DMR) — 一致性<a hidden class="anchor" aria-hidden="true" href="#23-任务-adeep-memory-retrieval-dmr--一致性">#</a></h3>
+<p><strong>构造方式</strong>：用另一个 LLM 基于 session 1–5 的历史，生成一条只能<strong>回看过去对话</strong>才答得出的问题。</p>
+<p><strong>评测指标</strong>：ROUGE-L Recall + GPT-4 作 LLM judge。</p>
+<p><strong>结果</strong>（Table 1）：</p>
+<table>
+  <thead>
+      <tr>
+          <th>Model</th>
+          <th>Accuracy ↑</th>
+          <th>ROUGE-L (R) ↑</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>GPT-3.5 Turbo</td>
+          <td>38.7%</td>
+          <td>0.394</td>
+      </tr>
+      <tr>
+          <td><strong>+ MemGPT</strong></td>
+          <td><strong>66.9%</strong></td>
+          <td><strong>0.629</strong></td>
+      </tr>
+      <tr>
+          <td>GPT-4</td>
+          <td>32.1%</td>
+          <td>0.296</td>
+      </tr>
+      <tr>
+          <td><strong>+ MemGPT</strong></td>
+          <td><strong>92.5%</strong></td>
+          <td><strong>0.814</strong></td>
+      </tr>
+      <tr>
+          <td>GPT-4 Turbo</td>
+          <td>35.3%</td>
+          <td>0.359</td>
+      </tr>
+      <tr>
+          <td><strong>+ MemGPT</strong></td>
+          <td><strong>93.4%</strong></td>
+          <td><strong>0.827</strong></td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>结论</strong>：MemGPT+GPT-4 Turbo 的 accuracy 比裸 GPT-4 Turbo 高了约 <strong>58 个百分点</strong>。递归摘要会有信息损失，而 MemGPT 通过分页检索<strong>完整原文</strong>，该记住的细节真的还在。</p>
+<h3 id="24-任务-bconversation-opener--参与度">2.4 任务 B：Conversation Opener — 参与度<a hidden class="anchor" aria-hidden="true" href="#24-任务-bconversation-opener--参与度">#</a></h3>
+<p><strong>评测指标</strong>（CSIM 相似度）：SIM-1/SIM-3（vs gold persona）、SIM-H（vs 人类手写 opener）。</p>
+<p><strong>结果</strong>（Table 2）：</p>
+<table>
+  <thead>
+      <tr>
+          <th>Method</th>
+          <th>SIM-1 ↑</th>
+          <th>SIM-3</th>
+          <th>SIM-H</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Human</td>
+          <td>0.800</td>
+          <td>0.800</td>
+          <td>1.000</td>
+      </tr>
+      <tr>
+          <td>MemGPT + GPT-3.5 Turbo</td>
+          <td>0.830</td>
+          <td>0.812</td>
+          <td><strong>0.817</strong></td>
+      </tr>
+      <tr>
+          <td>MemGPT + GPT-4</td>
+          <td><strong>0.868</strong></td>
+          <td><strong>0.843</strong></td>
+          <td>0.773</td>
+      </tr>
+      <tr>
+          <td>MemGPT + GPT-4 Turbo</td>
+          <td>0.857</td>
+          <td>0.828</td>
+          <td>0.767</td>
+      </tr>
+  </tbody>
+</table>
+<p><strong>结论</strong>：MemGPT 在 SIM-1/SIM-3 上<strong>超过了人类 baseline</strong>。把信息存进 <strong>working context</strong> 是写出高质量开场白的关键。</p>
+<h2 id="三文档分析实验">三、文档分析实验<a hidden class="anchor" aria-hidden="true" href="#三文档分析实验">#</a></h2>
+<h3 id="31-为什么需要-memgpt上下文窗口对比">3.1 为什么需要 MemGPT：上下文窗口对比<a hidden class="anchor" aria-hidden="true" href="#31-为什么需要-memgpt上下文窗口对比">#</a></h3>
+<table>
+  <thead>
+      <tr>
+          <th>模型</th>
+          <th>开源?</th>
+          <th>Tokens</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Llama 2</td>
+          <td>√</td>
+          <td>4k</td>
+      </tr>
+      <tr>
+          <td>Mistral 7B</td>
+          <td>√</td>
+          <td>8k</td>
+      </tr>
+      <tr>
+          <td>GPT-4 (release)</td>
+          <td>×</td>
+          <td>8k</td>
+      </tr>
+      <tr>
+          <td>GPT-3.5 Turbo</td>
+          <td>×</td>
+          <td>16k</td>
+      </tr>
+      <tr>
+          <td>GPT-4 Turbo</td>
+          <td>×</td>
+          <td>128k</td>
+      </tr>
+  </tbody>
+</table>
+<p>引用 <strong>Lost in the Middle</strong>（Liu et al. 2023）：长上下文注意力分布不均，<strong>中间位置的信息被严重遗忘</strong>。</p>
+<h3 id="32-任务-amulti-document-qa">3.2 任务 A：Multi-Document QA<a hidden class="anchor" aria-hidden="true" href="#32-任务-amulti-document-qa">#</a></h3>
+<p><strong>检索底座</strong>：<code>text-embedding-ada-002</code> + cosine similarity + <strong>PostgreSQL + pgvector + HNSW</strong>，Wikipedia 2018 快照预计算 embedding 入库。</p>
+<p><img alt="MemGPT 解决文档 QA 任务的示例" loading="lazy" src="/images/memgpt/memgpt_docqa_example_2.png"></p>
+<p><em>图：MemGPT 通过函数调用查询 archival storage，把分页结果拉进 main context。</em></p>
+<p><img alt="Document QA 准确率" loading="lazy" src="/images/memgpt/docqa.png"></p>
+<p><em>图：MemGPT 的表现几乎<strong>不随 K（上下文中文档数）变化</strong>；固定上下文基线用 truncation 硬扩上下文后准确率随压缩程度下降。</em></p>
+<p>关键观察：</p>
+<ol>
+<li><strong>固定上下文基线的上限被 retriever 卡死</strong>：gold 文档没排进前 K 就永远看不到。</li>
+<li><strong>MemGPT 可以多次分页翻</strong>，不被单次排名限制。</li>
+<li>主要失效模式：MemGPT 会在翻完候选库之前自己停下。</li>
+<li>GPT-3.5 上 MemGPT 显著变差，因为<strong>函数调用能力太弱</strong>。</li>
+</ol>
+<h3 id="33-任务-bnested-key-value-retrieval多跳检索">3.3 任务 B：Nested Key-Value Retrieval（多跳检索）<a hidden class="anchor" aria-hidden="true" href="#33-任务-bnested-key-value-retrieval多跳检索">#</a></h3>
+<p><strong>任务</strong>：140 对 UUID（~8k tokens），value 本身可能是另一个 key，要求<strong>多跳 lookup</strong>，嵌套层数 0–4。</p>
+<p><img alt="MemGPT 解决 Nested KV 的示例" loading="lazy" src="/images/memgpt/memgpt_nested_kv_example.png"></p>
+<p><em>图：MemGPT 逐跳查 <code>831..ea5 → 5b8..4c3 → f37..617</code>。</em></p>
+<p><img alt="Nested KV 准确率 vs 嵌套层数" loading="lazy" src="/images/memgpt/nested_kv.png"></p>
+<p><em>图：MemGPT 是<strong>唯一</strong>能稳定跨过 2 层嵌套的方法；MemGPT+GPT-4 反而比 MemGPT+GPT-4 Turbo 更好。</em></p>
+<table>
+  <thead>
+      <tr>
+          <th>模型</th>
+          <th>单跳（0 层）</th>
+          <th>2 层</th>
+          <th>3+ 层</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>GPT-3.5 / GPT-3.5+MemGPT</td>
+          <td>能做</td>
+          <td>0%</td>
+          <td>0%</td>
+      </tr>
+      <tr>
+          <td>GPT-4 / GPT-4 Turbo</td>
+          <td>能做</td>
+          <td>掉得很厉害</td>
+          <td>0%</td>
+      </tr>
+      <tr>
+          <td><strong>MemGPT + GPT-4</strong></td>
+          <td>能做</td>
+          <td><strong>不降</strong></td>
+          <td><strong>几乎不降</strong></td>
+      </tr>
+  </tbody>
+</table>
+<h2 id="四整体结论">四、整体结论<a hidden class="anchor" aria-hidden="true" href="#四整体结论">#</a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>维度</th>
+          <th>主要证据</th>
+          <th>规律</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>一致性</td>
+          <td>DMR 大幅领先基线（+58pp on GPT-4 Turbo）</td>
+          <td>完整原文 + 分页检索 &gt; 递归摘要</td>
+      </tr>
+      <tr>
+          <td>参与度</td>
+          <td>Opener 的 SIM-1/SIM-3 超人类</td>
+          <td>把 persona 固化进 working context 最有效</td>
+      </tr>
+      <tr>
+          <td>单文档扩容</td>
+          <td>Doc QA 不随 K 衰减</td>
+          <td>archival storage 让检索可<strong>反复翻</strong></td>
+      </tr>
+      <tr>
+          <td>多跳推理</td>
+          <td>Nested KV 跨 2–4 层稳定</td>
+          <td>函数链 + main context 读写让多跳 lookup 天然落地</td>
+      </tr>
+      <tr>
+          <td>主要失效</td>
+          <td>Doc QA / Nested KV 的弱底座</td>
+          <td><strong>函数调用能力</strong>决定 MemGPT 的上限</td>
+      </tr>
+  </tbody>
+</table>
+<h2 id="五一句话总结">五、一句话总结<a hidden class="anchor" aria-hidden="true" href="#五一句话总结">#</a></h2>
+<blockquote>
+<p><strong>MemGPT 的收益来自&quot;可翻页的外部存储 + 可读写的工作上下文 + 函数调用驱动的多跳&quot;三者协同</strong>：四类任务上都显著超越固定上下文基线，但<strong>底座的函数调用能力是天花板</strong>——GPT-4 上的 MemGPT 是最稳定的配置。</p></blockquote>
+
+</div>
+<div class="post-meme-tail">
+  <button class="post-meme-trigger" type="button" aria-label="触发表情彩蛋">
+    <img src="/images/memes/wave-fast.gif" alt="" loading="lazy">
+  </button>
+</div>
+
+<style>
+.like-pop{position:fixed;pointer-events:none;z-index:1000;width:50px;animation:likeFloat .8s ease-out forwards}
+@keyframes likeFloat{0%{opacity:1;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(var(--dx),-80px) scale(1.4)}}
+</style>
+<script>
+var memeMode=false;
+function spawnPop(src,x,y){
+  var pop=document.createElement('img');
+  pop.src=src;
+  pop.className='like-pop';
+  pop.style.left=(x-25)+'px';
+  pop.style.top=(y-25)+'px';
+  document.body.appendChild(pop);
+  setTimeout(function(){pop.remove()},800);
+}
+document.addEventListener('DOMContentLoaded',function(){
+  document.querySelectorAll('.post-meme-trigger').forEach(function(trigger){
+    trigger.addEventListener('click',function(e){
+      e.stopPropagation();
+      memeMode=!memeMode;
+      trigger.setAttribute('aria-pressed',memeMode?'true':'false');
+      trigger.classList.toggle('active',memeMode);
+    });
+  });
+
+  document.addEventListener('click',function(e){
+    if(!memeMode){return;}
+    if(e.target.closest('a,button,input,textarea,select,label,summary,iframe,.giscus,.post-meme-tail')){return;}
+    spawnPop('/images/like.jpg',e.clientX,e.clientY);
+    var mirrorX=window.innerWidth-e.clientX;
+    setTimeout(function(){spawnPop('/images/like2.jpg',mirrorX,e.clientY);},200);
+  });
+});
+</script>
+
+<script src="https://giscus.app/client.js"
+        data-repo="qshf/qshf.github.io"
+        data-repo-id="R_kgDOOF9BTA"
+        data-category="Announcements"
+        data-category-id="DIC_kwDOOF9BTM4C8uBn"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="0"
+        data-emit-metadata="0"
+        data-input-position="bottom"
+        data-theme="preferred_color_scheme"
+        data-lang="zh-CN"
+        crossorigin="anonymous"
+        async>
+</script>
+
+
+
+    <footer class="post-footer">
+      <ul class="post-tags">
+      </ul>
+<nav class="paginav">
+  <a class="prev" href="http://localhost:61927/papers/agent-memory/memgpt/appendix/">
+    <span class="title">« Prev</span>
+    <span>Appendix</span>
+  </a>
+  <a class="next" href="http://localhost:61927/papers/dataset-eval/crud-rag/tasks/">
+    <span class="title">Next »</span>
+    <span>四类任务构造逻辑</span>
+  </a>
+</nav>
+
+    </footer>
+  </article>
+
+  
+  <aside class="papers-toc"><details class="toc" >
+    <summary accesskey="c" title="(Alt + C)">
+        <span class="title">Table of Contents</span>
+    </summary>
+
+    <div class="inner"><ul>
+            <li>
+                <a href="#%e4%b8%80%e5%ae%9e%e9%aa%8c%e6%80%bb%e8%a7%88" aria-label="一、实验总览">一、实验总览</a><ul>
+                    
+            <li>
+                <a href="#%e5%ae%9e%e7%8e%b0%e7%bb%86%e8%8a%82%e6%a8%a1%e5%9e%8b%e7%89%88%e6%9c%ac" aria-label="实现细节（模型版本）">实现细节（模型版本）</a></li></ul>
+            </li>
+            <li>
+                <a href="#%e4%ba%8c%e5%af%b9%e8%af%9d-agent-%e5%ae%9e%e9%aa%8c" aria-label="二、对话 Agent 实验">二、对话 Agent 实验</a><ul>
+                    
+            <li>
+                <a href="#21-%e8%af%84%e6%b5%8b%e7%9b%ae%e6%a0%87%e4%b8%80%e8%87%b4%e6%80%a7--%e5%8f%82%e4%b8%8e%e5%ba%a6" aria-label="2.1 评测目标：一致性 &#43; 参与度">2.1 评测目标：一致性 + 参与度</a></li>
+            <li>
+                <a href="#22-%e6%95%b0%e6%8d%ae%e9%9b%86multi-session-chat-msc" aria-label="2.2 数据集：Multi-Session Chat (MSC)">2.2 数据集：Multi-Session Chat (MSC)</a></li>
+            <li>
+                <a href="#23-%e4%bb%bb%e5%8a%a1-adeep-memory-retrieval-dmr--%e4%b8%80%e8%87%b4%e6%80%a7" aria-label="2.3 任务 A：Deep Memory Retrieval (DMR) — 一致性">2.3 任务 A：Deep Memory Retrieval (DMR) — 一致性</a></li>
+            <li>
+                <a href="#24-%e4%bb%bb%e5%8a%a1-bconversation-opener--%e5%8f%82%e4%b8%8e%e5%ba%a6" aria-label="2.4 任务 B：Conversation Opener — 参与度">2.4 任务 B：Conversation Opener — 参与度</a></li></ul>
+            </li>
+            <li>
+                <a href="#%e4%b8%89%e6%96%87%e6%a1%a3%e5%88%86%e6%9e%90%e5%ae%9e%e9%aa%8c" aria-label="三、文档分析实验">三、文档分析实验</a><ul>
+                    
+            <li>
+                <a href="#31-%e4%b8%ba%e4%bb%80%e4%b9%88%e9%9c%80%e8%a6%81-memgpt%e4%b8%8a%e4%b8%8b%e6%96%87%e7%aa%97%e5%8f%a3%e5%af%b9%e6%af%94" aria-label="3.1 为什么需要 MemGPT：上下文窗口对比">3.1 为什么需要 MemGPT：上下文窗口对比</a></li>
+            <li>
+                <a href="#32-%e4%bb%bb%e5%8a%a1-amulti-document-qa" aria-label="3.2 任务 A：Multi-Document QA">3.2 任务 A：Multi-Document QA</a></li>
+            <li>
+                <a href="#33-%e4%bb%bb%e5%8a%a1-bnested-key-value-retrieval%e5%a4%9a%e8%b7%b3%e6%a3%80%e7%b4%a2" aria-label="3.3 任务 B：Nested Key-Value Retrieval（多跳检索）">3.3 任务 B：Nested Key-Value Retrieval（多跳检索）</a></li></ul>
+            </li>
+            <li>
+                <a href="#%e5%9b%9b%e6%95%b4%e4%bd%93%e7%bb%93%e8%ae%ba" aria-label="四、整体结论">四、整体结论</a></li>
+            <li>
+                <a href="#%e4%ba%94%e4%b8%80%e5%8f%a5%e8%af%9d%e6%80%bb%e7%bb%93" aria-label="五、一句话总结">五、一句话总结</a>
+            </li>
+        </ul>
+    </div>
+</details>
+
+  </aside>
+
+</div>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2026 <a href="http://localhost:61927/">撒手 &gt;_O </a></span> · 
+
+    
+    
+    <span>
+        Powered by
+        <a href="https://gohugo.io/?utm_source=papermod" rel="noopener" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" id="top-link" class="top-link hidden" aria-label="go to top" title="Go to Top (Alt + G)" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevrons-up">
+        <polyline points="17 11 12 6 7 11"></polyline>
+        <polyline points="17 18 12 13 7 18"></polyline>
+    </svg>
+</a>
+
+
+<script>
+    let menu = document.getElementById('menu');
+    if (menu) {
+        
+        const scrollPosition = localStorage.getItem("menu-scroll-position");
+        if (scrollPosition) {
+            menu.scrollLeft = parseInt(scrollPosition, 10);
+        }
+        
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var toplink = document.getElementById("top-link");
+    window.onscroll = function () {
+        const scrollThreshold = window.innerHeight;
+        if (document.body.scrollTop > scrollThreshold || document.documentElement.scrollTop > scrollThreshold) {
+            toplink.classList.remove("hidden");
+        } else {
+            toplink.classList.add("hidden");
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        const html = document.querySelector("html");
+        if (html.dataset.theme === "dark") {
+            html.dataset.theme = 'light';
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            html.dataset.theme = 'dark';
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

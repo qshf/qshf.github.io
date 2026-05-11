@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto" data-theme="auto">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=61927&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="noindex, nofollow">
+<title>四类任务构造逻辑 | 撒手 &gt;_O </title>
+<meta name="keywords" content="">
+<meta name="description" content="
+本节重点不是复述原文，而是把 4 类任务的数据构造思路讲清楚。
+总览
+文中把 RAG 应用分成四类：
+
+Create：文本续写
+Read：问答
+Update：幻觉修改
+Delete：多文档摘要
+
+四类任务共用同一套骨架：先定义目标输出 → 扩充检索库确保答案可被检索 → 配齐输入/检索库/标准答案。
+
+1. Delete：多文档摘要
+逻辑核心：反向构造，避免人工写摘要的高成本。
+
+从高质量新闻库中选出一篇目标新闻 d
+GPT-4 处理目标新闻，抽取 News Event &#43; 生成 News Summary
+用 Event 作为查询词去搜索相关新闻，筛掉与原文过于相似的文章，保留多篇相关但不相同的外部新闻 E
+扩充检索库：D - d &#43; E（移除原文，加入外部新闻）
+Summary 作为标准答案
+
+模型测试时不会直接看到原文，必须靠外部检索回来的多篇材料重建摘要。
+这类构造在评什么：检索能不能找回同一事件的不同报道；模型能不能去冗余、抓重点、写出简洁摘要。
+
+2. Create：文本续写
+逻辑核心：与摘要类似，区别是目标输出是新闻后半段而非摘要。
+
+选一篇完整新闻，按句子切分，roughly 分成前后两半
+前半段 → 任务输入；后半段 → 标准答案
+把后半段拆成多个小段，逐段去搜索相关材料，汇总加入检索库
+
+这类构造在评什么：输入前文后，检索是否能补齐后续所需事实；模型能不能既保持连贯，又把检索到的信息融进续写。
+
+3. Read：问答
+单文档问答
+直接用 GPT-4 基于单篇新闻生成事实型问题和答案（人物、地点、事件结果等）。
+多文档问答
+不能简单让 GPT-4 凭空出题（容易生成单篇就能回答的问题，或硬拼不相关内容）。论文用 CoT 式多步构造流程：
+
+检索多篇相关联新闻（2 篇或 3 篇）
+找共同点：确保几篇文章真的围绕同一核心事件
+找差异点：确保问题必须整合多个来源，而不是只看其中一篇
+基于差异点生成候选问题
+基于共同点重写问题：把&quot;两个子问题并列&quot;改成&quot;一个真正有内在联系的问题&quot;
+人工 refinement：判断问题是否自然、准确，不够自然则手动润色
+
+这类构造在评什么：模型能不能把多个来源拼起来；RAG 不只要&quot;找到答案在哪&quot;，还要能&quot;把多个来源整合&quot;。">
+<meta name="author" content="qshf">
+<link rel="canonical" href="http://localhost:61927/papers/dataset-eval/crud-rag/tasks/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.a5335217ac89600fae9e66fa8b1fa02c5cb480e273de49cfca71b60e23d5d25c.css" integrity="sha256-pTNSF6yJYA&#43;unmb6ix&#43;gLFy0gOJz3knPynG2DiPV0lw=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:61927/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:61927/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:61927/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:61927/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:61927/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="http://localhost:61927/papers/dataset-eval/crud-rag/tasks/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+                color-scheme: dark;
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .toc {
+                background: var(--entry);
+            }
+        }
+
+    </style>
+</noscript>
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.querySelector("html").dataset.theme = 'dark';
+    } else if (localStorage.getItem("pref-theme") === "light") {
+       document.querySelector("html").dataset.theme = 'light';
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.querySelector("html").dataset.theme = 'dark';
+    } else {
+        document.querySelector("html").dataset.theme = 'light';
+    }
+
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var tocLinks = document.querySelectorAll('.papers-toc a, .toc-sidebar a');
+  if (!tocLinks.length) return;
+
+  var headings = Array.from(tocLinks).map(function (a) {
+    var id = decodeURIComponent(a.getAttribute('href').slice(1));
+    return document.getElementById(id);
+  }).filter(Boolean);
+
+  function onScroll() {
+    var scrollY = window.scrollY + 80;
+    var current = headings[0];
+    for (var i = 0; i < headings.length; i++) {
+      if (headings[i].offsetTop <= scrollY) current = headings[i];
+    }
+    tocLinks.forEach(function (a) { a.classList.remove('active'); });
+    var activeLink = document.querySelector('.papers-toc a[href="#' + CSS.escape(current.id) + '"], .toc-sidebar a[href="#' + CSS.escape(current.id) + '"]');
+    if (activeLink) activeLink.classList.add('active');
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+});
+</script>
+
+
+</head>
+<body id="top">
+    <header class="header">
+    <nav class="header-nav">
+        <div class="logo">
+            <a href="http://localhost:61927/" accesskey="h" title="撒手 &gt;_O  (Alt + H)">撒手 &gt;_O </a>
+            <div class="logo-switches">
+                <button id="theme-toggle" class="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu" class="menu">
+            <li>
+                <a href="http://localhost:61927/papers/" title="论文笔记">
+                    <span>论文笔记</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:61927/life/" title="生活">
+                    <span>生活</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<div class="papers-layout">
+
+  
+  <aside class="papers-nav">
+    <details class="papers-nav-group">
+      <summary class="papers-nav-section">Agent Memory</summary>
+      <div class="papers-nav-paper">
+        <a class="" href="/papers/agent-memory/memgpt/">MemGPT: Towards LLMs as Operating Systems</a>
+      </div>
+    </details>
+    <details class="papers-nav-group" open>
+      <summary class="papers-nav-section active">数据集评测</summary>
+      <div class="papers-nav-paper open">
+        <a class="active" href="/papers/dataset-eval/crud-rag/">CRUD-RAG: A Comprehensive Chinese Benchmark for Retrieval-Augmented Generation</a>
+        <ul>
+          <li><a class="" href="/papers/dataset-eval/crud-rag/abstract/">Abstract &#43; 相关工作</a></li>
+          <li><a class="" href="/papers/dataset-eval/crud-rag/method/">主要方法：数据集构建</a></li>
+          <li><a class="current" href="/papers/dataset-eval/crud-rag/tasks/">四类任务构造逻辑</a></li>
+          <li><a class="" href="/papers/dataset-eval/crud-rag/experiments/">实验结论与调参逻辑</a></li>
+          <li><a class="" href="/papers/dataset-eval/crud-rag/uhgeval/">补充：UHGEval 数据集</a></li>
+        </ul>
+      </div>
+    </details>
+  </aside>
+
+  
+  <article class="post-single papers-content">
+    <header class="post-header">
+      <h1 class="post-title">四类任务构造逻辑</h1>
+    </header> 
+    <div class="post-content md-content"><blockquote>
+<p>本节重点不是复述原文，而是把 4 类任务的数据构造思路讲清楚。</p></blockquote>
+<h2 id="总览">总览<a hidden class="anchor" aria-hidden="true" href="#总览">#</a></h2>
+<p>文中把 RAG 应用分成四类：</p>
+<ul>
+<li><code>Create</code>：文本续写</li>
+<li><code>Read</code>：问答</li>
+<li><code>Update</code>：幻觉修改</li>
+<li><code>Delete</code>：多文档摘要</li>
+</ul>
+<p>四类任务共用同一套骨架：<strong>先定义目标输出 → 扩充检索库确保答案可被检索 → 配齐输入/检索库/标准答案</strong>。</p>
+<hr>
+<h2 id="1-delete多文档摘要">1. Delete：多文档摘要<a hidden class="anchor" aria-hidden="true" href="#1-delete多文档摘要">#</a></h2>
+<p><strong>逻辑核心</strong>：反向构造，避免人工写摘要的高成本。</p>
+<ol>
+<li>从高质量新闻库中选出一篇目标新闻 <code>d</code></li>
+<li>GPT-4 处理目标新闻，抽取 <code>News Event</code> + 生成 <code>News Summary</code></li>
+<li>用 <code>Event</code> 作为查询词去搜索相关新闻，筛掉与原文过于相似的文章，保留多篇相关但不相同的外部新闻 <code>E</code></li>
+<li>扩充检索库：<code>D - d + E</code>（移除原文，加入外部新闻）</li>
+<li><code>Summary</code> 作为标准答案</li>
+</ol>
+<p>模型测试时不会直接看到原文，必须靠外部检索回来的多篇材料重建摘要。</p>
+<p><strong>这类构造在评什么</strong>：检索能不能找回同一事件的不同报道；模型能不能去冗余、抓重点、写出简洁摘要。</p>
+<hr>
+<h2 id="2-create文本续写">2. Create：文本续写<a hidden class="anchor" aria-hidden="true" href="#2-create文本续写">#</a></h2>
+<p><strong>逻辑核心</strong>：与摘要类似，区别是目标输出是新闻后半段而非摘要。</p>
+<ol>
+<li>选一篇完整新闻，按句子切分，roughly 分成前后两半</li>
+<li>前半段 → 任务输入；后半段 → 标准答案</li>
+<li>把后半段拆成多个小段，逐段去搜索相关材料，汇总加入检索库</li>
+</ol>
+<p><strong>这类构造在评什么</strong>：输入前文后，检索是否能补齐后续所需事实；模型能不能既保持连贯，又把检索到的信息融进续写。</p>
+<hr>
+<h2 id="3-read问答">3. Read：问答<a hidden class="anchor" aria-hidden="true" href="#3-read问答">#</a></h2>
+<h3 id="单文档问答">单文档问答<a hidden class="anchor" aria-hidden="true" href="#单文档问答">#</a></h3>
+<p>直接用 GPT-4 基于单篇新闻生成事实型问题和答案（人物、地点、事件结果等）。</p>
+<h3 id="多文档问答">多文档问答<a hidden class="anchor" aria-hidden="true" href="#多文档问答">#</a></h3>
+<p>不能简单让 GPT-4 凭空出题（容易生成单篇就能回答的问题，或硬拼不相关内容）。论文用 CoT 式多步构造流程：</p>
+<ol>
+<li>检索多篇相关联新闻（2 篇或 3 篇）</li>
+<li><strong>找共同点</strong>：确保几篇文章真的围绕同一核心事件</li>
+<li><strong>找差异点</strong>：确保问题必须整合多个来源，而不是只看其中一篇</li>
+<li><strong>基于差异点生成候选问题</strong></li>
+<li><strong>基于共同点重写问题</strong>：把&quot;两个子问题并列&quot;改成&quot;一个真正有内在联系的问题&quot;</li>
+<li>人工 refinement：判断问题是否自然、准确，不够自然则手动润色</li>
+</ol>
+<p><strong>这类构造在评什么</strong>：模型能不能把多个来源拼起来；RAG 不只要&quot;找到答案在哪&quot;，还要能&quot;把多个来源整合&quot;。</p>
+<hr>
+<h2 id="4-update幻觉修改">4. Update：幻觉修改<a hidden class="anchor" aria-hidden="true" href="#4-update幻觉修改">#</a></h2>
+<p><strong>逻辑核心</strong>：利用现成的幻觉数据集 <code>UHGEval</code>，不从零构造。</p>
+<ol>
+<li>UHGEval 提供：新闻开头 + 带幻觉的续写 + 幻觉位置标注</li>
+<li>GPT-4 依据标注修正错误内容，得到无幻觉版本文本</li>
+<li>真实新闻后续内容加入检索库</li>
+</ol>
+<p><strong>这类构造在评什么</strong>：检索能不能找回真实新闻事实；模型能不能识别哪部分错了；模型能不能只改错的部分，同时保留原文里本来就对的信息。</p>
+<hr>
+<h2 id="5-一句话抓住方法论">5. 一句话抓住方法论<a hidden class="anchor" aria-hidden="true" href="#5-一句话抓住方法论">#</a></h2>
+<p><strong>CRUD-RAG 的重点，是让模型不能只靠参数记忆答题，而必须依赖外部检索来完成摘要、续写、问答和纠错。</strong></p>
+
+</div>
+<div class="post-meme-tail">
+  <button class="post-meme-trigger" type="button" aria-label="触发表情彩蛋">
+    <img src="/images/memes/wave-fast.gif" alt="" loading="lazy">
+  </button>
+</div>
+
+<style>
+.like-pop{position:fixed;pointer-events:none;z-index:1000;width:50px;animation:likeFloat .8s ease-out forwards}
+@keyframes likeFloat{0%{opacity:1;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(var(--dx),-80px) scale(1.4)}}
+</style>
+<script>
+var memeMode=false;
+function spawnPop(src,x,y){
+  var pop=document.createElement('img');
+  pop.src=src;
+  pop.className='like-pop';
+  pop.style.left=(x-25)+'px';
+  pop.style.top=(y-25)+'px';
+  document.body.appendChild(pop);
+  setTimeout(function(){pop.remove()},800);
+}
+document.addEventListener('DOMContentLoaded',function(){
+  document.querySelectorAll('.post-meme-trigger').forEach(function(trigger){
+    trigger.addEventListener('click',function(e){
+      e.stopPropagation();
+      memeMode=!memeMode;
+      trigger.setAttribute('aria-pressed',memeMode?'true':'false');
+      trigger.classList.toggle('active',memeMode);
+    });
+  });
+
+  document.addEventListener('click',function(e){
+    if(!memeMode){return;}
+    if(e.target.closest('a,button,input,textarea,select,label,summary,iframe,.giscus,.post-meme-tail')){return;}
+    spawnPop('/images/like.jpg',e.clientX,e.clientY);
+    var mirrorX=window.innerWidth-e.clientX;
+    setTimeout(function(){spawnPop('/images/like2.jpg',mirrorX,e.clientY);},200);
+  });
+});
+</script>
+
+<script src="https://giscus.app/client.js"
+        data-repo="qshf/qshf.github.io"
+        data-repo-id="R_kgDOOF9BTA"
+        data-category="Announcements"
+        data-category-id="DIC_kwDOOF9BTM4C8uBn"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="0"
+        data-emit-metadata="0"
+        data-input-position="bottom"
+        data-theme="preferred_color_scheme"
+        data-lang="zh-CN"
+        crossorigin="anonymous"
+        async>
+</script>
+
+
+
+    <footer class="post-footer">
+      <ul class="post-tags">
+      </ul>
+<nav class="paginav">
+  <a class="prev" href="http://localhost:61927/papers/agent-memory/memgpt/experiments/">
+    <span class="title">« Prev</span>
+    <span>Experiments</span>
+  </a>
+  <a class="next" href="http://localhost:61927/papers/dataset-eval/crud-rag/experiments/">
+    <span class="title">Next »</span>
+    <span>实验结论与调参逻辑</span>
+  </a>
+</nav>
+
+    </footer>
+  </article>
+
+  
+  <aside class="papers-toc"><details class="toc" >
+    <summary accesskey="c" title="(Alt + C)">
+        <span class="title">Table of Contents</span>
+    </summary>
+
+    <div class="inner"><ul>
+            <li>
+                <a href="#%e6%80%bb%e8%a7%88" aria-label="总览">总览</a></li>
+            <li>
+                <a href="#1-delete%e5%a4%9a%e6%96%87%e6%a1%a3%e6%91%98%e8%a6%81" aria-label="1. Delete：多文档摘要">1. Delete：多文档摘要</a></li>
+            <li>
+                <a href="#2-create%e6%96%87%e6%9c%ac%e7%bb%ad%e5%86%99" aria-label="2. Create：文本续写">2. Create：文本续写</a></li>
+            <li>
+                <a href="#3-read%e9%97%ae%e7%ad%94" aria-label="3. Read：问答">3. Read：问答</a><ul>
+                    
+            <li>
+                <a href="#%e5%8d%95%e6%96%87%e6%a1%a3%e9%97%ae%e7%ad%94" aria-label="单文档问答">单文档问答</a></li>
+            <li>
+                <a href="#%e5%a4%9a%e6%96%87%e6%a1%a3%e9%97%ae%e7%ad%94" aria-label="多文档问答">多文档问答</a></li></ul>
+            </li>
+            <li>
+                <a href="#4-update%e5%b9%bb%e8%a7%89%e4%bf%ae%e6%94%b9" aria-label="4. Update：幻觉修改">4. Update：幻觉修改</a></li>
+            <li>
+                <a href="#5-%e4%b8%80%e5%8f%a5%e8%af%9d%e6%8a%93%e4%bd%8f%e6%96%b9%e6%b3%95%e8%ae%ba" aria-label="5. 一句话抓住方法论">5. 一句话抓住方法论</a>
+            </li>
+        </ul>
+    </div>
+</details>
+
+  </aside>
+
+</div>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2026 <a href="http://localhost:61927/">撒手 &gt;_O </a></span> · 
+
+    
+    
+    <span>
+        Powered by
+        <a href="https://gohugo.io/?utm_source=papermod" rel="noopener" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" id="top-link" class="top-link hidden" aria-label="go to top" title="Go to Top (Alt + G)" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevrons-up">
+        <polyline points="17 11 12 6 7 11"></polyline>
+        <polyline points="17 18 12 13 7 18"></polyline>
+    </svg>
+</a>
+
+
+<script>
+    let menu = document.getElementById('menu');
+    if (menu) {
+        
+        const scrollPosition = localStorage.getItem("menu-scroll-position");
+        if (scrollPosition) {
+            menu.scrollLeft = parseInt(scrollPosition, 10);
+        }
+        
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var toplink = document.getElementById("top-link");
+    window.onscroll = function () {
+        const scrollThreshold = window.innerHeight;
+        if (document.body.scrollTop > scrollThreshold || document.documentElement.scrollTop > scrollThreshold) {
+            toplink.classList.remove("hidden");
+        } else {
+            toplink.classList.add("hidden");
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        const html = document.querySelector("html");
+        if (html.dataset.theme === "dark") {
+            html.dataset.theme = 'light';
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            html.dataset.theme = 'dark';
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>
