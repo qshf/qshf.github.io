@@ -2,17 +2,25 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
-  onload="renderMathInElement(document.querySelector('.post-content') || document.body, {
-    delimiters: [
-      {left:'$$', right:'$$', display:true},
-      {left:'\\\\[', right:'\\\\]', display:true},
-      {left:'\\\\(', right:'\\\\)', display:false},
-      {left:'$', right:'$', display:false}
-    ],
-    ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
-    throwOnError: false,
-    strict: 'warn'
-  })">
+  onload="(function(){
+    var opts = {
+      delimiters: [
+        {left:'$$', right:'$$', display:true},
+        {left:'\\\\[', right:'\\\\]', display:true},
+        {left:'\\\\(', right:'\\\\)', display:false},
+        {left:'$', right:'$', display:false}
+      ],
+      ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+      throwOnError: false,
+      strict: 'warn'
+    };
+    var targets = document.querySelectorAll('.post-content, .post-title, .post-description, .papers-nav, .papers-toc, .paginav');
+    if (targets.length) {
+      targets.forEach(function (el) { renderMathInElement(el, opts); });
+    } else {
+      renderMathInElement(document.body, opts);
+    }
+  })()">
 </script>
 {{ end }}
 
@@ -37,3 +45,26 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
 {{ end }}
+
+{{/* 右侧目录：给有子项的标题加折叠开关 */}}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var toc = document.querySelector('.papers-toc .inner');
+  if (!toc) return;
+  toc.querySelectorAll('li').forEach(function (li) {
+    var sub = li.querySelector(':scope > ul');
+    if (!sub) return;
+    li.classList.add('has-children');
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'toc-toggle';
+    btn.setAttribute('aria-label', '折叠/展开');
+    btn.addEventListener('click', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      li.classList.toggle('collapsed');
+    });
+    li.insertBefore(btn, li.firstChild);
+  });
+});
+</script>

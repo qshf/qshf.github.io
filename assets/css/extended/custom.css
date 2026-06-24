@@ -147,13 +147,42 @@ body:has(.papers-layout) .main {
 }
 
 .papers-toc details.toc summary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  list-style: none;
+  padding: 4px 0 8px;
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--secondary);
+  user-select: none;
+}
+
+.papers-toc details.toc summary::-webkit-details-marker {
   display: none;
 }
 
-.papers-toc details::details-content,
-.papers-toc details[open]::details-content {
-  height: auto;
-  opacity: 1;
+/* 折叠指示三角 */
+.papers-toc details.toc summary::before {
+  content: "";
+  width: 0;
+  height: 0;
+  border-left: 4px solid currentColor;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  transition: transform 0.15s ease;
+}
+
+.papers-toc details.toc[open] summary::before {
+  transform: rotate(90deg);
+}
+
+.papers-toc details.toc summary:hover {
+  color: var(--primary);
 }
 
 .papers-toc .inner {
@@ -191,6 +220,66 @@ body:has(.papers-layout) .main {
   color: var(--primary);
   font-weight: 500;
   background: var(--code-bg);
+}
+
+/* ── 折叠整个目录：腾出正文阅读宽度 ── */
+.papers-layout:has(.papers-toc details.toc:not([open])) .papers-toc {
+  flex: 0 0 auto;
+  width: auto;
+  padding-left: 8px;
+  border-left: none;
+}
+
+.papers-layout:has(.papers-toc details.toc:not([open])) .papers-toc summary .title {
+  display: none;
+}
+
+/* ── 按标题逐级收缩（树状目录）── */
+.papers-toc li {
+  position: relative;
+}
+
+.papers-toc .inner a {
+  padding-left: 16px;
+}
+
+.papers-toc .toc-toggle {
+  position: absolute;
+  left: -2px;
+  top: 6px;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--secondary);
+}
+
+.papers-toc .toc-toggle::before {
+  content: "";
+  width: 0;
+  height: 0;
+  border-left: 4px solid currentColor;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  transition: transform 0.15s ease;
+}
+
+/* 展开时三角向下，收缩时向右 */
+.papers-toc li.has-children:not(.collapsed) > .toc-toggle::before {
+  transform: rotate(90deg);
+}
+
+.papers-toc .toc-toggle:hover {
+  color: var(--primary);
+}
+
+.papers-toc li.collapsed > ul {
+  display: none;
 }
 
 /* ── 正文字号优化 ── */

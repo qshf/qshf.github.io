@@ -5,7 +5,7 @@ weight: 190
 math: true
 mermaid: true
 ShowToc: true
-TocOpen: false
+TocOpen: true
 categories: ["书籍笔记"]
 tags: ["强化学习", "数学原理"]
 ---

@@ -57,7 +57,7 @@ CRUD-RAG 包含四类评测任务：
 现有 RAG 评测主要关注如何判断系统性能，包括答案准确性、检索内容相关性、回答是否忠实于上下文，以及是否存在幻觉。">
 <meta name="author" content="qshf">
 <link rel="canonical" href="http://localhost:1313/papers/dataset-eval/crud-rag/abstract/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.ac9d367ca23e95d58bd22c4cec025f14e1ceb180140a759f9ff38ae3d70d961d.css" integrity="sha256-rJ02fKI&#43;ldWL0ixM7AJfFOHOsYAUCnWfn/OK49cNlh0=" rel="preload stylesheet" as="style">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.dd53f6712c373b2f576d7d8bc4285cb10a844614e7ab26da839cb58e836385d8.css" integrity="sha256-3VP2cSw3Oy9XbX2LxChcsQqERhTnqybag5y1joNjhdg=" rel="preload stylesheet" as="style">
 <link rel="icon" href="http://localhost:1313/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
@@ -407,17 +407,25 @@ document.addEventListener('DOMContentLoaded',function(){
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
-  onload="renderMathInElement(document.querySelector('.post-content') || document.body, {
-    delimiters: [
-      {left:'$$', right:'$$', display:true},
-      {left:'\\\\[', right:'\\\\]', display:true},
-      {left:'\\\\(', right:'\\\\)', display:false},
-      {left:'$', right:'$', display:false}
-    ],
-    ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
-    throwOnError: false,
-    strict: 'warn'
-  })">
+  onload="(function(){
+    var opts = {
+      delimiters: [
+        {left:'$$', right:'$$', display:true},
+        {left:'\\\\[', right:'\\\\]', display:true},
+        {left:'\\\\(', right:'\\\\)', display:false},
+        {left:'$', right:'$', display:false}
+      ],
+      ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+      throwOnError: false,
+      strict: 'warn'
+    };
+    var targets = document.querySelectorAll('.post-content, .post-title, .post-description, .papers-nav, .papers-toc, .paginav');
+    if (targets.length) {
+      targets.forEach(function (el) { renderMathInElement(el, opts); });
+    } else {
+      renderMathInElement(document.body, opts);
+    }
+  })()">
 </script>
 
 
@@ -442,6 +450,29 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
 
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var toc = document.querySelector('.papers-toc .inner');
+  if (!toc) return;
+  toc.querySelectorAll('li').forEach(function (li) {
+    var sub = li.querySelector(':scope > ul');
+    if (!sub) return;
+    li.classList.add('has-children');
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'toc-toggle';
+    btn.setAttribute('aria-label', '折叠/展开');
+    btn.addEventListener('click', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      li.classList.toggle('collapsed');
+    });
+    li.insertBefore(btn, li.firstChild);
+  });
+});
+</script>
 
 
 <script>

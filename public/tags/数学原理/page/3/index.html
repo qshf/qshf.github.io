@@ -10,7 +10,7 @@
 <meta name="description" content="论文笔记、书籍笔记 &amp; 生活随笔">
 <meta name="author" content="qshf">
 <link rel="canonical" href="http://localhost:1313/tags/%E6%95%B0%E5%AD%A6%E5%8E%9F%E7%90%86/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.ac9d367ca23e95d58bd22c4cec025f14e1ceb180140a759f9ff38ae3d70d961d.css" integrity="sha256-rJ02fKI&#43;ldWL0ixM7AJfFOHOsYAUCnWfn/OK49cNlh0=" rel="preload stylesheet" as="style">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.dd53f6712c373b2f576d7d8bc4285cb10a844614e7ab26da839cb58e836385d8.css" integrity="sha256-3VP2cSw3Oy9XbX2LxChcsQqERhTnqybag5y1joNjhdg=" rel="preload stylesheet" as="style">
 <link rel="icon" href="http://localhost:1313/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
@@ -312,6 +312,29 @@ $$ \nabla_\theta\pi_\theta(a\mid s) = \pi_\theta(a\mid s)\nabla_\theta\ln\pi_\th
 </a>
 
 
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var toc = document.querySelector('.papers-toc .inner');
+  if (!toc) return;
+  toc.querySelectorAll('li').forEach(function (li) {
+    var sub = li.querySelector(':scope > ul');
+    if (!sub) return;
+    li.classList.add('has-children');
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'toc-toggle';
+    btn.setAttribute('aria-label', '折叠/展开');
+    btn.addEventListener('click', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      li.classList.toggle('collapsed');
+    });
+    li.insertBefore(btn, li.firstChild);
+  });
+});
+</script>
 
 
 <script>

@@ -10,7 +10,7 @@
 <meta name="description" content="《强化学习的数学原理》学习笔记">
 <meta name="author" content="qshf">
 <link rel="canonical" href="http://localhost:1313/books/reinforcement-learning-math/notes/08_supplement-lemma-8-1-b-minus-aw-derivation/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.ac9d367ca23e95d58bd22c4cec025f14e1ceb180140a759f9ff38ae3d70d961d.css" integrity="sha256-rJ02fKI&#43;ldWL0ixM7AJfFOHOsYAUCnWfn/OK49cNlh0=" rel="preload stylesheet" as="style">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.dd53f6712c373b2f576d7d8bc4285cb10a844614e7ab26da839cb58e836385d8.css" integrity="sha256-3VP2cSw3Oy9XbX2LxChcsQqERhTnqybag5y1joNjhdg=" rel="preload stylesheet" as="style">
 <link rel="icon" href="http://localhost:1313/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
@@ -142,74 +142,51 @@ document.addEventListener('DOMContentLoaded', function () {
 </header>
 <main class="main">
 
-<article class="post-single">
-  <header class="post-header">
-    <nav class="breadcrumbs" role="navigation" aria-label="Breadcrumb">
-            <a href="/">Home</a>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
-                <polyline points="9 18 15 12 9 6"></polyline>
-            </svg>
-            <a href="/books/">书籍笔记</a>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
-                <polyline points="9 18 15 12 9 6"></polyline>
-            </svg>
-            <a href="/books/reinforcement-learning-math/">强化学习的数学原理</a>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
-                <polyline points="9 18 15 12 9 6"></polyline>
-            </svg>
-            <a href="/books/reinforcement-learning-math/notes/">章笔记与补充</a>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-        stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
-        <polyline points="9 18 15 12 9 6"></polyline>
-    </svg>
-</nav>
-    <h1 class="post-title entry-hint-parent">
-      补充：Lemma 8.1 中 b - Aw_t 的详细推导
-    </h1>
-    <div class="post-description">《强化学习的数学原理》学习笔记</div>
-    <div class="post-meta">
+<div class="papers-layout">
 
-<span>5 min</span>&nbsp;·&nbsp;<span>qshf</span>
-
-</div>
-  </header> 
-  <div class="post-with-toc">
-    <aside class="toc-sidebar"><details class="toc" >
-    <summary accesskey="c" title="(Alt + C)">
-        <span class="title">Table of Contents</span>
-    </summary>
-
-    <div class="inner"><ul>
-            <li>
-                <a href="#0-%e8%a6%81%e8%a7%a3%e5%86%b3%e7%9a%84%e9%97%ae%e9%a2%98" aria-label="0. 要解决的问题">0. 要解决的问题</a></li>
-            <li>
-                <a href="#1-%e5%85%88%e6%8a%8a%e6%89%80%e6%9c%89%e7%ac%a6%e5%8f%b7%e5%92%8c%e7%bb%b4%e5%ba%a6%e6%91%86%e6%b8%85%e6%a5%9a" aria-label="1. 先把所有符号和维度摆清楚">1. 先把所有符号和维度摆清楚</a></li>
-            <li>
-                <a href="#2-%e5%8e%9f%e5%bc%8f%e5%85%88%e6%8b%86%e6%88%90-reward-%e9%a1%b9%e5%92%8c-td-%e9%a1%b9" aria-label="2. 原式先拆成 reward 项和 TD 项">2. 原式先拆成 reward 项和 TD 项</a></li>
-            <li>
-                <a href="#3-%e4%b8%ba%e4%bb%80%e4%b9%88%e5%8f%af%e4%bb%a5%e6%8c%89--%e5%88%86%e8%a7%a3" aria-label="3. 为什么可以按 $s_t=s$ 分解">3. 为什么可以按 $s_t=s$ 分解</a></li>
-            <li>
-                <a href="#4-reward-%e9%a1%b9%e4%b8%ba%e4%bb%80%e4%b9%88%e7%ad%89%e4%ba%8e" aria-label="4. reward 项为什么等于 $\Phi^TDr_\pi$">4. reward 项为什么等于 $\Phi^TDr_\pi$</a></li>
-            <li>
-                <a href="#5-td-%e9%a1%b9%e4%b8%ba%e4%bb%80%e4%b9%88%e7%ad%89%e4%ba%8e" aria-label="5. TD 项为什么等于 $-\Phi^TD(I-\gamma P_\pi)\Phi w_t$">5. TD 项为什么等于 $-\Phi^TD(I-\gamma P_\pi)\Phi w_t$</a></li>
-            <li>
-                <a href="#6-%e5%90%88%e5%b9%b6-reward-%e9%a1%b9%e5%92%8c-td-%e9%a1%b9" aria-label="6. 合并 reward 项和 TD 项">6. 合并 reward 项和 TD 项</a></li>
-            <li>
-                <a href="#7-%e4%b8%80%e4%b8%aa-2-%e7%8a%b6%e6%80%811-%e7%bb%b4%e7%89%b9%e5%be%81%e7%9a%84%e5%b0%8f%e6%95%b0%e5%80%bc%e4%be%8b%e5%ad%90" aria-label="7. 一个 2 状态、1 维特征的小数值例子">7. 一个 2 状态、1 维特征的小数值例子</a></li>
-            <li>
-                <a href="#8-%e6%9c%80%e5%ae%b9%e6%98%93%e5%8d%a1%e4%bd%8f%e7%9a%84%e4%b8%89%e7%82%b9" aria-label="8. 最容易卡住的三点">8. 最容易卡住的三点</a></li>
-            <li>
-                <a href="#9-%e4%b8%80%e5%8f%a5%e8%af%9d%e6%80%bb%e7%bb%93" aria-label="9. 一句话总结">9. 一句话总结</a>
-            </li>
+  
+  <aside class="papers-nav">
+    <details class="papers-nav-group" open>
+      <summary class="papers-nav-section active">强化学习的数学原理</summary>
+      <div class="papers-nav-paper open">
+        <a class="active" href="/books/reinforcement-learning-math/notes/">章笔记与补充</a>
+        <ul>
+          <li><a class="" href="/books/reinforcement-learning-math/notes/01_chapter1-basic-concepts/">第 1 章 基本概念（Basic Concepts）— 初学者详解</a></li>
+          <li><a class="" href="/books/reinforcement-learning-math/notes/02_chapter2-bellman-equation/">第 2 章 状态值与贝尔曼方程（State Values and the Bellman Equation）— 2.1–2.8</a></li>
+          <li><a class="" href="/books/reinforcement-learning-math/notes/02_supplement-law-of-total-expectation/">补充：全期望公式（Law of Total Expectation）— 直觉版</a></li>
+          <li><a class="" href="/books/reinforcement-learning-math/notes/03_chapter3-optimal-policies-and-the-bellman-optimality-equation/">第 3 章 最优策略与贝尔曼最优方程（Optimal Policies and the Bellman Optimality Equation）— 3.1–3.7</a></li>
+          <li><a class="" href="/books/reinforcement-learning-math/notes/04_chapter4-value-iteration-and-policy-iteration/">第 4 章 值迭代与策略迭代（Value Iteration and Policy Iteration）— 从 4.1 开始</a></li>
+          <li><a class="" href="/books/reinforcement-learning-math/notes/04_supplement-value-iteration-vs-policy-iteration/">第 4 章补充：同一个例子对比值迭代与策略迭代</a></li>
+          <li><a class="" href="/books/reinforcement-learning-math/notes/05_chapter5-monte-carlo-methods/">第 5 章 蒙特卡洛方法（Monte Carlo Methods）- 5.1-5.7</a></li>
+          <li><a class="" href="/books/reinforcement-learning-math/notes/06_chapter6-stochastic-approximation/">第 6 章 随机近似（Stochastic Approximation）- 6.1-6.4</a></li>
+          <li><a class="" href="/books/reinforcement-learning-math/notes/06_supplement-6-1-6-3-structure/">第 6 章补充：6.1-6.4 结构梳理</a></li>
+          <li><a class="" href="/books/reinforcement-learning-math/notes/07_chapter7-temporal-difference-methods/">第 7 章 时序差分方法（Temporal-Difference Methods）- 7.1-7.7（全章完）</a></li>
+          <li><a class="" href="/books/reinforcement-learning-math/notes/07_supplement-expectation-vpi-qpi-next-state/">第 7 章补充：为什么 $\mathbb E[q_\pi(S_{t&#43;1},A_{t&#43;1})|s,a]=\mathbb E[v_\pi(S_{t&#43;1})|s,a]$</a></li>
+          <li><a class="" href="/books/reinforcement-learning-math/notes/07_supplement-on-policy-off-policy/">第 7 章补充：on-policy 与 off-policy 怎么理解</a></li>
+          <li><a class="" href="/books/reinforcement-learning-math/notes/07_supplement-v-q-rm-and-expectation-forms/">第 7 章补充：$v_\pi$、$q_\pi$、RM 与期望/求和表达式</a></li>
+          <li><a class="" href="/books/reinforcement-learning-math/notes/08_chapter8-value-function-approximation/">第 8 章 价值函数近似（Value Function Approximation）- 8.1-8.6</a></li>
+          <li><a class="" href="/books/reinforcement-learning-math/notes/08_supplement-from-true-error-to-bellman-target/">补充：从“估计值减真值”到 Bellman target</a></li>
+          <li><a class="current" href="/books/reinforcement-learning-math/notes/08_supplement-lemma-8-1-b-minus-aw-derivation/">补充：Lemma 8.1 中 b - Aw_t 的详细推导</a></li>
+          <li><a class="" href="/books/reinforcement-learning-math/notes/09_chapter9-policy-gradient-methods/">第 9 章 策略梯度方法（Policy Gradient Methods）- 9.1-9.6</a></li>
+          <li><a class="" href="/books/reinforcement-learning-math/notes/09_supplement-lemma-9-2-discounted-total-probability/">补充：Lemma 9.2 里的 $\Pr_\pi(s&#39;|s)$ 到底是什么</a></li>
+          <li><a class="" href="/books/reinforcement-learning-math/notes/09_supplement-theorem-9-2-9-3-gradient-derivations/">第 9 章补充：Theorem 9.2 和 9.3 的梯度推导</a></li>
+          <li><a class="" href="/books/reinforcement-learning-math/notes/09_supplement-why-gradient-of-v-sees-future-states/">补充：为什么 $\nabla_\theta v_\pi(s)$ 不是只看当前状态 $s$</a></li>
+          <li><a class="" href="/books/reinforcement-learning-math/notes/10_chapter10-actor-critic-methods/">第 10 章 Actor-Critic 方法（Actor-Critic Methods）- 10.1-10.6</a></li>
+          <li><a class="" href="/books/reinforcement-learning-math/notes/10_supplement-policy-gradient-formula-origins/">补充：随机策略梯度与确定性策略梯度公式来源</a></li>
         </ul>
-    </div>
-</details>
+      </div>
+      <div class="papers-nav-paper">
+        <a class="" href="/books/reinforcement-learning-math/summary/">二轮总结</a>
+      </div>
+    </details>
+  </aside>
 
-    </aside>
-
+  
+  <article class="post-single papers-content">
+    <header class="post-header">
+      <h1 class="post-title">补充：Lemma 8.1 中 b - Aw_t 的详细推导</h1>
+      <div class="post-description">《强化学习的数学原理》学习笔记</div>
+    </header> 
     <div class="post-content md-content"><blockquote>
 <p>对应原书 8.2.5 / Box 8.3 · 学习日期 2026-06-16</p></blockquote>
 <p>本补充要解释为什么：</p>
@@ -392,9 +369,7 @@ $$ -\Phi^TD(I-\gamma P_\pi)\Phi w_t. $$<p>
 <p>Lemma 8.1 做的事情是把“平均 TD 更新方向”矩阵化：</p>
 $$ \mathbb E[\delta_t\phi(s_t)] = \underbrace{\Phi^TDr_\pi}_{b} - \underbrace{\Phi^TD(I-\gamma P_\pi)\Phi}_{A}w_t. $$<p>它不是凭空变出来的：$D$ 来自当前状态的平稳分布，$P_\pi$ 来自下一状态的条件分布，$\Phi$ 来自把每个状态的特征向量按行堆起来。</p>
 
-
-    </div>
-  </div>
+</div>
 <div class="post-meme-tail">
   <button class="post-meme-trigger" type="button" aria-label="触发表情彩蛋">
     <img src="/images/memes/wave-fast.gif" alt="" loading="lazy">
@@ -454,11 +429,11 @@ document.addEventListener('DOMContentLoaded',function(){
 
 
 
-  <footer class="post-footer">
-    <ul class="post-tags">
-      <li><a href="http://localhost:1313/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/">强化学习</a></li>
-      <li><a href="http://localhost:1313/tags/%E6%95%B0%E5%AD%A6%E5%8E%9F%E7%90%86/">数学原理</a></li>
-    </ul>
+    <footer class="post-footer">
+      <ul class="post-tags">
+        <li><a href="http://localhost:1313/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/">强化学习</a></li>
+        <li><a href="http://localhost:1313/tags/%E6%95%B0%E5%AD%A6%E5%8E%9F%E7%90%86/">数学原理</a></li>
+      </ul>
 <nav class="paginav">
   <a class="prev" href="http://localhost:1313/books/reinforcement-learning-math/notes/08_supplement-from-true-error-to-bellman-target/">
     <span class="title">« Prev</span>
@@ -470,8 +445,44 @@ document.addEventListener('DOMContentLoaded',function(){
   </a>
 </nav>
 
-  </footer>
-</article>
+    </footer>
+  </article>
+
+  
+  <aside class="papers-toc"><details class="toc"  open>
+    <summary accesskey="c" title="(Alt + C)">
+        <span class="title">Table of Contents</span>
+    </summary>
+
+    <div class="inner"><ul>
+            <li>
+                <a href="#0-%e8%a6%81%e8%a7%a3%e5%86%b3%e7%9a%84%e9%97%ae%e9%a2%98" aria-label="0. 要解决的问题">0. 要解决的问题</a></li>
+            <li>
+                <a href="#1-%e5%85%88%e6%8a%8a%e6%89%80%e6%9c%89%e7%ac%a6%e5%8f%b7%e5%92%8c%e7%bb%b4%e5%ba%a6%e6%91%86%e6%b8%85%e6%a5%9a" aria-label="1. 先把所有符号和维度摆清楚">1. 先把所有符号和维度摆清楚</a></li>
+            <li>
+                <a href="#2-%e5%8e%9f%e5%bc%8f%e5%85%88%e6%8b%86%e6%88%90-reward-%e9%a1%b9%e5%92%8c-td-%e9%a1%b9" aria-label="2. 原式先拆成 reward 项和 TD 项">2. 原式先拆成 reward 项和 TD 项</a></li>
+            <li>
+                <a href="#3-%e4%b8%ba%e4%bb%80%e4%b9%88%e5%8f%af%e4%bb%a5%e6%8c%89--%e5%88%86%e8%a7%a3" aria-label="3. 为什么可以按 $s_t=s$ 分解">3. 为什么可以按 $s_t=s$ 分解</a></li>
+            <li>
+                <a href="#4-reward-%e9%a1%b9%e4%b8%ba%e4%bb%80%e4%b9%88%e7%ad%89%e4%ba%8e" aria-label="4. reward 项为什么等于 $\Phi^TDr_\pi$">4. reward 项为什么等于 $\Phi^TDr_\pi$</a></li>
+            <li>
+                <a href="#5-td-%e9%a1%b9%e4%b8%ba%e4%bb%80%e4%b9%88%e7%ad%89%e4%ba%8e" aria-label="5. TD 项为什么等于 $-\Phi^TD(I-\gamma P_\pi)\Phi w_t$">5. TD 项为什么等于 $-\Phi^TD(I-\gamma P_\pi)\Phi w_t$</a></li>
+            <li>
+                <a href="#6-%e5%90%88%e5%b9%b6-reward-%e9%a1%b9%e5%92%8c-td-%e9%a1%b9" aria-label="6. 合并 reward 项和 TD 项">6. 合并 reward 项和 TD 项</a></li>
+            <li>
+                <a href="#7-%e4%b8%80%e4%b8%aa-2-%e7%8a%b6%e6%80%811-%e7%bb%b4%e7%89%b9%e5%be%81%e7%9a%84%e5%b0%8f%e6%95%b0%e5%80%bc%e4%be%8b%e5%ad%90" aria-label="7. 一个 2 状态、1 维特征的小数值例子">7. 一个 2 状态、1 维特征的小数值例子</a></li>
+            <li>
+                <a href="#8-%e6%9c%80%e5%ae%b9%e6%98%93%e5%8d%a1%e4%bd%8f%e7%9a%84%e4%b8%89%e7%82%b9" aria-label="8. 最容易卡住的三点">8. 最容易卡住的三点</a></li>
+            <li>
+                <a href="#9-%e4%b8%80%e5%8f%a5%e8%af%9d%e6%80%bb%e7%bb%93" aria-label="9. 一句话总结">9. 一句话总结</a>
+            </li>
+        </ul>
+    </div>
+</details>
+
+  </aside>
+
+</div>
     </main>
     
 <footer class="footer">
@@ -495,17 +506,25 @@ document.addEventListener('DOMContentLoaded',function(){
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
-  onload="renderMathInElement(document.querySelector('.post-content') || document.body, {
-    delimiters: [
-      {left:'$$', right:'$$', display:true},
-      {left:'\\\\[', right:'\\\\]', display:true},
-      {left:'\\\\(', right:'\\\\)', display:false},
-      {left:'$', right:'$', display:false}
-    ],
-    ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
-    throwOnError: false,
-    strict: 'warn'
-  })">
+  onload="(function(){
+    var opts = {
+      delimiters: [
+        {left:'$$', right:'$$', display:true},
+        {left:'\\\\[', right:'\\\\]', display:true},
+        {left:'\\\\(', right:'\\\\)', display:false},
+        {left:'$', right:'$', display:false}
+      ],
+      ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+      throwOnError: false,
+      strict: 'warn'
+    };
+    var targets = document.querySelectorAll('.post-content, .post-title, .post-description, .papers-nav, .papers-toc, .paginav');
+    if (targets.length) {
+      targets.forEach(function (el) { renderMathInElement(el, opts); });
+    } else {
+      renderMathInElement(document.body, opts);
+    }
+  })()">
 </script>
 
 
@@ -530,6 +549,29 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
 
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var toc = document.querySelector('.papers-toc .inner');
+  if (!toc) return;
+  toc.querySelectorAll('li').forEach(function (li) {
+    var sub = li.querySelector(':scope > ul');
+    if (!sub) return;
+    li.classList.add('has-children');
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'toc-toggle';
+    btn.setAttribute('aria-label', '折叠/展开');
+    btn.addEventListener('click', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      li.classList.toggle('collapsed');
+    });
+    li.insertBefore(btn, li.firstChild);
+  });
+});
+</script>
 
 
 <script>

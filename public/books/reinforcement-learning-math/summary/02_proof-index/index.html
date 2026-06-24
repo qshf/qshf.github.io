@@ -10,7 +10,7 @@
 <meta name="description" content="《强化学习的数学原理》二轮总结">
 <meta name="author" content="qshf">
 <link rel="canonical" href="http://localhost:1313/books/reinforcement-learning-math/summary/02_proof-index/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.ac9d367ca23e95d58bd22c4cec025f14e1ceb180140a759f9ff38ae3d70d961d.css" integrity="sha256-rJ02fKI&#43;ldWL0ixM7AJfFOHOsYAUCnWfn/OK49cNlh0=" rel="preload stylesheet" as="style">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.dd53f6712c373b2f576d7d8bc4285cb10a844614e7ab26da839cb58e836385d8.css" integrity="sha256-3VP2cSw3Oy9XbX2LxChcsQqERhTnqybag5y1joNjhdg=" rel="preload stylesheet" as="style">
 <link rel="icon" href="http://localhost:1313/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
@@ -142,60 +142,34 @@ document.addEventListener('DOMContentLoaded', function () {
 </header>
 <main class="main">
 
-<article class="post-single">
-  <header class="post-header">
-    <nav class="breadcrumbs" role="navigation" aria-label="Breadcrumb">
-            <a href="/">Home</a>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
-                <polyline points="9 18 15 12 9 6"></polyline>
-            </svg>
-            <a href="/books/">书籍笔记</a>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
-                <polyline points="9 18 15 12 9 6"></polyline>
-            </svg>
-            <a href="/books/reinforcement-learning-math/">强化学习的数学原理</a>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
-                <polyline points="9 18 15 12 9 6"></polyline>
-            </svg>
-            <a href="/books/reinforcement-learning-math/summary/">二轮总结</a>
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-        stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
-        <polyline points="9 18 15 12 9 6"></polyline>
-    </svg>
-</nav>
-    <h1 class="post-title entry-hint-parent">
-      02 · 证明 / 推导索引
-    </h1>
-    <div class="post-description">《强化学习的数学原理》二轮总结</div>
-    <div class="post-meta">
+<div class="papers-layout">
 
-<span>2 min</span>&nbsp;·&nbsp;<span>qshf</span>
-
-</div>
-  </header> 
-  <div class="post-with-toc">
-    <aside class="toc-sidebar"><details class="toc" >
-    <summary accesskey="c" title="(Alt + C)">
-        <span class="title">Table of Contents</span>
-    </summary>
-
-    <div class="inner"><ul>
-            <li>
-                <a href="#%e7%94%a8%e6%b3%95" aria-label="用法">用法</a></li>
-            <li>
-                <a href="#%e7%b4%a2%e5%bc%95%e8%a1%a8" aria-label="索引表">索引表</a></li>
-            <li>
-                <a href="#%e9%87%8d%e5%a4%8d--%e6%a0%bc%e5%bc%8f%e5%be%85%e5%8a%9e%e9%9d%9e%e8%af%81%e6%98%8e%e4%bd%86%e6%94%be%e8%bf%99%e9%87%8c%e6%96%b9%e4%be%bf%e8%bf%bd%e8%b8%aa" aria-label="重复 / 格式待办（非证明，但放这里方便追踪）">重复 / 格式待办（非证明，但放这里方便追踪）</a>
-            </li>
+  
+  <aside class="papers-nav">
+    <details class="papers-nav-group" open>
+      <summary class="papers-nav-section active">强化学习的数学原理</summary>
+      <div class="papers-nav-paper">
+        <a class="" href="/books/reinforcement-learning-math/notes/">章笔记与补充</a>
+      </div>
+      <div class="papers-nav-paper open">
+        <a class="active" href="/books/reinforcement-learning-math/summary/">二轮总结</a>
+        <ul>
+          <li><a class="" href="/books/reinforcement-learning-math/summary/00_book-map/">00 · 全书地图与问题链（全局综合层）</a></li>
+          <li><a class="" href="/books/reinforcement-learning-math/summary/01_concept-comparison/">01 · 概念对比表</a></li>
+          <li><a class="current" href="/books/reinforcement-learning-math/summary/02_proof-index/">02 · 证明 / 推导索引</a></li>
+          <li><a class="" href="/books/reinforcement-learning-math/summary/03_pitfalls-symbols/">03 · 易错点与统一符号表</a></li>
+          <li><a class="" href="/books/reinforcement-learning-math/summary/04_review-questions/">04 · 二刷问题清单（主动回忆）</a></li>
         </ul>
-    </div>
-</details>
+      </div>
+    </details>
+  </aside>
 
-    </aside>
-
+  
+  <article class="post-single papers-content">
+    <header class="post-header">
+      <h1 class="post-title">02 · 证明 / 推导索引</h1>
+      <div class="post-description">《强化学习的数学原理》二轮总结</div>
+    </header> 
     <div class="post-content md-content"><blockquote>
 <p><strong>主笔记负责结构，本表负责定位细节。</strong> 二刷时不必重看所有证明——先看「难点一句话」回忆，卡住了再点链接进对应文件。
 「状态」列自己维护：✅已懂 / 🟡半懂 / 🔴待重看。入口见 <a href="/books/reinforcement-learning-math/summary/00_book-map/">00 全书地图</a>。</p></blockquote>
@@ -411,9 +385,7 @@ document.addEventListener('DOMContentLoaded', function () {
 <li><strong>条目 17</strong>：<a href="/books/reinforcement-learning-math/html/08_geometry-view.html">08_几何理解补充.html</a> 是 HTML 格式，夹在 md 笔记里无法统一检索/链接，建议后续转为 markdown。</li>
 </ul>
 
-
-    </div>
-  </div>
+</div>
 <div class="post-meme-tail">
   <button class="post-meme-trigger" type="button" aria-label="触发表情彩蛋">
     <img src="/images/memes/wave-fast.gif" alt="" loading="lazy">
@@ -473,11 +445,11 @@ document.addEventListener('DOMContentLoaded',function(){
 
 
 
-  <footer class="post-footer">
-    <ul class="post-tags">
-      <li><a href="http://localhost:1313/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/">强化学习</a></li>
-      <li><a href="http://localhost:1313/tags/%E6%95%B0%E5%AD%A6%E5%8E%9F%E7%90%86/">数学原理</a></li>
-    </ul>
+    <footer class="post-footer">
+      <ul class="post-tags">
+        <li><a href="http://localhost:1313/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/">强化学习</a></li>
+        <li><a href="http://localhost:1313/tags/%E6%95%B0%E5%AD%A6%E5%8E%9F%E7%90%86/">数学原理</a></li>
+      </ul>
 <nav class="paginav">
   <a class="prev" href="http://localhost:1313/books/reinforcement-learning-math/notes/02_chapter2-bellman-equation/">
     <span class="title">« Prev</span>
@@ -489,8 +461,30 @@ document.addEventListener('DOMContentLoaded',function(){
   </a>
 </nav>
 
-  </footer>
-</article>
+    </footer>
+  </article>
+
+  
+  <aside class="papers-toc"><details class="toc"  open>
+    <summary accesskey="c" title="(Alt + C)">
+        <span class="title">Table of Contents</span>
+    </summary>
+
+    <div class="inner"><ul>
+            <li>
+                <a href="#%e7%94%a8%e6%b3%95" aria-label="用法">用法</a></li>
+            <li>
+                <a href="#%e7%b4%a2%e5%bc%95%e8%a1%a8" aria-label="索引表">索引表</a></li>
+            <li>
+                <a href="#%e9%87%8d%e5%a4%8d--%e6%a0%bc%e5%bc%8f%e5%be%85%e5%8a%9e%e9%9d%9e%e8%af%81%e6%98%8e%e4%bd%86%e6%94%be%e8%bf%99%e9%87%8c%e6%96%b9%e4%be%bf%e8%bf%bd%e8%b8%aa" aria-label="重复 / 格式待办（非证明，但放这里方便追踪）">重复 / 格式待办（非证明，但放这里方便追踪）</a>
+            </li>
+        </ul>
+    </div>
+</details>
+
+  </aside>
+
+</div>
     </main>
     
 <footer class="footer">
@@ -514,17 +508,25 @@ document.addEventListener('DOMContentLoaded',function(){
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
-  onload="renderMathInElement(document.querySelector('.post-content') || document.body, {
-    delimiters: [
-      {left:'$$', right:'$$', display:true},
-      {left:'\\\\[', right:'\\\\]', display:true},
-      {left:'\\\\(', right:'\\\\)', display:false},
-      {left:'$', right:'$', display:false}
-    ],
-    ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
-    throwOnError: false,
-    strict: 'warn'
-  })">
+  onload="(function(){
+    var opts = {
+      delimiters: [
+        {left:'$$', right:'$$', display:true},
+        {left:'\\\\[', right:'\\\\]', display:true},
+        {left:'\\\\(', right:'\\\\)', display:false},
+        {left:'$', right:'$', display:false}
+      ],
+      ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+      throwOnError: false,
+      strict: 'warn'
+    };
+    var targets = document.querySelectorAll('.post-content, .post-title, .post-description, .papers-nav, .papers-toc, .paginav');
+    if (targets.length) {
+      targets.forEach(function (el) { renderMathInElement(el, opts); });
+    } else {
+      renderMathInElement(document.body, opts);
+    }
+  })()">
 </script>
 
 
@@ -549,6 +551,29 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
 
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var toc = document.querySelector('.papers-toc .inner');
+  if (!toc) return;
+  toc.querySelectorAll('li').forEach(function (li) {
+    var sub = li.querySelector(':scope > ul');
+    if (!sub) return;
+    li.classList.add('has-children');
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'toc-toggle';
+    btn.setAttribute('aria-label', '折叠/展开');
+    btn.addEventListener('click', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      li.classList.toggle('collapsed');
+    });
+    li.insertBefore(btn, li.firstChild);
+  });
+});
+</script>
 
 
 <script>
