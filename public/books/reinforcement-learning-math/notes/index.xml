@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>章笔记与补充 on 撒手 &gt;_O </title>
+    <link>http://localhost:1313/books/reinforcement-learning-math/notes/</link>
+    <description>Recent content in 章笔记与补充 on 撒手 &gt;_O </description>
+    <generator>Hugo</generator>
+    <language>zh-cn</language>
+    <atom:link href="http://localhost:1313/books/reinforcement-learning-math/notes/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>第 1 章 基本概念（Basic Concepts）— 初学者详解</title>
+      <link>http://localhost:1313/books/reinforcement-learning-math/notes/01_chapter1-basic-concepts/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/books/reinforcement-learning-math/notes/01_chapter1-basic-concepts/</guid>
+      <description>《强化学习的数学原理》学习笔记</description>
+    </item>
+    <item>
+      <title>第 2 章 状态值与贝尔曼方程（State Values and the Bellman Equation）— 2.1–2.8</title>
+      <link>http://localhost:1313/books/reinforcement-learning-math/notes/02_chapter2-bellman-equation/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/books/reinforcement-learning-math/notes/02_chapter2-bellman-equation/</guid>
+      <description>《强化学习的数学原理》学习笔记</description>
+    </item>
+    <item>
+      <title>补充：全期望公式（Law of Total Expectation）— 直觉版</title>
+      <link>http://localhost:1313/books/reinforcement-learning-math/notes/02_supplement-law-of-total-expectation/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/books/reinforcement-learning-math/notes/02_supplement-law-of-total-expectation/</guid>
+      <description>《强化学习的数学原理》学习笔记</description>
+    </item>
+    <item>
+      <title>第 3 章 最优策略与贝尔曼最优方程（Optimal Policies and the Bellman Optimality Equation）— 3.1–3.7</title>
+      <link>http://localhost:1313/books/reinforcement-learning-math/notes/03_chapter3-optimal-policies-and-the-bellman-optimality-equation/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/books/reinforcement-learning-math/notes/03_chapter3-optimal-policies-and-the-bellman-optimality-equation/</guid>
+      <description>《强化学习的数学原理》学习笔记</description>
+    </item>
+    <item>
+      <title>第 4 章 值迭代与策略迭代（Value Iteration and Policy Iteration）— 从 4.1 开始</title>
+      <link>http://localhost:1313/books/reinforcement-learning-math/notes/04_chapter4-value-iteration-and-policy-iteration/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/books/reinforcement-learning-math/notes/04_chapter4-value-iteration-and-policy-iteration/</guid>
+      <description>《强化学习的数学原理》学习笔记</description>
+    </item>
+    <item>
+      <title>第 4 章补充：同一个例子对比值迭代与策略迭代</title>
+      <link>http://localhost:1313/books/reinforcement-learning-math/notes/04_supplement-value-iteration-vs-policy-iteration/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/books/reinforcement-learning-math/notes/04_supplement-value-iteration-vs-policy-iteration/</guid>
+      <description>《强化学习的数学原理》学习笔记</description>
+    </item>
+    <item>
+      <title>第 5 章 蒙特卡洛方法（Monte Carlo Methods）- 5.1-5.7</title>
+      <link>http://localhost:1313/books/reinforcement-learning-math/notes/05_chapter5-monte-carlo-methods/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/books/reinforcement-learning-math/notes/05_chapter5-monte-carlo-methods/</guid>
+      <description>《强化学习的数学原理》学习笔记</description>
+    </item>
+    <item>
+      <title>第 6 章 随机近似（Stochastic Approximation）- 6.1-6.4</title>
+      <link>http://localhost:1313/books/reinforcement-learning-math/notes/06_chapter6-stochastic-approximation/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/books/reinforcement-learning-math/notes/06_chapter6-stochastic-approximation/</guid>
+      <description>《强化学习的数学原理》学习笔记</description>
+    </item>
+    <item>
+      <title>第 6 章补充：6.1-6.4 结构梳理</title>
+      <link>http://localhost:1313/books/reinforcement-learning-math/notes/06_supplement-6-1-6-3-structure/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/books/reinforcement-learning-math/notes/06_supplement-6-1-6-3-structure/</guid>
+      <description>《强化学习的数学原理》学习笔记</description>
+    </item>
+    <item>
+      <title>第 7 章 时序差分方法（Temporal-Difference Methods）- 7.1-7.7（全章完）</title>
+      <link>http://localhost:1313/books/reinforcement-learning-math/notes/07_chapter7-temporal-difference-methods/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/books/reinforcement-learning-math/notes/07_chapter7-temporal-difference-methods/</guid>
+      <description>《强化学习的数学原理》学习笔记</description>
+    </item>
+    <item>
+      <title>第 7 章补充：为什么 $\mathbb E[q_\pi(S_{t&#43;1},A_{t&#43;1})|s,a]=\mathbb E[v_\pi(S_{t&#43;1})|s,a]$</title>
+      <link>http://localhost:1313/books/reinforcement-learning-math/notes/07_supplement-expectation-vpi-qpi-next-state/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/books/reinforcement-learning-math/notes/07_supplement-expectation-vpi-qpi-next-state/</guid>
+      <description>《强化学习的数学原理》学习笔记</description>
+    </item>
+    <item>
+      <title>第 7 章补充：on-policy 与 off-policy 怎么理解</title>
+      <link>http://localhost:1313/books/reinforcement-learning-math/notes/07_supplement-on-policy-off-policy/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/books/reinforcement-learning-math/notes/07_supplement-on-policy-off-policy/</guid>
+      <description>《强化学习的数学原理》学习笔记</description>
+    </item>
+    <item>
+      <title>第 7 章补充：$v_\pi$、$q_\pi$、RM 与期望/求和表达式</title>
+      <link>http://localhost:1313/books/reinforcement-learning-math/notes/07_supplement-v-q-rm-and-expectation-forms/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/books/reinforcement-learning-math/notes/07_supplement-v-q-rm-and-expectation-forms/</guid>
+      <description>《强化学习的数学原理》学习笔记</description>
+    </item>
+    <item>
+      <title>第 8 章 价值函数近似（Value Function Approximation）- 8.1-8.6</title>
+      <link>http://localhost:1313/books/reinforcement-learning-math/notes/08_chapter8-value-function-approximation/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/books/reinforcement-learning-math/notes/08_chapter8-value-function-approximation/</guid>
+      <description>《强化学习的数学原理》学习笔记</description>
+    </item>
+    <item>
+      <title>补充：从“估计值减真值”到 Bellman target</title>
+      <link>http://localhost:1313/books/reinforcement-learning-math/notes/08_supplement-from-true-error-to-bellman-target/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/books/reinforcement-learning-math/notes/08_supplement-from-true-error-to-bellman-target/</guid>
+      <description>《强化学习的数学原理》学习笔记</description>
+    </item>
+    <item>
+      <title>补充：Lemma 8.1 中 b - Aw_t 的详细推导</title>
+      <link>http://localhost:1313/books/reinforcement-learning-math/notes/08_supplement-lemma-8-1-b-minus-aw-derivation/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/books/reinforcement-learning-math/notes/08_supplement-lemma-8-1-b-minus-aw-derivation/</guid>
+      <description>《强化学习的数学原理》学习笔记</description>
+    </item>
+    <item>
+      <title>第 9 章 策略梯度方法（Policy Gradient Methods）- 9.1-9.6</title>
+      <link>http://localhost:1313/books/reinforcement-learning-math/notes/09_chapter9-policy-gradient-methods/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/books/reinforcement-learning-math/notes/09_chapter9-policy-gradient-methods/</guid>
+      <description>《强化学习的数学原理》学习笔记</description>
+    </item>
+    <item>
+      <title>补充：Lemma 9.2 里的 $\Pr_\pi(s&#39;|s)$ 到底是什么</title>
+      <link>http://localhost:1313/books/reinforcement-learning-math/notes/09_supplement-lemma-9-2-discounted-total-probability/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/books/reinforcement-learning-math/notes/09_supplement-lemma-9-2-discounted-total-probability/</guid>
+      <description>《强化学习的数学原理》学习笔记</description>
+    </item>
+    <item>
+      <title>第 9 章补充：Theorem 9.2 和 9.3 的梯度推导</title>
+      <link>http://localhost:1313/books/reinforcement-learning-math/notes/09_supplement-theorem-9-2-9-3-gradient-derivations/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/books/reinforcement-learning-math/notes/09_supplement-theorem-9-2-9-3-gradient-derivations/</guid>
+      <description>《强化学习的数学原理》学习笔记</description>
+    </item>
+    <item>
+      <title>补充：为什么 $\nabla_\theta v_\pi(s)$ 不是只看当前状态 $s$</title>
+      <link>http://localhost:1313/books/reinforcement-learning-math/notes/09_supplement-why-gradient-of-v-sees-future-states/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/books/reinforcement-learning-math/notes/09_supplement-why-gradient-of-v-sees-future-states/</guid>
+      <description>《强化学习的数学原理》学习笔记</description>
+    </item>
+    <item>
+      <title>第 10 章 Actor-Critic 方法（Actor-Critic Methods）- 10.1-10.6</title>
+      <link>http://localhost:1313/books/reinforcement-learning-math/notes/10_chapter10-actor-critic-methods/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/books/reinforcement-learning-math/notes/10_chapter10-actor-critic-methods/</guid>
+      <description>《强化学习的数学原理》学习笔记</description>
+    </item>
+    <item>
+      <title>补充：随机策略梯度与确定性策略梯度公式来源</title>
+      <link>http://localhost:1313/books/reinforcement-learning-math/notes/10_supplement-policy-gradient-formula-origins/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/books/reinforcement-learning-math/notes/10_supplement-policy-gradient-formula-origins/</guid>
+      <description>《强化学习的数学原理》学习笔记</description>
+    </item>
+  </channel>
+</rss>

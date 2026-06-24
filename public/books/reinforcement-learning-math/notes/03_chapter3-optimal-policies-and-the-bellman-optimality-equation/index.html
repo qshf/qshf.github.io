@@ -1,0 +1,1326 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto" data-theme="auto">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="noindex, nofollow">
+<title>第 3 章 最优策略与贝尔曼最优方程（Optimal Policies and the Bellman Optimality Equation）— 3.1–3.7 | 撒手 &gt;_O </title>
+<meta name="keywords" content="强化学习, 数学原理">
+<meta name="description" content="《强化学习的数学原理》学习笔记">
+<meta name="author" content="qshf">
+<link rel="canonical" href="http://localhost:1313/books/reinforcement-learning-math/notes/03_chapter3-optimal-policies-and-the-bellman-optimality-equation/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.ac9d367ca23e95d58bd22c4cec025f14e1ceb180140a759f9ff38ae3d70d961d.css" integrity="sha256-rJ02fKI&#43;ldWL0ixM7AJfFOHOsYAUCnWfn/OK49cNlh0=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/books/reinforcement-learning-math/notes/03_chapter3-optimal-policies-and-the-bellman-optimality-equation/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+                color-scheme: dark;
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .toc {
+                background: var(--entry);
+            }
+        }
+
+    </style>
+</noscript>
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.querySelector("html").dataset.theme = 'dark';
+    } else if (localStorage.getItem("pref-theme") === "light") {
+       document.querySelector("html").dataset.theme = 'light';
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.querySelector("html").dataset.theme = 'dark';
+    } else {
+        document.querySelector("html").dataset.theme = 'light';
+    }
+
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var tocLinks = document.querySelectorAll('.papers-toc a, .toc-sidebar a');
+  if (!tocLinks.length) return;
+
+  var headings = Array.from(tocLinks).map(function (a) {
+    var id = decodeURIComponent(a.getAttribute('href').slice(1));
+    return document.getElementById(id);
+  }).filter(Boolean);
+
+  function onScroll() {
+    var scrollY = window.scrollY + 80;
+    var current = headings[0];
+    for (var i = 0; i < headings.length; i++) {
+      if (headings[i].offsetTop <= scrollY) current = headings[i];
+    }
+    tocLinks.forEach(function (a) { a.classList.remove('active'); });
+    var activeLink = document.querySelector('.papers-toc a[href="#' + CSS.escape(current.id) + '"], .toc-sidebar a[href="#' + CSS.escape(current.id) + '"]');
+    if (activeLink) activeLink.classList.add('active');
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+});
+</script>
+
+
+</head>
+<body id="top">
+    <header class="header">
+    <nav class="header-nav">
+        <div class="logo">
+            <a href="http://localhost:1313/" accesskey="h" title="撒手 &gt;_O  (Alt + H)">撒手 &gt;_O </a>
+            <div class="logo-switches">
+                <button id="theme-toggle" class="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu" class="menu">
+            <li>
+                <a href="http://localhost:1313/papers/" title="论文笔记">
+                    <span>论文笔记</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/books/" title="书籍笔记">
+                    <span>书籍笔记</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/life/" title="生活">
+                    <span>生活</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <nav class="breadcrumbs" role="navigation" aria-label="Breadcrumb">
+            <a href="/">Home</a>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+            <a href="/books/">书籍笔记</a>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+            <a href="/books/reinforcement-learning-math/">强化学习的数学原理</a>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+            <a href="/books/reinforcement-learning-math/notes/">章笔记与补充</a>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+        <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+</nav>
+    <h1 class="post-title entry-hint-parent">
+      第 3 章 最优策略与贝尔曼最优方程（Optimal Policies and the Bellman Optimality Equation）— 3.1–3.7
+    </h1>
+    <div class="post-description">《强化学习的数学原理》学习笔记</div>
+    <div class="post-meta">
+
+<span>13 min</span>&nbsp;·&nbsp;<span>qshf</span>
+
+</div>
+  </header> 
+  <div class="post-with-toc">
+    <aside class="toc-sidebar"><details class="toc" >
+    <summary accesskey="c" title="(Alt + C)">
+        <span class="title">Table of Contents</span>
+    </summary>
+
+    <div class="inner"><ul>
+            <li>
+                <a href="#%e6%9c%ac%e7%ab%a0%e5%9c%a8%e5%85%a8%e4%b9%a6%e7%9a%84%e4%bd%8d%e7%bd%ae%e5%85%88%e8%af%bb%e8%bf%99%e6%ae%b5" aria-label="本章在全书的位置（先读这段）">本章在全书的位置（先读这段）</a></li>
+            <li>
+                <a href="#31-%e5%8a%a8%e6%9c%ba%e5%a6%82%e4%bd%95%e6%94%b9%e8%bf%9b%e4%b8%80%e4%b8%aa%e7%ad%96%e7%95%a5" aria-label="3.1 动机：如何改进一个策略">3.1 动机：如何改进一个策略</a><ul>
+                    
+            <li>
+                <a href="#%e7%ac%ac%e4%b8%80%e6%ad%a5%e5%85%88%e8%af%84%e4%bb%b7%e8%bf%99%e4%b8%aa%e7%ad%96%e7%95%a5" aria-label="第一步：先评价这个策略">第一步：先评价这个策略</a></li>
+            <li>
+                <a href="#%e7%ac%ac%e4%ba%8c%e6%ad%a5%e8%ae%a1%e7%ae%97--%e7%9a%84%e6%89%80%e6%9c%89%e5%8a%a8%e4%bd%9c%e5%80%bc" aria-label="第二步：计算 $s_1$ 的所有动作值">第二步：计算 $s_1$ 的所有动作值</a></li>
+            <li>
+                <a href="#%e6%9c%ac%e8%8a%82%e7%9c%9f%e6%ad%a3%e6%83%b3%e8%ae%a9%e4%bd%a0%e7%9c%8b%e8%a7%81%e7%9a%84%e4%b8%9c%e8%a5%bf" aria-label="本节真正想让你看见的东西">本节真正想让你看见的东西</a></li></ul>
+            </li>
+            <li>
+                <a href="#32-%e6%9c%80%e4%bc%98%e7%8a%b6%e6%80%81%e5%80%bc%e4%b8%8e%e6%9c%80%e4%bc%98%e7%ad%96%e7%95%a5" aria-label="3.2 最优状态值与最优策略">3.2 最优状态值与最优策略</a><ul>
+                    
+            <li>
+                <a href="#%e7%94%a8%e7%8a%b6%e6%80%81%e5%80%bc%e6%af%94%e8%be%83%e7%ad%96%e7%95%a5" aria-label="用状态值比较策略">用状态值比较策略</a></li>
+            <li>
+                <a href="#%e5%ae%9a%e4%b9%89-31%e6%9c%80%e4%bc%98%e7%ad%96%e7%95%a5%e4%b8%8e%e6%9c%80%e4%bc%98%e7%8a%b6%e6%80%81%e5%80%bc" aria-label="定义 3.1：最优策略与最优状态值">定义 3.1：最优策略与最优状态值</a></li></ul>
+            </li>
+            <li>
+                <a href="#33-%e8%b4%9d%e5%b0%94%e6%9b%bc%e6%9c%80%e4%bc%98%e6%96%b9%e7%a8%8bbellman-optimality-equation-boe" aria-label="3.3 贝尔曼最优方程（Bellman Optimality Equation, BOE）">3.3 贝尔曼最优方程（Bellman Optimality Equation, BOE）</a><ul>
+                    
+            <li>
+                <a href="#331-boe-%e9%95%bf%e4%bb%80%e4%b9%88%e6%a0%b7" aria-label="3.3.1 BOE 长什么样">3.3.1 BOE 长什么样</a></li>
+            <li>
+                <a href="#332-%e5%8f%b3%e8%be%b9%e7%9a%84%e6%9c%80%e5%a4%a7%e5%8c%96%e6%80%8e%e4%b9%88%e8%a7%a3" aria-label="3.3.2 右边的最大化怎么解">3.3.2 右边的最大化怎么解</a></li>
+            <li>
+                <a href="#333-boe-%e7%9a%84%e7%9f%a9%e9%98%b5-%e5%90%91%e9%87%8f%e5%bd%a2%e5%bc%8f" aria-label="3.3.3 BOE 的矩阵-向量形式">3.3.3 BOE 的矩阵-向量形式</a><ul>
+                    
+            <li>
+                <a href="#%e7%94%a8%e5%90%8c%e4%b8%80%e4%b8%aa-2-%e7%8a%b6%e6%80%81%e4%be%8b%e5%ad%90%e6%8a%8a%e7%9f%a9%e9%98%b5%e5%bc%8f%e7%ae%97%e5%87%ba%e6%9d%a5" aria-label="用同一个 2 状态例子把矩阵式算出来">用同一个 2 状态例子把矩阵式算出来</a></li></ul>
+            </li>
+            <li>
+                <a href="#334-%e4%b8%ba%e4%bb%80%e4%b9%88-boe-%e4%b8%8d%e8%83%bd%e5%83%8f%e6%99%ae%e9%80%9a%e8%b4%9d%e5%b0%94%e6%9b%bc%e6%96%b9%e7%a8%8b%e9%82%a3%e6%a0%b7%e6%b1%82%e9%80%86" aria-label="3.3.4 为什么 BOE 不能像普通贝尔曼方程那样求逆">3.3.4 为什么 BOE 不能像普通贝尔曼方程那样求逆</a></li>
+            <li>
+                <a href="#335-%e5%8e%8b%e7%bc%a9%e6%98%a0%e5%b0%84%e5%ae%9a%e7%90%86" aria-label="3.3.5 压缩映射定理">3.3.5 压缩映射定理</a></li>
+            <li>
+                <a href="#336-boe-%e5%8f%b3%e8%be%b9%e7%9a%84--%e6%98%af%e5%8e%8b%e7%bc%a9%e6%98%a0%e5%b0%84" aria-label="3.3.6 BOE 右边的 $f(v)$ 是压缩映射">3.3.6 BOE 右边的 $f(v)$ 是压缩映射</a></li>
+            <li>
+                <a href="#33-%e5%88%b0%e8%bf%99%e9%87%8c%e8%a7%a3%e5%86%b3%e4%ba%86%e4%bb%80%e4%b9%88" aria-label="3.3 到这里解决了什么">3.3 到这里解决了什么</a></li></ul>
+            </li>
+            <li>
+                <a href="#34-%e4%bb%8e-boe-%e6%b1%82%e6%9c%80%e4%bc%98%e7%ad%96%e7%95%a5solving-an-optimal-policy-from-the-boe" aria-label="3.4 从 BOE 求最优策略（Solving an optimal policy from the BOE）">3.4 从 BOE 求最优策略（Solving an optimal policy from the BOE）</a><ul>
+                    
+            <li>
+                <a href="#%e7%ac%ac%e4%b8%80%e6%ad%a5%e8%a7%a3-%e5%ae%9a%e7%90%86-33" aria-label="第一步：解 $v^*$（定理 3.3）">第一步：解 $v^*$（定理 3.3）</a></li>
+            <li>
+                <a href="#%e7%ac%ac%e4%ba%8c%e6%ad%a5%e8%a7%a3-%e5%af%b9--%e8%b4%aa%e5%bf%83" aria-label="第二步：解 $\pi^*$（对 $v^*$ 贪心）">第二步：解 $\pi^*$（对 $v^*$ 贪心）</a></li>
+            <li>
+                <a href="#%e7%ac%ac%e4%b8%89%e6%ad%a5%e6%9c%80%e4%bc%98%e6%80%a7%e5%ae%9a%e7%90%86-34-%e4%b8%ba%e4%bb%80%e4%b9%88%e8%a6%81%e7%a0%94%e7%a9%b6-boe%e7%9a%84%e7%ad%94%e6%a1%88" aria-label="第三步：最优性（定理 3.4）—— 「为什么要研究 BOE」的答案">第三步：最优性（定理 3.4）—— 「为什么要研究 BOE」的答案</a></li>
+            <li>
+                <a href="#%e7%ac%ac%e5%9b%9b%e6%ad%a5%e8%b4%aa%e5%bf%83%e6%9c%80%e4%bc%98%e7%ad%96%e7%95%a5%e5%ae%9a%e7%90%86-35" aria-label="第四步：贪心最优策略（定理 3.5）">第四步：贪心最优策略（定理 3.5）</a></li>
+            <li>
+                <a href="#%e8%87%aa%e9%80%a0%e6%9c%80%e5%b0%8f%e6%95%b0%e5%80%bc%e4%be%8b%e5%ad%90%e5%80%bc%e8%bf%ad%e4%bb%a3%e6%94%b6%e6%95%9b--%e8%b4%aa%e5%bf%83%e9%80%89%e5%8a%a8%e4%bd%9c%e4%b8%80%e6%ac%a1%e7%9c%8b%e5%85%a8" aria-label="自造最小数值例子：值迭代收敛 &#43; 贪心选动作，一次看全">自造最小数值例子：值迭代收敛 + 贪心选动作，一次看全</a><ul>
+                    
+            <li>
+                <a href="#%e4%be%8b%e5%ad%90%e7%9a%84%e7%8e%af%e5%a2%83" aria-label="例子的环境">例子的环境</a></li>
+            <li>
+                <a href="#%e7%ac%ac%e4%b8%80%e6%ad%a5%e5%86%99%e5%87%ba-boe-%e5%8f%b3%e8%be%b9" aria-label="第一步：写出 BOE 右边 $f(v)$">第一步：写出 BOE 右边 $f(v)$</a></li>
+            <li>
+                <a href="#%e7%ac%ac%e4%ba%8c%e6%ad%a5%e4%bb%8e--%e5%bc%80%e5%a7%8b%e5%81%9a%e5%80%bc%e8%bf%ad%e4%bb%a3" aria-label="第二步：从 $v_0=(0,0)$ 开始做值迭代">第二步：从 $v_0=(0,0)$ 开始做值迭代</a></li>
+            <li>
+                <a href="#%e7%ac%ac%e4%b8%89%e6%ad%a5%e4%b8%ba%e4%bb%80%e4%b9%88%e6%9e%81%e9%99%90%e6%98%af-10" aria-label="第三步：为什么极限是 10">第三步：为什么极限是 10</a></li>
+            <li>
+                <a href="#%e7%ac%ac%e5%9b%9b%e6%ad%a5%e7%94%a8--%e8%b4%aa%e5%bf%83%e9%80%89%e5%8a%a8%e4%bd%9c" aria-label="第四步：用 $v^*$ 贪心选动作">第四步：用 $v^*$ 贪心选动作</a></li></ul>
+            </li>
+            <li>
+                <a href="#%e4%b8%a4%e4%b8%aa%e9%87%8d%e8%a6%81%e6%80%a7%e8%b4%a8%e9%85%8d-figure-33" aria-label="两个重要性质（配 Figure 3.3）">两个重要性质（配 Figure 3.3）</a></li>
+            <li>
+                <a href="#34-%e9%97%ad%e7%8e%af--%e6%8e%a5%e5%88%b0-35" aria-label="3.4 闭环 / 接到 3.5">3.4 闭环 / 接到 3.5</a></li></ul>
+            </li>
+            <li>
+                <a href="#35-%e5%bd%b1%e5%93%8d%e6%9c%80%e4%bc%98%e7%ad%96%e7%95%a5%e7%9a%84%e5%9b%a0%e7%b4%a0" aria-label="3.5 影响最优策略的因素">3.5 影响最优策略的因素</a><ul>
+                    
+            <li>
+                <a href="#351-%e5%9f%ba%e5%87%86%e4%be%8b%e5%ad%90-%e6%97%b6%e7%ad%96%e7%95%a5%e6%9b%b4%e8%bf%9c%e8%a7%86" aria-label="3.5.1 基准例子：$\gamma=0.9$ 时，策略更“远视”">3.5.1 基准例子：$\gamma=0.9$ 时，策略更“远视”</a></li>
+            <li>
+                <a href="#352-%e6%8a%98%e6%89%a3%e7%8e%87%e5%8f%98%e5%b0%8f%e7%ad%96%e7%95%a5%e6%9b%b4%e7%9f%ad%e8%a7%86" aria-label="3.5.2 折扣率变小：策略更“短视”">3.5.2 折扣率变小：策略更“短视”</a></li>
+            <li>
+                <a href="#353-%e6%94%b9%e5%8f%98%e5%a5%96%e5%8a%b1%e5%80%bc%e6%83%a9%e7%bd%9a%e8%b6%8a%e9%87%8d%e8%b6%8a%e4%bc%9a%e9%81%bf%e5%bc%80" aria-label="3.5.3 改变奖励值：惩罚越重，越会避开">3.5.3 改变奖励值：惩罚越重，越会避开</a></li>
+            <li>
+                <a href="#354-%e4%bd%86%e4%b8%8d%e6%98%af%e6%89%80%e6%9c%89%e5%a5%96%e5%8a%b1%e5%8f%98%e6%8d%a2%e9%83%bd%e4%bc%9a%e6%94%b9%e5%8f%98%e6%9c%80%e4%bc%98%e7%ad%96%e7%95%a5" aria-label="3.5.4 但不是所有奖励变换都会改变最优策略">3.5.4 但不是所有奖励变换都会改变最优策略</a></li>
+            <li>
+                <a href="#355-%e5%ae%9a%e7%90%86-36%e5%a5%96%e5%8a%b1%e4%bb%bf%e5%b0%84%e5%8f%98%e6%8d%a2%e4%b8%8d%e6%94%b9%e5%8f%98%e6%9c%80%e4%bc%98%e7%ad%96%e7%95%a5" aria-label="3.5.5 定理 3.6：奖励仿射变换不改变最优策略">3.5.5 定理 3.6：奖励仿射变换不改变最优策略</a></li>
+            <li>
+                <a href="#356-%e5%b8%b8%e8%a7%81%e8%af%af%e8%a7%a3%e5%bf%85%e9%a1%bb%e7%bb%99%e6%af%8f%e4%b8%80%e6%ad%a5%e5%8a%a0%e8%b4%9f%e5%a5%96%e5%8a%b1%e6%89%8d%e8%83%bd%e9%81%bf%e5%85%8d%e7%bb%95%e8%b7%af%e5%90%97" aria-label="3.5.6 常见误解：必须给每一步加负奖励，才能避免绕路吗？">3.5.6 常见误解：必须给每一步加负奖励，才能避免绕路吗？</a></li>
+            <li>
+                <a href="#35-%e5%b0%8f%e7%bb%93" aria-label="3.5 小结">3.5 小结</a></li></ul>
+            </li>
+            <li>
+                <a href="#36-%e6%9c%ac%e7%ab%a0%e6%80%bb%e7%bb%93" aria-label="3.6 本章总结">3.6 本章总结</a><ul>
+                    
+            <li>
+                <a href="#%e6%9c%ac%e7%ab%a0%e9%80%bb%e8%be%91%e9%97%ad%e7%8e%af" aria-label="本章逻辑闭环">本章逻辑闭环</a></li>
+            <li>
+                <a href="#%e6%9c%80%e5%90%8e%e8%a6%81%e8%ae%b0%e4%bd%8f%e7%9a%84%e4%b8%89%e5%8f%a5%e8%af%9d" aria-label="最后要记住的三句话">最后要记住的三句话</a></li></ul>
+            </li>
+            <li>
+                <a href="#%e8%a6%81%e7%82%b9%e9%80%9f%e8%ae%b0" aria-label="要点速记">要点速记</a></li>
+            <li>
+                <a href="#37-qa" aria-label="3.7 Q&amp;A">3.7 Q&amp;A</a>
+            </li>
+        </ul>
+    </div>
+</details>
+
+    </aside>
+
+    <div class="post-content md-content"><blockquote>
+<p>原书 p48–66 · 学习日期 2026-05-30、2026-06-01、2026-06-02 · 涵盖 3.1–3.7（全章完）</p></blockquote>
+<h2 id="本章在全书的位置先读这段">本章在全书的位置（先读这段）<a hidden class="anchor" aria-hidden="true" href="#本章在全书的位置先读这段">#</a></h2>
+<p>第 2 章解决的是一个“评价”问题：<strong>给定一个策略 $\pi$，怎么算它的状态值 $v_\pi$</strong>。工具是普通贝尔曼方程：</p>
+$$v_\pi=r_\pi+\gamma P_\pi v_\pi.$$<p>但强化学习真正想要的不是“评价一个既定策略”，而是<strong>找到最好的策略</strong>。第 3 章就从“评价”往“优化”走：</p>
+<blockquote>
+<p><strong>先用一个例子看见策略怎么变好（3.1）→ 再严格定义什么叫最优策略（3.2）
+→ 最后把“最优”翻译成一个能求解的方程：贝尔曼最优方程 BOE（3.3）。</strong></p></blockquote>
+<p>这一章的核心变化很简单：第 2 章的贝尔曼方程里，策略 $\pi$ 是给定的；第 3 章的贝尔曼最优方程里，
+策略也要一起被找出来。也就是说，未知量从“只有状态值 $v$”变成了“状态值 $v$ + 最优动作选择规则”。</p>
+<hr>
+<h2 id="31-动机如何改进一个策略">3.1 动机：如何改进一个策略<a hidden class="anchor" aria-hidden="true" href="#31-动机如何改进一个策略">#</a></h2>
+<p><strong>要解决的问题</strong>：第 2 章已经会算一个策略的状态值和动作值了。那算出来之后能干什么？
+答案是：用动作值告诉我们，<strong>当前策略在某个状态选的动作是不是该换掉</strong>。</p>
+<p>原书图 3.2 是一个最小的 2×2 网格：</p>
+<p><img alt="原书图 3.2：用于演示策略改进的 2×2 网格例子，s1 处的策略选了向右(a2)撞进禁止区" loading="lazy" src="/books/reinforcement-learning-math/images/56df6048092d18b83e3484dc7cdd6fcc5d76ceb03ec397caf5c6baf0a161d206.jpg"></p>
+<blockquote>
+<p><strong>原书图 3.2</strong>：橙色 $s_2$ 是禁止区，蓝色 $s_4$ 是目标区。给定策略在 $s_1$ 选 $a_2$（向右），会先进禁止区；
+直觉上应该改成 $a_3$（向下），绕开禁止区。</p></blockquote>
+<p>动作约定：</p>
+<ul>
+<li>$a_1$：上；</li>
+<li>$a_2$：右；</li>
+<li>$a_3$：下；</li>
+<li>$a_4$：左；</li>
+<li>$a_5$：原地不动。</li>
+</ul>
+<p>奖励约定（本例的简化取值）：进目标区 $+1$，进禁止区 $-1$，撞边界 $-1$，其它普通移动为 $0$。</p>
+<p>给定策略 $\pi$ 的行为是：</p>
+$$s_1\to a_2,\qquad s_2\to a_3,\qquad s_3\to a_2,\qquad s_4\to a_5.$$<p>也就是说，它唯一明显不好的地方在 $s_1$：向右会撞进禁止区；向下才更合理。</p>
+<h3 id="第一步先评价这个策略">第一步：先评价这个策略<a hidden class="anchor" aria-hidden="true" href="#第一步先评价这个策略">#</a></h3>
+<p>这个策略是确定性的，所以贝尔曼方程会塌缩成“即时奖励 + 折扣后的下一状态值”：</p>
+$$ \begin{array}{l} v_\pi(s_1)=-1+\gamma v_\pi(s_2),\\ v_\pi(s_2)=+1+\gamma v_\pi(s_4),\\ v_\pi(s_3)=+1+\gamma v_\pi(s_4),\\ v_\pi(s_4)=+1+\gamma v_\pi(s_4). \end{array} $$<p>取 $\gamma=0.9$。先解最后一行：</p>
+$$v_\pi(s_4)=1+0.9v_\pi(s_4)\quad\Rightarrow\quad v_\pi(s_4)=10.$$<p>再回代：</p>
+$$v_\pi(s_2)=v_\pi(s_3)=1+0.9\times10=10,$$$$v_\pi(s_1)=-1+0.9\times10=8.$$<p>所以这个策略下：</p>
+$$v_\pi(s_4)=v_\pi(s_3)=v_\pi(s_2)=10,\qquad v_\pi(s_1)=8.$$<p>⚠️ <strong>为什么 $s_4$ 是 10？</strong> 因为在目标格原地不动，每一步都拿 $+1$，所以</p>
+$$1+\gamma+\gamma^2+\cdots=\frac{1}{1-\gamma}=\frac{1}{0.1}=10.$$<p>这和第 1、2 章反复出现的等比级数完全一致。</p>
+<h3 id="第二步计算--的所有动作值">第二步：计算 $s_1$ 的所有动作值<a hidden class="anchor" aria-hidden="true" href="#第二步计算--的所有动作值">#</a></h3>
+<p>动作值 $q_\pi(s,a)$ 的读法是：</p>
+<blockquote>
+<p><strong>先在状态 $s$ 强行执行动作 $a$，之后再按原策略 $\pi$ 走，能得到多少期望回报。</strong></p></blockquote>
+<p>因此在 $s_1$，五个动作值分别是：</p>
+$$q_\pi(s_1,a_1)=-1+0.9v_\pi(s_1)=6.2\qquad(\text{上，撞边界，留在 }s_1),$$$$q_\pi(s_1,a_2)=-1+0.9v_\pi(s_2)=8\qquad(\text{右，进入禁止区 }s_2),$$$$q_\pi(s_1,a_3)=0+0.9v_\pi(s_3)=9\qquad(\text{下，到普通格 }s_3),$$$$q_\pi(s_1,a_4)=-1+0.9v_\pi(s_1)=6.2\qquad(\text{左，撞边界，留在 }s_1),$$$$q_\pi(s_1,a_5)=0+0.9v_\pi(s_1)=7.2\qquad(\text{原地不动，留在 }s_1).$$<p>最大的是 $a_3$：</p>
+$$q_\pi(s_1,a_3)\ge q_\pi(s_1,a_i),\quad \forall i\ne3.$$<p>所以改进策略的自然做法是：<strong>把 $s_1$ 处的动作从 $a_2$ 改成 $a_3$</strong>。</p>
+<h3 id="本节真正想让你看见的东西">本节真正想让你看见的东西<a hidden class="anchor" aria-hidden="true" href="#本节真正想让你看见的东西">#</a></h3>
+<p>这节不是为了手算一个 2×2 网格，而是为了给后面埋下策略改进的种子：</p>
+<blockquote>
+<p><strong>先做策略评价，算出 $v_\pi$；再用 $v_\pi$ 算 $q_\pi(s,a)$；最后在每个状态选动作值最大的动作。</strong></p></blockquote>
+<p>这就是 <strong>policy improvement（策略改进）</strong> 的基本思想，也是后面策略迭代、值迭代、Q-learning 等方法的共同骨架。</p>
+<p>⚠️ <strong>一个很好的自检点</strong>：当前策略在 $s_1$ 选择 $a_2$，所以</p>
+$$q_\pi(s_1,a_2)=v_\pi(s_1)=8.$$<p>这不是巧合。因为“先在 $s_1$ 走 $a_2$，之后按 $\pi$ 走”和“从 $s_1$ 开始就按 $\pi$ 走”是同一件事。</p>
+<p>本例还留下三个问题：</p>
+<ol>
+<li>如果不止 $s_1$ 一个状态不好，逐状态都选最大动作值，还能保证变好吗？</li>
+<li>最优策略一定存在吗？</li>
+<li>最优策略到底长什么样，怎么求？</li>
+</ol>
+<p>这三个问题把我们带到 3.2 和 3.3。</p>
+<hr>
+<h2 id="32-最优状态值与最优策略">3.2 最优状态值与最优策略<a hidden class="anchor" aria-hidden="true" href="#32-最优状态值与最优策略">#</a></h2>
+<p><strong>要解决的问题</strong>：3.1 说“改进策略”，但改到哪里算终点？要回答这个问题，必须先严格定义什么叫
+<strong>最优策略（optimal policy）</strong>。</p>
+<h3 id="用状态值比较策略">用状态值比较策略<a hidden class="anchor" aria-hidden="true" href="#用状态值比较策略">#</a></h3>
+<p>给定两个策略 $\pi_1,\pi_2$。如果对所有状态都有</p>
+$$v_{\pi_1}(s)\ge v_{\pi_2}(s),\quad \forall s\in\mathcal S,$$<p>就说 $\pi_1$ 比 $\pi_2$ 好。</p>
+<p>注意这里的“好”是非常严格的：必须<strong>每个状态都不差</strong>，不能只看某一个起点。</p>
+<p>⚠️ <strong>这是偏序，不是全序</strong>。可能出现这种情况：</p>
+<ul>
+<li>$\pi_1$ 在 $s_1$ 比 $\pi_2$ 好；</li>
+<li>$\pi_2$ 在 $s_2$ 比 $\pi_1$ 好。</li>
+</ul>
+<p>这时两个策略就不能简单说谁更好。正因为策略之间可能互相不可比，“存在一个策略对所有策略、所有状态都不差”并不是显然的事。</p>
+<h3 id="定义-31最优策略与最优状态值">定义 3.1：最优策略与最优状态值<a hidden class="anchor" aria-hidden="true" href="#定义-31最优策略与最优状态值">#</a></h3>
+<p>如果一个策略 $\pi^*$ 满足</p>
+$$v_{\pi^*}(s)\ge v_\pi(s),\quad \forall s\in\mathcal S,\ \text{且对任意策略 }\pi,$$<p>那么 $\pi^*$ 就叫 <strong>最优策略（optimal policy）</strong>。</p>
+<p>它对应的状态值叫 <strong>最优状态值（optimal state values）</strong>，记作</p>
+$$v^*(s)\doteq v_{\pi^*}(s).$$<p>这句话的人话版本是：</p>
+<blockquote>
+<p><strong>不管从哪个状态出发，也不管拿哪个其它策略来比，$\pi^*$ 都不输。</strong></p></blockquote>
+<p>这个定义很强。它不是说“从某个初始状态最好”，而是说“从每一个状态看都最好”。所以它立刻引出第 3 章的四个根本问题：</p>
+<ul>
+<li><strong>存在性</strong>：这样的最优策略一定存在吗？</li>
+<li><strong>唯一性</strong>：如果存在，它唯一吗？</li>
+<li><strong>随机性</strong>：最优策略必须随机，还是可以确定性？</li>
+<li><strong>算法</strong>：怎么把最优状态值和最优策略求出来？</li>
+</ul>
+<p>3.3 的贝尔曼最优方程会先回答前三个问题中的大部分：最优状态值存在且唯一，并且可以由迭代求出；
+“它和定义 3.1 的最优策略确实是一回事”这个最优性证明，会在 3.4 完成。</p>
+<hr>
+<h2 id="33-贝尔曼最优方程bellman-optimality-equation-boe">3.3 贝尔曼最优方程（Bellman Optimality Equation, BOE）<a hidden class="anchor" aria-hidden="true" href="#33-贝尔曼最优方程bellman-optimality-equation-boe">#</a></h2>
+<p><strong>要解决的问题</strong>：3.2 给了一个比较型定义：最优策略就是状态值处处最大。但这个定义不能直接拿来算。
+我们需要把“处处最大”改写成一个方程。这个方程就是 <strong>贝尔曼最优方程（BOE）</strong>。</p>
+<p>3.3 的主线可以按下面这条路读：</p>
+<blockquote>
+<p><strong>先写出 BOE（3.3.1）→ 再解右边的最大化，说明最优动作是贪心动作（3.3.2）
+→ 把 BOE 写成 $v=f(v)$（3.3.3）→ 说明它是非线性的，不能矩阵求逆（3.3.4）
+→ 用压缩映射定理证明解存在、唯一、可迭代求（3.3.5–3.3.6）。</strong></p></blockquote>
+<h3 id="331-boe-长什么样">3.3.1 BOE 长什么样<a hidden class="anchor" aria-hidden="true" href="#331-boe-长什么样">#</a></h3>
+<p>对每个状态 $s\in\mathcal S$，BOE 的逐元素形式是：</p>
+$$ \begin{array}{l} v(s) =\max_{\pi(s)\in\Pi(s)} \sum_{a\in\mathcal A}\pi(a|s) \left(\sum_{r\in\mathcal R}p(r|s,a)r +\gamma\sum_{s'\in\mathcal S}p(s'|s,a)v(s')\right)\\[4pt] =\max_{\pi(s)\in\Pi(s)}\sum_{a\in\mathcal A}\pi(a|s)q(s,a). \end{array} \tag{3.1} $$<p>其中</p>
+$$q(s,a)\doteq \sum_{r\in\mathcal R}p(r|s,a)r+\gamma\sum_{s'\in\mathcal S}p(s'|s,a)v(s').$$<p>先别被公式吓住。它其实就是第 2 章普通贝尔曼方程加了一个外层最大化。</p>
+<p>逐项看：</p>
+<ul>
+<li>$q(s,a)$：先在 $s$ 执行动作 $a$，得到平均即时奖励，再加上折扣后的下一状态值。它就是“动作值”的结构。</li>
+<li>$\sum_a\pi(a|s)q(s,a)$：按策略 $\pi(a|s)$ 对各动作值做加权平均。这就是普通贝尔曼方程里状态值的结构。</li>
+<li>$\max_{\pi(s)\in\Pi(s)}$：在状态 $s$，从所有可能的动作概率分布里挑一个，让这个加权平均最大。</li>
+</ul>
+<p>（个人理解 就是选出最好的动作）
+</p>
+$$ \max_{\pi(s) \in \Pi(s)} \sum_{a \in \mathcal{A}} \pi(a|s)q(s,a) = \max_{a} q(s,a) $$<p>所以一句话：</p>
+<blockquote>
+<p><strong>普通贝尔曼方程问：给定策略 $\pi$，这个状态值多少？BOE 问：所有策略里，最好能让这个状态值多少？</strong></p></blockquote>
+<p>⚠️ <strong>第一个易错点：BOE 里有两个未知数</strong>。一个是左边的 $v(s)$；另一个藏在 $\max_{\pi(s)}$ 下面，
+也就是“到底选哪个策略 $\pi(s)$ 才能让右边最大”。普通贝尔曼方程只有 $v$ 一个未知数，因为 $\pi$ 是给定的；
+BOE 要同时找值和最优动作选择规则。</p>
+<p>⚠️ <strong>第二个易错点：BOE 是一组方程</strong>。右边出现了 $v(s')$，所以每个状态的值都依赖其它状态的值。
+它和第 2 章一样，不是一行方程单独解，而是所有状态一起联立。</p>
+<p>BOE 自己也要回答四个问题：</p>
+<ul>
+<li><strong>存在性</strong>：这个方程有解吗？</li>
+<li><strong>唯一性</strong>：解唯一吗？</li>
+<li><strong>算法</strong>：怎么解？</li>
+<li><strong>最优性</strong>：解出来的 $v$ 和 $\pi$，真的是 3.2 定义的最优状态值和最优策略吗？</li>
+</ul>
+<p>本节先解决前三个，最优性留到 3.4。</p>
+<h3 id="332-右边的最大化怎么解">3.3.2 右边的最大化怎么解<a hidden class="anchor" aria-hidden="true" href="#332-右边的最大化怎么解">#</a></h3>
+<p>先看一个热身例子。</p>
+<p><strong>例 3.1</strong>：求</p>
+$$x=\max_{y\in\mathbb R}(2x-1-y^2).$$<p>这里看起来有 $x,y$ 两个未知数。做法是分两步：</p>
+<ol>
+<li>先固定 $x$，解右边关于 $y$ 的最大化。因为 $-y^2\le0$，最大值在 $y=0$ 处取得，所以
+$$\max_y(2x-1-y^2)=2x-1.$$</li>
+<li>再解 $x$：$x=2x-1$，得到 $x=1$。</li>
+</ol>
+<p>所以 $y=0,x=1$。BOE 也是这个逻辑：<strong>先把右边让 $\pi$ 最大化的问题解掉，再解 $v$</strong>。</p>
+<p>再看最大化本身为什么会变成“选最大 q 值动作”。</p>
+<p><strong>例 3.2</strong>：给定三个数 $q_1,q_2,q_3$，在</p>
+$$c_1+c_2+c_3=1,\qquad c_i\ge0$$<p>的约束下，最大化</p>
+$$c_1q_1+c_2q_2+c_3q_3.$$<p>不妨设 $q_3$ 最大。因为</p>
+$$ q_3=(c_1+c_2+c_3)q_3=c_1q_3+c_2q_3+c_3q_3 \ge c_1q_1+c_2q_2+c_3q_3, $$<p>所以任何加权平均都不可能超过 $q_3$。等号在</p>
+$$c_3=1,\qquad c_1=c_2=0$$<p>时取到。</p>
+<p>这件事翻成人话就是：</p>
+<blockquote>
+<p><strong>一堆数的概率加权平均，永远不会超过其中最大的那个数；要取到最大值，就把全部概率放在最大那个数上。</strong></p></blockquote>
+<p>套回 BOE：</p>
+$$ \sum_a\pi(a|s)q(s,a) \le \sum_a\pi(a|s)\max_a q(s,a) = \max_a q(s,a)\sum_a\pi(a|s) = \max_a q(s,a). $$<p>因此，右边最大化的解是：</p>
+$$ \pi(a|s)= \begin{cases} 1,& a\in\arg\max_{\bar a}q(s,\bar a),\\ 0,& \text{其它动作}. \end{cases} $$<p>如果最大动作不唯一，可以任选一个最大动作；也可以在多个最大动作之间随机。重要结论是：</p>
+<blockquote>
+<p><strong>总存在一个确定性贪心策略能取到 BOE 右边的最大值。</strong></p></blockquote>
+<p>这就把 3.1 的直觉严格化了：改进策略时为什么选动作值最大的动作？因为在所有动作概率分布里，
+“把概率全压到最大动作值上”会使加权平均最大。</p>
+<p>⚠️ <strong>这里也回答了 3.2 的“随机性”问题的一部分</strong>：即使允许随机策略，最优值也可以由确定性贪心策略取到。
+最优策略不一定唯一；如果多个动作并列最大，就会有多个最优动作选择方式。</p>
+<h3 id="333-boe-的矩阵-向量形式">3.3.3 BOE 的矩阵-向量形式<a hidden class="anchor" aria-hidden="true" href="#333-boe-的矩阵-向量形式">#</a></h3>
+<p>逐元素形式是一条状态一条方程。矩阵-向量形式只是把这些方程叠起来，一次写完：</p>
+$$v=\max_{\pi\in\Pi}(r_\pi+\gamma P_\pi v).\tag{3.2}$$<p>这一行里有四个东西：</p>
+<ul>
+<li>$v$：所有状态值堆成的列向量；</li>
+<li>$r_\pi$：在策略 $\pi$ 下，每个状态的一步平均奖励；</li>
+<li>$P_\pi$：在策略 $\pi$ 下，每个状态转移到其它状态的概率矩阵；</li>
+<li>$\max_{\pi\in\Pi}$：对所有策略的右边结果逐状态取最大。</li>
+</ul>
+<p>先看通用形状。假设一共有 $n$ 个状态：</p>
+$$\mathcal S=\{s_1,s_2,\dots,s_n\}.$$<p>那么</p>
+$$ v= \begin{bmatrix} v(s_1)\\ v(s_2)\\ \vdots\\ v(s_n) \end{bmatrix}. $$<p>对一个给定策略 $\pi$，</p>
+$$ r_\pi= \begin{bmatrix} r_\pi(s_1)\\ r_\pi(s_2)\\ \vdots\\ r_\pi(s_n) \end{bmatrix}, $$<p>其中 $r_\pi(s_i)$ 是“在状态 $s_i$ 按策略 $\pi$ 选动作时，下一步即时奖励的平均值”。转移矩阵是</p>
+$$ P_\pi= \begin{bmatrix} p_\pi(s_1|s_1)&p_\pi(s_2|s_1)&\cdots&p_\pi(s_n|s_1)\\ p_\pi(s_1|s_2)&p_\pi(s_2|s_2)&\cdots&p_\pi(s_n|s_2)\\ \vdots&\vdots&\ddots&\vdots\\ p_\pi(s_1|s_n)&p_\pi(s_2|s_n)&\cdots&p_\pi(s_n|s_n) \end{bmatrix}. $$<p>矩阵第 $i$ 行表示：<strong>从当前状态 $s_i$ 出发，按策略 $\pi$ 走一步后，落到各个下一状态的概率分布</strong>。
+所以每一行都非负，且一行加起来等于 1。</p>
+<p>现在看乘法 $P_\pi v$。它的第 $i$ 个分量是</p>
+$$ [P_\pi v]_i =\sum_{j=1}^n p_\pi(s_j|s_i)v(s_j). $$<p>这正是“从 $s_i$ 出发，下一状态值的期望”。因此</p>
+$$ [r_\pi+\gamma P_\pi v]_i =r_\pi(s_i)+\gamma\sum_{j=1}^n p_\pi(s_j|s_i)v(s_j). $$<p>这就是第 $i$ 个状态的普通贝尔曼右边。矩阵形式没有新内容，只是把所有状态的贝尔曼右边一次性打包。</p>
+<h4 id="用同一个-2-状态例子把矩阵式算出来">用同一个 2 状态例子把矩阵式算出来<a hidden class="anchor" aria-hidden="true" href="#用同一个-2-状态例子把矩阵式算出来">#</a></h4>
+<p>下面从头到尾只用一个例子，避免抽象式和数值式断开。</p>
+<p>假设只有两个状态 $s_1,s_2$，每个状态都有两个动作 $a,b$，折扣率</p>
+$$\gamma=0.9.$$<p>动作、奖励、下一状态如下：</p>
+<table>
+  <thead>
+      <tr>
+          <th>当前状态</th>
+          <th>动作</th>
+          <th style="text-align: right">即时奖励</th>
+          <th>下一状态</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>$s_1$</td>
+          <td>$a$</td>
+          <td style="text-align: right">$0$</td>
+          <td>$s_1$</td>
+      </tr>
+      <tr>
+          <td>$s_1$</td>
+          <td>$b$</td>
+          <td style="text-align: right">$1$</td>
+          <td>$s_2$</td>
+      </tr>
+      <tr>
+          <td>$s_2$</td>
+          <td>$a$</td>
+          <td style="text-align: right">$2$</td>
+          <td>$s_1$</td>
+      </tr>
+      <tr>
+          <td>$s_2$</td>
+          <td>$b$</td>
+          <td style="text-align: right">$0$</td>
+          <td>$s_2$</td>
+      </tr>
+  </tbody>
+</table>
+<p>现在给一个当前状态值估计：</p>
+$$ v= \begin{bmatrix} 4\\ 6 \end{bmatrix}, $$<p>也就是暂时认为 $v(s_1)=4,\ v(s_2)=6$。我们要计算</p>
+$$f(v)=\max_{\pi\in\Pi}(r_\pi+\gamma P_\pi v).$$<p>两个状态、每个状态两个动作，一共有 4 个确定性策略：</p>
+$$ (a,a),\quad (a,b),\quad (b,a),\quad (b,b), $$<p>其中 $(b,a)$ 表示“在 $s_1$ 选 $b$，在 $s_2$ 选 $a$”。</p>
+<p><strong>策略一：$\pi=(a,a)$</strong></p>
+<p>这个策略在 $s_1$ 选 $a$，在 $s_2$ 也选 $a$。所以：</p>
+<ul>
+<li>从 $s_1$ 出发：奖励 $0$，下一状态 $s_1$；</li>
+<li>从 $s_2$ 出发：奖励 $2$，下一状态 $s_1$。</li>
+</ul>
+<p>因此</p>
+$$ r_\pi= \begin{bmatrix} 0\\ 2 \end{bmatrix}, \qquad P_\pi= \begin{bmatrix} 1&0\\ 1&0 \end{bmatrix}. $$<p>这里 $P_\pi$ 的第一行 $[1,0]$ 表示“从 $s_1$ 一定到 $s_1$”，第二行 $[1,0]$ 表示“从 $s_2$ 也一定到 $s_1$”。</p>
+<p>先算矩阵乘法：</p>
+$$ P_\pi v= \begin{bmatrix} 1&0\\ 1&0 \end{bmatrix} \begin{bmatrix} 4\\ 6 \end{bmatrix} = \begin{bmatrix} 4\\ 4 \end{bmatrix}. $$<p>所以这个策略的右边值是</p>
+$$ r_\pi+\gamma P_\pi v = \begin{bmatrix} 0\\ 2 \end{bmatrix} +0.9 \begin{bmatrix} 4\\ 4 \end{bmatrix} = \begin{bmatrix} 3.6\\ 5.6 \end{bmatrix}. $$<p>这两个数也可以逐元素读：</p>
+$$s_1:\ 0+0.9\times4=3.6,\qquad s_2:\ 2+0.9\times4=5.6.$$<p><strong>策略二：$\pi=(a,b)$</strong></p>
+<p>从 $s_1$ 选 $a$ 到 $s_1$，从 $s_2$ 选 $b$ 到 $s_2$：</p>
+$$ r_\pi= \begin{bmatrix} 0\\ 0 \end{bmatrix}, \qquad P_\pi= \begin{bmatrix} 1&0\\ 0&1 \end{bmatrix}, $$<p>于是</p>
+$$ r_\pi+\gamma P_\pi v = \begin{bmatrix} 3.6\\ 5.4 \end{bmatrix}. $$<p><strong>策略三：$\pi=(b,a)$</strong></p>
+<p>从 $s_1$ 选 $b$ 到 $s_2$，从 $s_2$ 选 $a$ 到 $s_1$：</p>
+$$ r_\pi= \begin{bmatrix} 1\\ 2 \end{bmatrix}, \qquad P_\pi= \begin{bmatrix} 0&1\\ 1&0 \end{bmatrix}. $$$$ r_\pi+\gamma P_\pi v = \begin{bmatrix} 1\\ 2 \end{bmatrix} +0.9 \begin{bmatrix} 0&1\\ 1&0 \end{bmatrix} \begin{bmatrix} 4\\ 6 \end{bmatrix} = \begin{bmatrix} 1\\ 2 \end{bmatrix} +0.9 \begin{bmatrix} 6\\ 4 \end{bmatrix} = \begin{bmatrix} 6.4\\ 5.6 \end{bmatrix}. $$<p><strong>策略四：$\pi=(b,b)$</strong></p>
+<p>从 $s_1$ 选 $b$ 到 $s_2$，从 $s_2$ 选 $b$ 留在 $s_2$：</p>
+$$ r_\pi= \begin{bmatrix} 1\\ 0 \end{bmatrix}, \qquad P_\pi= \begin{bmatrix} 0&1\\ 0&1 \end{bmatrix}, $$<p>所以</p>
+$$ r_\pi+\gamma P_\pi v = \begin{bmatrix} 6.4\\ 5.4 \end{bmatrix}. $$<p>现在把四个策略的结果放在一起：</p>
+$$ \begin{array}{c|c} \text{策略} & r_\pi+\gamma P_\pi v\\ \hline (a,a) & \begin{bmatrix}3.6\\5.6\end{bmatrix}\\[6pt] (a,b) & \begin{bmatrix}3.6\\5.4\end{bmatrix}\\[6pt] (b,a) & \begin{bmatrix}6.4\\5.6\end{bmatrix}\\[6pt] (b,b) & \begin{bmatrix}6.4\\5.4\end{bmatrix} \end{array} $$<p>这张表就是矩阵式里的</p>
+$$r_\pi+\gamma P_\pi v.$$<p>接下来才轮到 BOE 里的外层</p>
+$$\max_{\pi\in\Pi}.$$<p>它的意思是：<strong>对表格右边的向量逐元素取最大</strong>。</p>
+$$ \max_\pi(r_\pi+\gamma P_\pi v) = \begin{bmatrix} \max\{3.6,3.6,6.4,6.4\}\\ \max\{5.6,5.4,5.6,5.4\} \end{bmatrix} = \begin{bmatrix} 6.4\\ 5.6 \end{bmatrix}. $$<p>所以对这个当前估计 $v=[4,6]^T$，</p>
+$$ f(v)= \begin{bmatrix} 6.4\\ 5.6 \end{bmatrix}. $$<p>这就是矩阵式</p>
+$$f(v)=\max_{\pi\in\Pi}(r_\pi+\gamma P_\pi v)$$<p>的完整数值计算。</p>
+<p>⚠️ <strong>逐元素最大是什么意思？</strong> 第一行最大值 $6.4$ 可以由策略 $(b,a)$ 或 $(b,b)$ 取到，因为它们在 $s_1$ 都选 $b$；
+第二行最大值 $5.6$ 可以由策略 $(a,a)$ 或 $(b,a)$ 取到，因为它们在 $s_2$ 都选 $a$。
+要同时取到两个分量的最大值，选策略 $(b,a)$ 即可。</p>
+<p>这和逐状态看动作完全一致：</p>
+<ul>
+<li>在 $s_1$：$a$ 给 $3.6$，$b$ 给 $6.4$，所以选 $b$；</li>
+<li>在 $s_2$：$a$ 给 $5.6$，$b$ 给 $5.4$，所以选 $a$。</li>
+</ul>
+<p>如果允许随机策略，也不会得到比这个更大的值，因为随机策略只是对动作值做加权平均，而加权平均不会超过最大动作值。</p>
+<p>⚠️ <strong>注意</strong>：这里算出的</p>
+$$ f(v)= \begin{bmatrix} 6.4\\ 5.6 \end{bmatrix} $$<p>还不是最终最优状态值，它只是“把当前估计 $v=[4,6]^T$ 喂进 BOE 右边后，得到的下一次估计”。真正解 BOE，
+是要找到一个向量满足</p>
+$$v=f(v).$$<p>如果不断做 $v_{k+1}=f(v_k)$，就会逐步逼近那个唯一的不动点。</p>
+<p>由 3.3.2 可知，一旦给定一个向量 $v$，每个状态的 $q(s,a)$ 就定了；$q$ 一定，贪心策略也就定了。
+所以右边整体其实是 $v$ 的一个函数，记作：</p>
+$$f(v)\doteq \max_{\pi\in\Pi}(r_\pi+\gamma P_\pi v).$$<p>于是 BOE 可以写成极简形式：</p>
+$$\boxed{v=f(v).}\tag{3.3}$$<h3 id="334-为什么-boe-不能像普通贝尔曼方程那样求逆">3.3.4 为什么 BOE 不能像普通贝尔曼方程那样求逆<a hidden class="anchor" aria-hidden="true" href="#334-为什么-boe-不能像普通贝尔曼方程那样求逆">#</a></h3>
+<p>第 2 章普通贝尔曼方程是：</p>
+$$v_\pi=r_\pi+\gamma P_\pi v_\pi.$$<p>因为 $\pi$ 是给定的，所以 $r_\pi$ 和 $P_\pi$ 是固定的，方程是线性的，可以移项：</p>
+$$(I-\gamma P_\pi)v_\pi=r_\pi,\qquad v_\pi=(I-\gamma P_\pi)^{-1}r_\pi.$$<p>但 BOE 是：</p>
+$$v=\max_{\pi\in\Pi}(r_\pi+\gamma P_\pi v).$$<p>这里 $\pi$ 会随着 $v$ 改变。$v$ 一变，每个动作的 $q(s,a)$ 可能变，哪个动作最大也可能变。</p>
+<p>接着刚才的 2 状态例子看就很清楚。刚才用的是</p>
+$$ v= \begin{bmatrix} 4\\ 6 \end{bmatrix}. $$<p>在这个 $v$ 下：</p>
+<ul>
+<li>$s_1$：选 $a$ 得 $3.6$，选 $b$ 得 $6.4$，所以选 $b$；</li>
+<li>$s_2$：选 $a$ 得 $5.6$，选 $b$ 得 $5.4$，所以选 $a$。</li>
+</ul>
+<p>因此贪心策略是</p>
+$$\pi_v=(b,a).$$<p>现在环境完全不变，只把当前状态值估计换成</p>
+$$ \tilde v= \begin{bmatrix} 10\\ 0 \end{bmatrix}. $$<p>重新算动作值：</p>
+<p>在 $s_1$：</p>
+$$q(s_1,a)=0+0.9\tilde v(s_1)=9,$$$$q(s_1,b)=1+0.9\tilde v(s_2)=1.$$<p>所以 $s_1$ 改成选 $a$。</p>
+<p>在 $s_2$：</p>
+$$q(s_2,a)=2+0.9\tilde v(s_1)=11,$$$$q(s_2,b)=0+0.9\tilde v(s_2)=0.$$<p>所以 $s_2$ 仍然选 $a$。</p>
+<p>这时贪心策略变成</p>
+$$\pi_{\tilde v}=(a,a).$$<p>⚠️ <strong>看见关键了吗？</strong> 环境的奖励和转移都没变，只是输入的状态值向量从 $v=[4,6]^T$ 换成
+$\tilde v=[10,0]^T$，右边取最大值的策略就从 $(b,a)$ 变成了 $(a,a)$。所以在 BOE 里，
+$r_\pi$ 和 $P_\pi$ 不是固定的；它们会跟着“当前哪个策略对 $v$ 贪心”一起变化。</p>
+<p>这就是为什么 $f(v)$ 里面有一个 $\max$，整体是<strong>非线性函数</strong>。</p>
+<p>⚠️ <strong>关键结论</strong>：BOE 不能通过一次矩阵求逆直接解出来。我们需要分析非线性方程</p>
+$$v=f(v)$$<p>的工具。这就是下一小节的压缩映射定理。</p>
+<h3 id="335-压缩映射定理">3.3.5 压缩映射定理<a hidden class="anchor" aria-hidden="true" href="#335-压缩映射定理">#</a></h3>
+<p><strong>要解决的问题</strong>：对于非线性方程 $x=f(x)$，怎么知道它有没有解、解是否唯一、能不能用迭代算出来？
+压缩映射定理正是回答这三个问题的工具。</p>
+<p>先定义两个概念。</p>
+<p><strong>不动点（fixed point）</strong>：如果</p>
+$$f(x^*)=x^*,$$<p>就说 $x^*$ 是 $f$ 的不动点。也就是说，$f$ 把 $x^*$ 映射回它自己。</p>
+<p>注意 BOE 的形式 $v=f(v)$，本质上就是在找 $f$ 的不动点。</p>
+<p><strong>压缩映射（contraction mapping）</strong>：如果存在常数 $\gamma\in(0,1)$，使得对任意 $x_1,x_2$ 都有</p>
+$$\|f(x_1)-f(x_2)\|\le\gamma\|x_1-x_2\|,$$<p>就说 $f$ 是压缩映射。</p>
+<p>人话解释：</p>
+<blockquote>
+<p><strong>任意两个点经过 $f$ 映射后，距离都会变小，最多只剩原来的 $\gamma$ 倍。</strong></p></blockquote>
+<p>因为 $\gamma\lt 1$，反复应用 $f$ 时，点与点之间会越来越近，最后被推向同一个不动点。</p>
+<p><strong>例 3.3</strong>：三个简单压缩映射。</p>
+<ul>
+<li>$f(x)=0.5x$。有 $f(0)=0$，且
+$$|0.5x_1-0.5x_2|=0.5|x_1-x_2|.$$</li>
+<li>$f(x)=Ax$，若 $\|A\|\le\gamma\lt 1$，则
+$$\|Ax_1-Ax_2\|\le\|A\|\|x_1-x_2\|\le\gamma\|x_1-x_2\|.$$</li>
+<li>$f(x)=0.5\sin x$。由中值定理，
+$$|0.5\sin x_1-0.5\sin x_2|\le0.5|x_1-x_2|.$$</li>
+</ul>
+<p><strong>定理 3.1（压缩映射定理）</strong>：</p>
+<p>如果 $f$ 是压缩映射，那么方程</p>
+$$x=f(x)$$<p>满足：</p>
+<ul>
+<li><strong>存在性</strong>：存在不动点 $x^*$；</li>
+<li><strong>唯一性</strong>：这个不动点唯一；</li>
+<li><strong>算法</strong>：从任意初值 $x_0$ 出发，迭代
+$$x_{k+1}=f(x_k)$$
+都会收敛到 $x^*$，而且是指数级收敛。</li>
+</ul>
+<p>这就是这个定理对 BOE 的价值：只要能证明 BOE 的右边 $f(v)$ 是压缩映射，BOE 的存在、唯一、算法就全有了。</p>
+<p>⚠️ <strong>Box 3.1 的证明里最值得记的一点</strong>：证明收敛不能只看</p>
+$$\|x_{k+1}-x_k\|\to0.$$<p>相邻两项差趋于 0 不代表序列收敛。反例：</p>
+$$x_n=\sqrt n,\qquad x_{n+1}-x_n\to0,$$<p>但 $x_n$ 仍然发散到无穷大。真正需要证明的是柯西列：足够靠后的任意两项都互相接近。</p>
+<p>证明的大意是：</p>
+<ol>
+<li>由压缩性得到相邻项差指数缩小：
+$$\|x_{k+1}-x_k\|\le\gamma^k\|x_1-x_0\|.$$</li>
+<li>再用三角不等式和等比级数证明任意远两项也接近：
+$$\|x_m-x_n\|\le\frac{\gamma^n}{1-\gamma}\|x_1-x_0\|.$$</li>
+<li>因此 $\{x_k\}$ 是柯西列，收敛到某个 $x^*$。</li>
+<li>取极限得到 $f(x^*)=x^*$。</li>
+<li>若还有另一个不动点 $x'$，则
+$$\|x'-x^*\|=\|f(x')-f(x^*)\|\le\gamma\|x'-x^*\|,$$
+由于 $\gamma\lt 1$，只能有 $\|x'-x^*\|=0$，所以 $x'=x^*$。</li>
+</ol>
+<h3 id="336-boe-右边的--是压缩映射">3.3.6 BOE 右边的 $f(v)$ 是压缩映射<a hidden class="anchor" aria-hidden="true" href="#336-boe-右边的--是压缩映射">#</a></h3>
+<p><strong>要解决的问题</strong>：压缩映射定理很强，但不能凭空用。我们必须证明</p>
+$$f(v)=\max_{\pi\in\Pi}(r_\pi+\gamma P_\pi v)$$<p>确实是压缩映射。</p>
+<p><strong>定理 3.2</strong>：对任意 $v_1,v_2\in\mathbb R^{|\mathcal S|}$，</p>
+$$\|f(v_1)-f(v_2)\|_\infty\le\gamma\|v_1-v_2\|_\infty.$$<p>⚠️ <strong>先澄清符号：这里的 $v_1,v_2$ 是两个“状态值向量”，不是 $s_1,s_2$ 两个状态下的值。</strong></p>
+<p>也就是说，$v_1$ 代表一整套状态值估计，$v_2$ 代表另一整套状态值估计：</p>
+$$ v_1= \begin{bmatrix} v_1(s_1)\\ v_1(s_2)\\ \vdots\\ v_1(s_n) \end{bmatrix}, \qquad v_2= \begin{bmatrix} v_2(s_1)\\ v_2(s_2)\\ \vdots\\ v_2(s_n) \end{bmatrix}. $$<p>下标 $1,2$ 只是给两个向量编号，意思是“第一套估计”和“第二套估计”；它们不是状态编号。
+如果还是用刚才的二状态例子，可以取</p>
+$$ v_1= \begin{bmatrix} 4\\ 6 \end{bmatrix}, \qquad v_2= \begin{bmatrix} 10\\ 0 \end{bmatrix}. $$<p>这时 $v_1(s_1)=4,\ v_1(s_2)=6$；而 $v_2(s_1)=10,\ v_2(s_2)=0$。所以一定要区分：</p>
+<ul>
+<li>$v_1$：第一个完整向量；</li>
+<li>$v_2$：第二个完整向量；</li>
+<li>$v_1(s_2)$：第一个向量在状态 $s_2$ 处的分量；</li>
+<li>$v_2(s_1)$：第二个向量在状态 $s_1$ 处的分量。</li>
+</ul>
+<p>这里的 $\|\cdot\|_\infty$ 是最大范数：</p>
+$$\|x\|_\infty=\max_i |x_i|.$$<p>证明思路如下。</p>
+<p>设 $\pi_1^*$ 是在 $v_1$ 处让右边取到最大值的策略，$\pi_2^*$ 是在 $v_2$ 处让右边取到最大值的策略：</p>
+$$f(v_1)=r_{\pi_1^*}+\gamma P_{\pi_1^*}v_1,$$$$f(v_2)=r_{\pi_2^*}+\gamma P_{\pi_2^*}v_2.$$<p>因为 $\pi_1^*$ 是 $v_1$ 处的最大者，所以换成 $\pi_2^*$ 只会不增：</p>
+$$f(v_1)\ge r_{\pi_2^*}+\gamma P_{\pi_2^*}v_1.$$<p>同理，因为 $\pi_2^*$ 是 $v_2$ 处的最大者：</p>
+$$f(v_2)\ge r_{\pi_1^*}+\gamma P_{\pi_1^*}v_2.$$<p>把这两个不等式整理，就能把 $f(v_1)-f(v_2)$ 夹在两边：</p>
+$$ \gamma P_{\pi_2^*}(v_1-v_2) \le f(v_1)-f(v_2) \le \gamma P_{\pi_1^*}(v_1-v_2). $$<p>现在关键变成控制</p>
+$$P_\pi(v_1-v_2).$$<p>而 $P_\pi$ 的每一行都是概率分布：元素非负，且和为 1。因此对任意一行 $p_i^\top$，</p>
+$$ |p_i^\top(v_1-v_2)| \le p_i^\top|v_1-v_2| \le \|v_1-v_2\|_\infty. $$<p>最后一个不等式又是 3.3.2 的老朋友：概率加权平均不超过最大分量。</p>
+<p>于是每个分量都被 $\gamma\|v_1-v_2\|_\infty$ 控住，得到</p>
+$$\|f(v_1)-f(v_2)\|_\infty\le\gamma\|v_1-v_2\|_\infty.$$<p>这就证明了 $f$ 是压缩映射。</p>
+<p>⚠️ <strong>为什么这里用最大范数，而不是欧氏范数？</strong> 因为证明的命门是</p>
+$$p_i^\top|x|\le\|x\|_\infty.$$<p>也就是“概率加权平均不超过最大分量”。这条性质天然对应 $\infty$-范数。</p>
+<h3 id="33-到这里解决了什么">3.3 到这里解决了什么<a hidden class="anchor" aria-hidden="true" href="#33-到这里解决了什么">#</a></h3>
+<p>现在两块拼起来：</p>
+<ol>
+<li>定理 3.2：BOE 右边的 $f(v)$ 是压缩映射；</li>
+<li>定理 3.1：压缩映射的方程 $v=f(v)$ 有唯一不动点，并且迭代必收敛。</li>
+</ol>
+<p>所以 BOE 得到三个结论：</p>
+<ul>
+<li><strong>存在性</strong>：BOE 一定有解；</li>
+<li><strong>唯一性</strong>：BOE 的状态值解唯一，记作 $v^*$；</li>
+<li><strong>算法</strong>：从任意 $v_0$ 出发，反复迭代
+$$v_{k+1}=f(v_k)=\max_{\pi\in\Pi}(r_\pi+\gamma P_\pi v_k)$$
+会收敛到 $v^*$。</li>
+</ul>
+<p>这个迭代就是后面 4.1 会正式讲的 <strong>value iteration（值迭代）</strong> 的数学基础。</p>
+<p>还剩一个最重要的问题：</p>
+<blockquote>
+<p>BOE 解出来的 $v^*$，以及对它贪心得到的策略 $\pi^*$，真的等于 3.2 定义的“最优状态值”和“最优策略”吗？</p></blockquote>
+<p>这个“最优性”问题留到 3.4 证明。</p>
+<hr>
+<h2 id="34-从-boe-求最优策略solving-an-optimal-policy-from-the-boe">3.4 从 BOE 求最优策略（Solving an optimal policy from the BOE）<a hidden class="anchor" aria-hidden="true" href="#34-从-boe-求最优策略solving-an-optimal-policy-from-the-boe">#</a></h2>
+<p><strong>要解决的问题</strong>：3.3 证明了 BOE $v=f(v)$ 有唯一解 $v^*$、且能迭代算出来。但还差临门一脚：
+(1) 怎么从 $v^*$ 拿到一个<strong>策略</strong> $\pi^*$？(2) 这个 $v^*/\pi^*$ 真的就是 3.2 定义的「最优状态值/最优策略」吗？
+本节给出肯定回答，并指出最优策略总可取<strong>确定性贪心</strong>形式。</p>
+<blockquote>
+<p>路线图：<strong>解 $v^*$</strong>（定理 3.3，承接 3.3 的压缩映射）→ <strong>解 $\pi^*$</strong>（对 $v^*$ 贪心）→ <strong>证最优性</strong>（定理 3.4：$v^*\ge v_\pi$ 对任意 $\pi$）→ <strong>贪心最优策略显式形式</strong>（定理 3.5）→ 讨论<strong>唯一性与随机性</strong>。</p></blockquote>
+<h3 id="第一步解-定理-33">第一步：解 $v^*$（定理 3.3）<a hidden class="anchor" aria-hidden="true" href="#第一步解-定理-33">#</a></h3>
+<p>BOE 的不动点形式：</p>
+$$v^{*}=\max_{\pi\in\Pi}\bigl(r_{\pi}+\gamma P_{\pi}v^{*}\bigr)=f(v^*).$$<p>读法：$v^*$ 是 $f$ 的不动点（代进去等于自己）。3.3 证过 $f$ 是压缩映射，直接套压缩映射定理：</p>
+<p><strong>定理 3.3（存在性、唯一性、算法）</strong>：对 BOE $v=f(v)=\max_{\pi\in\Pi}(r_\pi+\gamma P_\pi v)$，
+解 $v^*$ <strong>存在且唯一</strong>；从任意 $v_0$ 出发迭代</p>
+$$v_{k+1}=f(v_k)=\max_{\pi\in\Pi}\bigl(r_{\pi}+\gamma P_{\pi}v_{k}\bigr),\quad k=0,1,2,\dots$$<p>会<strong>指数级速度</strong>收敛到 $v^*$。⚠️ 这个迭代正式名字叫 <strong>value iteration 值迭代</strong>，第 4 章细讲；本章只关心它的数学性质：能收敛、收敛到唯一的 $v^*$。</p>
+<h3 id="第二步解-对--贪心">第二步：解 $\pi^*$（对 $v^*$ 贪心）<a hidden class="anchor" aria-hidden="true" href="#第二步解-对--贪心">#</a></h3>
+<p>拿到 $v^*$ 后策略一步到位：</p>
+$$\pi^{*}=\arg\max_{\pi\in\Pi}\bigl(r_{\pi}+\gamma P_{\pi}v^{*}\bigr).\tag{3.6}$$<p>把 (3.6) 代回 BOE，$\max$ 被这个具体 $\pi^*$ 取到：</p>
+$$v^{*}=r_{\pi^{*}}+\gamma P_{\pi^{*}}v^{*}.$$<p>读法：<strong>这是一条普通（线性）贝尔曼方程</strong>，只不过策略恰好是 $\pi^*$。所以 $v^{*}=v_{\pi^{*}}$，即 $v^*$ 正是 $\pi^*$ 的状态值。一句话：<strong>BOE 是一条特殊的贝尔曼方程，它对应的策略就是 $\pi^*$</strong>。</p>
+<h3 id="第三步最优性定理-34-为什么要研究-boe的答案">第三步：最优性（定理 3.4）—— 「为什么要研究 BOE」的答案<a hidden class="anchor" aria-hidden="true" href="#第三步最优性定理-34-为什么要研究-boe的答案">#</a></h3>
+<p><strong>定理 3.4（$v^*$ 与 $\pi^*$ 的最优性）</strong>：$v^*$ 是最优状态值，$\pi^*$ 是最优策略。即对<strong>任意</strong>策略 $\pi$：</p>
+$$v^{*}=v_{\pi^{*}}\;\ge\; v_{\pi}\quad(\text{逐元素比较}).$$<p>到这里才真正闭环：3.2 把「最优」定义成「在每个状态都 $\ge$ 别人」，现在证明 BOE 的解恰好满足这个定义。</p>
+<p><strong>证明（Box 3.3），逐步走</strong>：任意 $\pi$ 满足 $v_{\pi}=r_{\pi}+\gamma P_{\pi}v_{\pi}$。</p>
+<p>① $v^*$ 是对所有 $\pi$ 取 $\max$，故对这一个具体 $\pi$ 有</p>
+$$v^{*}=\underbrace{r_{\pi^{*}}+\gamma P_{\pi^{*}}v^{*}}_{\max\text{ 取到的}}\;\ge\;\underbrace{r_{\pi}+\gamma P_{\pi}v^{*}}_{\text{随便一个 }\pi}.$$<p>② 用 ① 减 $v_\pi=r_\pi+\gamma P_\pi v_\pi$（$r_\pi$ 抵消）：</p>
+$$v^{*}-v_{\pi}\;\ge\;\gamma P_{\pi}(v^{*}-v_{\pi}).$$<p>③ 反复代入自己：</p>
+$$v^{*}-v_{\pi}\ge\gamma P_{\pi}(v^{*}-v_{\pi})\ge\gamma^{2}P_{\pi}^{2}(v^{*}-v_{\pi})\ge\cdots\ge\gamma^{n}P_{\pi}^{n}(v^{*}-v_{\pi}).$$<p>④ 令 $n\to\infty$：$\gamma^n\to0$，$P_\pi^n$ 非负且元素 $\le1$（因 $P_\pi^n\mathbf1=\mathbf1$），故右边 $\to0$：</p>
+$$v^{*}-v_{\pi}\ge\lim_{n\to\infty}\gamma^{n}P_{\pi}^{n}(v^{*}-v_{\pi})=0.$$<p>故 $v^*\ge v_\pi$ 对任意 $\pi$ 成立。∎
+直觉：$\gamma P_\pi$ 是「每作用一次把差距按 $\gamma\lt 1$ 收缩」的算子，差距比它自己的 $\gamma$ 倍还大，无限收缩只能 $\ge0$。</p>
+<h3 id="第四步贪心最优策略定理-35">第四步：贪心最优策略（定理 3.5）<a hidden class="anchor" aria-hidden="true" href="#第四步贪心最优策略定理-35">#</a></h3>
+<p>(3.6) 落到每个状态 $s$ 是什么样？</p>
+<p><strong>定理 3.5（贪心最优策略）</strong>：下面这个<strong>确定性贪心</strong>策略就是最优的：</p>
+$$\pi^{*}(a|s)=\begin{cases}1,&a=a^{*}(s),\\[2pt]0,&a\neq a^{*}(s),\end{cases}\qquad a^{*}(s)=\arg\max_{a}q^{*}(s,a),$$<p>其中</p>
+$$q^{*}(s,a)\doteq\underbrace{\sum_{r}p(r|s,a)\,r}_{\text{即时回报期望}}+\underbrace{\gamma\sum_{s'}p(s'|s,a)\,v^{*}(s')}_{\text{折扣后未来值}}.$$<p>读法：用 $v^*$ 算出每个状态-动作的最优动作值 $q^*(s,a)$，每个状态<strong>贪心地选 $q^*$ 最大的那个动作</strong>，概率全押上去。</p>
+<p><strong>证明（Box 3.4）</strong>：(3.6) 的逐元素形式是 $\pi^{*}(s)=\arg\max_{\pi}\sum_{a}\pi(a|s)\,q^{*}(s,a)$。
+$\sum_a\pi(a|s)q^*(s,a)$ 是「和为 1 的非负权重」对 $q^*$ 的加权平均，<strong>加权平均 $\le$ 最大分量</strong>；要顶到最大，就把全部权重压在 $q^*$ 最大的动作上 → 这就是贪心。∎（和 3.3.2 解 $\max$ 完全一样的逻辑。）</p>
+<h3 id="自造最小数值例子值迭代收敛--贪心选动作一次看全">自造最小数值例子：值迭代收敛 + 贪心选动作，一次看全<a hidden class="anchor" aria-hidden="true" href="#自造最小数值例子值迭代收敛--贪心选动作一次看全">#</a></h3>
+<p>这个例子想一次说明三件事：</p>
+<ol>
+<li>BOE 右边的 $f(v)=\max_\pi(r_\pi+\gamma P_\pi v)$ 到底怎么算；</li>
+<li>值迭代 $v_{k+1}=f(v_k)$ 为什么会一步步收敛；</li>
+<li>收敛到 $v^*$ 后，怎么用 $q^*$ 贪心选出最优策略。</li>
+</ol>
+<h4 id="例子的环境">例子的环境<a hidden class="anchor" aria-hidden="true" href="#例子的环境">#</a></h4>
+<p>只有两个状态 $s_1,s_2$，折扣率</p>
+$$\gamma=0.9.$$<p>每个状态都有两个动作 $a_1,a_2$，转移和奖励如下：</p>
+<table>
+  <thead>
+      <tr>
+          <th>当前状态</th>
+          <th>动作</th>
+          <th style="text-align: right">即时奖励</th>
+          <th>下一状态</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>$s_1$</td>
+          <td>$a_1$</td>
+          <td style="text-align: right">$1$</td>
+          <td>$s_2$</td>
+      </tr>
+      <tr>
+          <td>$s_1$</td>
+          <td>$a_2$</td>
+          <td style="text-align: right">$0$</td>
+          <td>$s_1$</td>
+      </tr>
+      <tr>
+          <td>$s_2$</td>
+          <td>$a_1$</td>
+          <td style="text-align: right">$1$</td>
+          <td>$s_2$</td>
+      </tr>
+      <tr>
+          <td>$s_2$</td>
+          <td>$a_2$</td>
+          <td style="text-align: right">$0$</td>
+          <td>$s_1$</td>
+      </tr>
+  </tbody>
+</table>
+<p>人话解释：</p>
+<ul>
+<li>$a_1$ 是“好动作”：立刻拿 $+1$；</li>
+<li>$a_2$ 是“差动作”：立刻拿 $0$；</li>
+<li>这个例子故意设计得很简单，好让我们专心看 BOE 的计算过程。</li>
+</ul>
+<h4 id="第一步写出-boe-右边">第一步：写出 BOE 右边 $f(v)$<a hidden class="anchor" aria-hidden="true" href="#第一步写出-boe-右边">#</a></h4>
+<p>设当前状态值估计是</p>
+$$ v= \begin{bmatrix} x\\ y \end{bmatrix}, $$<p>也就是 $v(s_1)=x,\ v(s_2)=y$。</p>
+<p>在 $s_1$：</p>
+<ul>
+<li>选 $a_1$：奖励 $1$，下一状态 $s_2$，所以右边值是
+$$1+0.9y.$$</li>
+<li>选 $a_2$：奖励 $0$，下一状态 $s_1$，所以右边值是
+$$0+0.9x=0.9x.$$</li>
+</ul>
+<p>因此</p>
+$$f(v)(s_1)=\max\{1+0.9y,\ 0.9x\}.$$<p>在 $s_2$：</p>
+<ul>
+<li>选 $a_1$：奖励 $1$，下一状态还是 $s_2$，所以右边值是
+$$1+0.9y.$$</li>
+<li>选 $a_2$：奖励 $0$，下一状态 $s_1$，所以右边值是
+$$0.9x.$$</li>
+</ul>
+<p>因此</p>
+$$f(v)(s_2)=\max\{1+0.9y,\ 0.9x\}.$$<p>所以这个例子里的 BOE 右边是</p>
+$$ f\!\left( \begin{bmatrix} x\\ y \end{bmatrix} \right) = \begin{bmatrix} \max\{1+0.9y,\ 0.9x\}\\ \max\{1+0.9y,\ 0.9x\} \end{bmatrix}. $$<p>⚠️ <strong>为什么两个分量长得一样？</strong> 因为这个例子设计得非常对称：在两个状态里，$a_1$ 都对应“拿 1 后看 $s_2$ 的值”，
+$a_2$ 都对应“拿 0 后看 $s_1$ 的值”。所以 $s_1,s_2$ 的更新式刚好一样。</p>
+<h4 id="第二步从--开始做值迭代">第二步：从 $v_0=(0,0)$ 开始做值迭代<a hidden class="anchor" aria-hidden="true" href="#第二步从--开始做值迭代">#</a></h4>
+<p>初值取</p>
+$$ v_0= \begin{bmatrix} 0\\ 0 \end{bmatrix}. $$<p><strong>第 1 轮</strong>：</p>
+$$ f(v_0)(s_1)=f(v_0)(s_2)=\max\{1+0.9\cdot0,\ 0.9\cdot0\}=\max\{1,0\}=1. $$<p>所以</p>
+$$ v_1= \begin{bmatrix} 1\\ 1 \end{bmatrix}. $$<p><strong>第 2 轮</strong>：</p>
+$$ f(v_1)(s_1)=f(v_1)(s_2)=\max\{1+0.9\cdot1,\ 0.9\cdot1\}=\max\{1.9,0.9\}=1.9. $$<p>所以</p>
+$$ v_2= \begin{bmatrix} 1.9\\ 1.9 \end{bmatrix}. $$<p><strong>第 3 轮</strong>：</p>
+$$ f(v_2)(s_1)=f(v_2)(s_2)=\max\{1+0.9\cdot1.9,\ 0.9\cdot1.9\}=\max\{2.71,1.71\}=2.71. $$<p>所以</p>
+$$ v_3= \begin{bmatrix} 2.71\\ 2.71 \end{bmatrix}. $$<p>整理成表：</p>
+<table>
+  <thead>
+      <tr>
+          <th>$k$</th>
+          <th style="text-align: right">$v_k(s_1)$</th>
+          <th style="text-align: right">$v_k(s_2)$</th>
+          <th>本轮最大值怎么算</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>0</td>
+          <td style="text-align: right">0</td>
+          <td style="text-align: right">0</td>
+          <td>初值</td>
+      </tr>
+      <tr>
+          <td>1</td>
+          <td style="text-align: right">1</td>
+          <td style="text-align: right">1</td>
+          <td>$\max\{1,0\}=1$</td>
+      </tr>
+      <tr>
+          <td>2</td>
+          <td style="text-align: right">1.9</td>
+          <td style="text-align: right">1.9</td>
+          <td>$\max\{1.9,0.9\}=1.9$</td>
+      </tr>
+      <tr>
+          <td>3</td>
+          <td style="text-align: right">2.71</td>
+          <td style="text-align: right">2.71</td>
+          <td>$\max\{2.71,1.71\}=2.71$</td>
+      </tr>
+      <tr>
+          <td>4</td>
+          <td style="text-align: right">3.439</td>
+          <td style="text-align: right">3.439</td>
+          <td>$\max\{3.439,2.439\}=3.439$</td>
+      </tr>
+  </tbody>
+</table>
+<p>可以看出，每一轮都选 $a_1$，因为第一项总是比第二项大 1：</p>
+$$1+0.9v_k(s_2)\gt 0.9v_k(s_1)$$<p>（在这个例子中 $v_k(s_1)=v_k(s_2)$，所以左边就是比右边多一个 $1$）。</p>
+<p>于是后面其实变成一个简单递推：</p>
+$$c_{k+1}=1+0.9c_k,\qquad c_0=0,$$<p>其中</p>
+$$ v_k= \begin{bmatrix} c_k\\ c_k \end{bmatrix}. $$<h4 id="第三步为什么极限是-10">第三步：为什么极限是 10<a hidden class="anchor" aria-hidden="true" href="#第三步为什么极限是-10">#</a></h4>
+<p>如果迭代收敛到某个数 $c^*$，它必须满足</p>
+$$c^*=1+0.9c^*.$$<p>移项：</p>
+$$0.1c^*=1\quad\Rightarrow\quad c^*=10.$$<p>所以</p>
+$$ v^*= \begin{bmatrix} 10\\ 10 \end{bmatrix}. $$<p>也可以从回报直观看：最优策略会一直选 $a_1$，每一步都拿 $+1$，所以总回报是</p>
+$$1+0.9+0.9^2+\cdots=\frac{1}{1-0.9}=10.$$<p>这也解释了为什么两个状态的最优值都是 10：从 $s_1$ 选 $a_1$ 会拿 1 并到 $s_2$；从 $s_2$ 选 $a_1$ 会拿 1 并留在 $s_2$。
+不管从哪个状态开始，之后都能每步拿 $+1$。</p>
+<h4 id="第四步用--贪心选动作">第四步：用 $v^*$ 贪心选动作<a hidden class="anchor" aria-hidden="true" href="#第四步用--贪心选动作">#</a></h4>
+<p>现在用</p>
+$$v^*(s_1)=v^*(s_2)=10$$<p>来计算最优动作值。</p>
+<p>在 $s_1$：</p>
+$$q^*(s_1,a_1)=1+0.9v^*(s_2)=1+0.9\times10=10,$$$$q^*(s_1,a_2)=0+0.9v^*(s_1)=9.$$<p>所以 $s_1$ 选 $a_1$。</p>
+<p>在 $s_2$：</p>
+$$q^*(s_2,a_1)=1+0.9v^*(s_2)=10,$$$$q^*(s_2,a_2)=0+0.9v^*(s_1)=9.$$<p>所以 $s_2$ 也选 $a_1$。</p>
+<p>因此最优策略是</p>
+$$ \pi^*(s_1)=a_1,\qquad \pi^*(s_2)=a_1. $$<p>再反过来检查这个策略的状态值：</p>
+$$v_{\pi^*}(s_2)=1+0.9v_{\pi^*}(s_2)\quad\Rightarrow\quad v_{\pi^*}(s_2)=10,$$$$v_{\pi^*}(s_1)=1+0.9v_{\pi^*}(s_2)=10.$$<p>所以</p>
+$$v_{\pi^*}=v^*.$$<p>这个小例子把三件事接起来了：</p>
+<ul>
+<li>值迭代 $v_{k+1}=f(v_k)$ 一步步逼近 $v^*$；</li>
+<li>$v^*$ 是 BOE 的不动点；</li>
+<li>对 $v^*$ 贪心得到的策略 $\pi^*$，它的状态值正好就是 $v^*$。</li>
+</ul>
+<h3 id="两个重要性质配-figure-33">两个重要性质（配 Figure 3.3）<a hidden class="anchor" aria-hidden="true" href="#两个重要性质配-figure-33">#</a></h3>
+<p><img alt="原书图 3.3：两个不同但都最优的策略" loading="lazy" src="/books/reinforcement-learning-math/images/83c6d4327193f774e2c8edc8d794df205b0c3a4adfdd90fad2f24a91a37c9c79.jpg">
+<img alt="原书图 3.3（续）：另一个等价最优策略" loading="lazy" src="/books/reinforcement-learning-math/images/c1294d3b7e402bbbd041cad2e45a1486a6ecf927efa2bed084d2e79fbe0c9711.jpg"></p>
+<blockquote>
+<p><strong>原书图 3.3</strong>：两个策略长得不一样，却都是最优的——说明对同一个 $v^*$，最优策略可以不唯一。</p></blockquote>
+<ul>
+<li>⚠️ <strong>唯一性</strong>：$v^*$ <strong>唯一</strong>，但对应 $v^*$ 的<strong>最优策略不一定唯一</strong>。原因：某状态若有<strong>多个动作并列 $q^*$ 最大</strong>，选谁都最优（Figure 3.3 即反例）。</li>
+<li><strong>随机性</strong>：最优策略<strong>可随机也可确定</strong>（并列时任意分配概率）；但定理 3.5 保证<strong>一定存在确定性最优策略</strong>。</li>
+</ul>
+<h3 id="34-闭环--接到-35">3.4 闭环 / 接到 3.5<a hidden class="anchor" aria-hidden="true" href="#34-闭环--接到-35">#</a></h3>
+<ul>
+<li><strong>闭环 1</strong>：3.3 证「BOE 有唯一解、能迭代」，3.4 证「这个解就是 3.2 定义的最优」——BOE 与「最优」定义在此接通，回答了 3.3 结尾留的问题。</li>
+<li><strong>闭环 2</strong>：数值例子里，值迭代收敛的 $v^*$ = 对它贪心的 $\pi^*$ 的状态值 $v_{\pi^*}$ = 10，三处对上。</li>
+<li><strong>铺垫</strong>：定理 3.3 的迭代式 $v_{k+1}=f(v_k)$ 是第 4 章 <strong>value iteration</strong> 的原型；定理 3.5 的「$q^*\to$ 贪心」是后面所有控制算法（值迭代、策略迭代、Q-learning）的共同内核。</li>
+<li><strong>接到 3.5</strong>：最优策略由 $v^*$ 决定，而 $v^*$ 依赖 $r$、$\gamma$、系统模型——所以接下来讨论<strong>哪些因素会影响最优策略</strong>。</li>
+</ul>
+<hr>
+<h2 id="35-影响最优策略的因素">3.5 影响最优策略的因素<a hidden class="anchor" aria-hidden="true" href="#35-影响最优策略的因素">#</a></h2>
+<p><strong>要解决的问题</strong>：3.3 和 3.4 已经说明 BOE 能定义并求出最优策略。现在自然要问：<strong>最优策略到底会被哪些东西影响？</strong></p>
+<p>直接看 BOE 的逐元素形式：</p>
+$$ v(s)=\max_{\pi(s)\in\Pi(s)}\sum_{a\in\mathcal A}\pi(a|s) \left( \sum_{r\in\mathcal R}p(r|s,a)r +\gamma\sum_{s'\in\mathcal S}p(s'|s,a)v(s') \right). $$<p>能影响右边大小的东西主要有三个：</p>
+<ol>
+<li><strong>即时奖励 $r$</strong>：进入目标区给多少、进入禁止区罚多少、普通移动给多少；</li>
+<li><strong>折扣率 $\gamma$</strong>：未来奖励被看得多重；</li>
+<li><strong>系统模型 $p(s'|s,a),p(r|s,a)$</strong>：执行动作后会到哪里、会得到什么奖励。</li>
+</ol>
+<p>本节默认系统模型固定，主要讨论两件事：</p>
+<blockquote>
+<p><strong>改变 $\gamma$ 会怎样改变最优策略？改变奖励值又会怎样改变最优策略？</strong></p></blockquote>
+<h3 id="351-基准例子-时策略更远视">3.5.1 基准例子：$\gamma=0.9$ 时，策略更“远视”<a hidden class="anchor" aria-hidden="true" href="#351-基准例子-时策略更远视">#</a></h3>
+<p>原书图 3.4(a) 的奖励设置是：</p>
+$$r_{\text{boundary}}=r_{\text{forbidden}}=-1,\qquad r_{\text{target}}=1,\qquad r_{\text{other}}=0,$$<p>折扣率是</p>
+$$\gamma=0.9.$$<p><img alt="原书图 3.4(a)：基准例子，gamma=0.9" loading="lazy" src="/books/reinforcement-learning-math/images/06c5640d56e255e8c879f798dbb6626ad56e262dfe2bc11c2dc7259a07777927.jpg">
+<img alt="原书图 3.4(a) 对应的最优状态值" loading="lazy" src="/books/reinforcement-learning-math/images/7ae9943e1daf4f7634cd9bd4e99adc5204442972d88f47e577d923a0d9aab018.jpg"></p>
+<blockquote>
+<p><strong>原书图 3.4(a)</strong>：基准设置。禁止区和边界都是 $-1$，目标区 $+1$，普通移动 $0$，$\gamma=0.9$。</p></blockquote>
+<p>这个结果有个有意思的地方：智能体有时会<strong>穿过禁止区</strong>去目标区。直觉上禁止区有 $-1$ 惩罚，好像应该绕开；
+但如果绕路太远，虽然少吃一次 $-1$，却会把未来的 $+1$ 目标奖励推迟很多步。</p>
+<p>当 $\gamma=0.9$ 时，未来奖励衰减得慢，智能体比较“远视”。它会比较整条路径的累计折扣回报，而不是只看眼前是否踩到 $-1$。
+所以在某些起点，<strong>冒一点短期惩罚、换取更快到达目标</strong>，总回报反而更高。</p>
+<p>这正是 BOE 里的两项在拉扯：</p>
+$$ \underbrace{\sum_r p(r|s,a)r}_{\text{眼前奖励}} \quad+\quad \underbrace{\gamma\sum_{s'}p(s'|s,a)v(s')}_{\text{未来价值}}. $$<h3 id="352-折扣率变小策略更短视">3.5.2 折扣率变小：策略更“短视”<a hidden class="anchor" aria-hidden="true" href="#352-折扣率变小策略更短视">#</a></h3>
+<p>如果把折扣率从 $\gamma=0.9$ 改成 $\gamma=0.5$，其它奖励不变，最优策略会变成图 3.4(b)：</p>
+<p><img alt="原书图 3.4(b)：gamma=0.5 时的最优策略" loading="lazy" src="/books/reinforcement-learning-math/images/52b2b8792c8eca2f8305c0aa3728d6032a5a0747f85475d54a077e2fefdae16e.jpg">
+<img alt="原书图 3.4(b) 对应的最优状态值" loading="lazy" src="/books/reinforcement-learning-math/images/4bf981b7e44fff3f4781469037da61fea33cf938e6ca43975452cd0853473fe1.jpg"></p>
+<blockquote>
+<p><strong>原书图 3.4(b)</strong>：只把 $\gamma$ 改成 $0.5$。智能体更短视，更倾向于避开禁止区。</p></blockquote>
+<p>为什么？因为 $\gamma$ 小，未来价值这一项</p>
+$$\gamma\sum_{s'}p(s'|s,a)v(s')$$<p>被压得更低。远处目标区的好处变得“不值钱”，眼前踩禁止区的 $-1$ 惩罚相对更显眼。
+于是智能体不再愿意冒险穿过禁止区，而是宁愿绕远路。</p>
+<p>极端一点，如果</p>
+$$\gamma=0,$$<p>BOE 直接变成</p>
+$$v(s)=\max_{\pi(s)}\sum_a\pi(a|s)\sum_r p(r|s,a)r.$$<p>未来项完全消失。智能体只看<strong>下一步即时奖励</strong>，不再关心之后能不能到目标区。图 3.4(c) 就是这个效果：</p>
+<p><img alt="原书图 3.4(c)：gamma=0 时的最优策略" loading="lazy" src="/books/reinforcement-learning-math/images/4c5649da4591719b2cfd27bc99ddde49c8a7c78393c0ee5c2e1c42bd5e5c0255.jpg">
+<img alt="原书图 3.4(c) 对应的最优状态值" loading="lazy" src="/books/reinforcement-learning-math/images/3753999b70282f1a21e607fbed95c9b20ea53a8ab9ad0bbeca371c8b00bcb2b2.jpg"></p>
+<blockquote>
+<p><strong>原书图 3.4(c)</strong>：$\gamma=0$ 时，智能体极端短视，只选即时奖励最大的动作。</p></blockquote>
+<p>⚠️ <strong>一句话记住 $\gamma$ 的作用</strong>：</p>
+<ul>
+<li>$\gamma$ 大：未来重要，策略更远视，可能为了长期收益承受短期损失；</li>
+<li>$\gamma$ 小：未来不重要，策略更短视，更看重眼前奖励；</li>
+<li>$\gamma=0$：只看下一步即时奖励。</li>
+</ul>
+<p>还有一个现象：状态值通常会呈现“离目标越近越大、离目标越远越小”的空间分布。原因也很简单：
+离目标越远，奖励要经过更多步才拿到，折扣因子 $\gamma^k$ 会把它压小。</p>
+<h3 id="353-改变奖励值惩罚越重越会避开">3.5.3 改变奖励值：惩罚越重，越会避开<a hidden class="anchor" aria-hidden="true" href="#353-改变奖励值惩罚越重越会避开">#</a></h3>
+<p>如果希望智能体<strong>严格避开禁止区</strong>，可以把进入禁止区的惩罚加重。比如把</p>
+$$r_{\text{forbidden}}=-1$$<p>改成</p>
+$$r_{\text{forbidden}}=-10,$$<p>其它参数保持基准设置不变，最优策略就会变成图 3.4(d)，明显更倾向于绕开禁止区：</p>
+<p><img alt="原书图 3.4(d)：禁止区惩罚改为 -10" loading="lazy" src="/books/reinforcement-learning-math/images/1f5b5c3bdd9f4159109690749f2befab4efcd7fbf06b75f3877f02f273803d34.jpg">
+<img alt="原书图 3.4(d) 对应的最优状态值" loading="lazy" src="/books/reinforcement-learning-math/images/062ec18de03319120000fddcd1388da64d38300324d9c7cc6ec164676d394f72.jpg"></p>
+<blockquote>
+<p><strong>原书图 3.4(d)</strong>：把禁止区惩罚从 $-1$ 加重到 $-10$。禁止区太贵了，最优策略会绕开。</p></blockquote>
+<p>这件事也可以直接从 BOE 看出来：$r_{\text{forbidden}}$ 变得更负，会降低“进入禁止区”这个动作的</p>
+$$q(s,a)=\text{即时奖励}+\gamma\times\text{下一状态值}.$$<p>当这个动作的 $q$ 值不再最大，贪心策略自然就不会选它。</p>
+<h3 id="354-但不是所有奖励变换都会改变最优策略">3.5.4 但不是所有奖励变换都会改变最优策略<a hidden class="anchor" aria-hidden="true" href="#354-但不是所有奖励变换都会改变最优策略">#</a></h3>
+<p>有一个非常重要的事实：<strong>对所有奖励做同一个正比例缩放，或者给所有奖励都加同一个常数，不会改变最优策略。</strong></p>
+<p>更准确地说，如果把每个奖励都做仿射变换</p>
+$$r\longmapsto \alpha r+\beta,\qquad \alpha\gt 0,$$<p>那么最优状态值会变成</p>
+$$v'=\alpha v^*+\frac{\beta}{1-\gamma}\mathbf 1,\tag{3.8}$$<p>但最优策略不变。</p>
+<p>为什么策略不变？抓住两个直觉就够了。</p>
+<p><strong>第一，正比例缩放不改变大小关系。</strong> 比如原来两个动作值是 $10$ 和 $8$，都乘以 $2$ 后变成 $20$ 和 $16$，
+最大者仍然是原来的那个动作。</p>
+<p><strong>第二，所有动作都加同一个长期常数，也不改变大小关系。</strong> 式子里的</p>
+$$\frac{\beta}{1-\gamma}\mathbf 1$$<p>是给每个状态值都加同一个偏移量。用它算动作值时，每个动作的未来项也会多出同样的偏移，不会改变谁大谁小。</p>
+<p>所以，贪心选择</p>
+$$\arg\max_a q^*(s,a)$$<p>不会变，最优策略也就不会变。</p>
+<p>⚠️ <strong>注意 $\alpha\gt 0$ 很重要</strong>：如果 $\alpha\lt 0$，奖励大小关系会反过来，最大会变最小，策略当然可能改变。</p>
+<h3 id="355-定理-36奖励仿射变换不改变最优策略">3.5.5 定理 3.6：奖励仿射变换不改变最优策略<a hidden class="anchor" aria-hidden="true" href="#355-定理-36奖励仿射变换不改变最优策略">#</a></h3>
+<p><strong>定理 3.6（最优策略不变性）</strong>：若原 BOE 的唯一解是 $v^*$，把所有奖励从 $r$ 变成</p>
+$$\alpha r+\beta,\qquad \alpha\gt 0,$$<p>则新 BOE 的最优状态值为</p>
+$$v'=\alpha v^*+\frac{\beta}{1-\gamma}\mathbf 1,$$<p>并且由 $v'$ 贪心得到的最优策略，与由 $v^*$ 贪心得到的最优策略相同。</p>
+<p>推导 + 验证（Box 3.5，慢慢来）：</p>
+<p>原来的 BOE 是</p>
+$$v^*=\max_{\pi\in\Pi}(r_\pi+\gamma P_\pi v^*).$$<p>奖励变换</p>
+$$r\mapsto \alpha r+\beta$$<p>以后，对任意策略 $\pi$，即时奖励向量也跟着变：</p>
+$$r_\pi\mapsto \alpha r_\pi+\beta\mathbf1.$$<p>所以新的 BOE 是</p>
+$$v'=\max_{\pi\in\Pi}(\alpha r_\pi+\beta\mathbf1+\gamma P_\pi v').\tag{3.9}$$<p>现在问题是：新 BOE 的解 $v'$ 和旧解 $v^*$ 有什么关系？</p>
+<p>先从回报定义推导直觉。任意一条轨迹的原回报是</p>
+$$G=R_{t+1}+\gamma R_{t+2}+\gamma^2R_{t+3}+\cdots.$$<p>奖励变成 $R'=\alpha R+\beta$ 后，新回报是</p>
+$$ \begin{aligned} G' &=(\alpha R_{t+1}+\beta)+\gamma(\alpha R_{t+2}+\beta)+\gamma^2(\alpha R_{t+3}+\beta)+\cdots\\ &=\alpha(R_{t+1}+\gamma R_{t+2}+\gamma^2R_{t+3}+\cdots)+\beta(1+\gamma+\gamma^2+\cdots)\\ &=\alpha G+\frac{\beta}{1-\gamma}. \end{aligned} $$<p>对回报取期望，状态值也应满足同样的形式：</p>
+$$v'=\alpha v^*+\frac{\beta}{1-\gamma}\mathbf1$$<p>这个式子不是凭空来的，而是从“每条轨迹的回报如何变化”推出来的。向量里的 $\mathbf1$ 表示：
+每个状态都额外多了同一个常数 $\frac{\beta}{1-\gamma}$。</p>
+<ul>
+<li>$\alpha v^*$：奖励整体乘 $\alpha$，总回报也应整体乘 $\alpha$；</li>
+<li>$+\frac{\beta}{1-\gamma}\mathbf1$：每一步奖励都额外多 $\beta$，从任意状态出发都会额外得到
+$$\beta+\gamma\beta+\gamma^2\beta+\cdots=\frac{\beta}{1-\gamma}.$$</li>
+</ul>
+<p>接下来才是严格验证：这个推导出来的候选 $v'$ 是否真的满足新 BOE？</p>
+<p>为了让代数更清楚，先设</p>
+$$v'=\alpha v^*+c\mathbf1,$$<p>其中 $c$ 先当作未知常数，稍后由 BOE 解出来。把它代入新 BOE 右边：</p>
+$$ \max_{\pi\in\Pi}(\alpha r_\pi+\beta\mathbf1+\gamma P_\pi v') = \max_{\pi\in\Pi}(\alpha r_\pi+\beta\mathbf1+\gamma P_\pi(\alpha v^*+c\mathbf1)). $$<p>把矩阵乘法展开：</p>
+$$ = \max_{\pi\in\Pi}(\alpha r_\pi+\beta\mathbf1+\alpha\gamma P_\pi v^*+\gamma c P_\pi\mathbf1). $$<p>因为 $P_\pi$ 是转移矩阵，每一行都是概率分布，所以每一行加起来等于 1，因此</p>
+$$P_\pi\mathbf1=\mathbf1.$$<p>于是上式变成</p>
+$$ \max_{\pi\in\Pi}(\alpha r_\pi+\alpha\gamma P_\pi v^*+\beta\mathbf1+\gamma c\mathbf1). $$<p>其中 $\beta\mathbf1+\gamma c\mathbf1$ 与 $\pi$ 无关，可以从 $\max$ 里拿出来：</p>
+$$ = \max_{\pi\in\Pi}\alpha(r_\pi+\gamma P_\pi v^*)+\beta\mathbf1+\gamma c\mathbf1. $$<p>因为 $\alpha\gt 0$，乘以 $\alpha$ 不改变谁最大，所以</p>
+$$ \max_{\pi\in\Pi}\alpha(r_\pi+\gamma P_\pi v^*) = \alpha\max_{\pi\in\Pi}(r_\pi+\gamma P_\pi v^*). $$<p>而原 BOE 告诉我们</p>
+$$\max_{\pi\in\Pi}(r_\pi+\gamma P_\pi v^*)=v^*.$$<p>所以新 BOE 右边最终等于</p>
+$$\alpha v^*+\beta\mathbf1+\gamma c\mathbf1.$$<p>如果 $v'=\alpha v^*+c\mathbf1$ 真的是新 BOE 的解，就必须有</p>
+$$\alpha v^*+c\mathbf1=\alpha v^*+\beta\mathbf1+\gamma c\mathbf1.$$<p>两边减去 $\alpha v^*$：</p>
+$$c\mathbf1=\beta\mathbf1+\gamma c\mathbf1.$$<p>也就是</p>
+$$c=\beta+\gamma c.$$<p>移项：</p>
+$$c(1-\gamma)=\beta,$$<p>所以</p>
+$$c=\frac{\beta}{1-\gamma}.$$<p>于是</p>
+$$v'=\alpha v^*+\frac{\beta}{1-\gamma}\mathbf1.$$<p>这就推到了 (3.8)。</p>
+<p>最后解释为什么策略不变。对任意状态 $s$ 和动作 $a$，新奖励下的动作值满足</p>
+$$q'(s,a)=\alpha q^*(s,a)+\frac{\beta}{1-\gamma}.$$<p>也就是说，同一个状态下所有动作的 $q$ 值都被“乘以正数 $\alpha$，再加同一个常数”。因此动作之间的大小关系不变：</p>
+$$\arg\max_a q'(s,a)=\arg\max_a q^*(s,a).$$<p>所以由 $v'$ 贪心得到的最优策略，和由 $v^*$ 贪心得到的最优策略相同。</p>
+<h3 id="356-常见误解必须给每一步加负奖励才能避免绕路吗">3.5.6 常见误解：必须给每一步加负奖励，才能避免绕路吗？<a hidden class="anchor" aria-hidden="true" href="#356-常见误解必须给每一步加负奖励才能避免绕路吗">#</a></h3>
+<p>不一定。原书专门讨论了这个误解：</p>
+<blockquote>
+<p>如果普通移动奖励 $r_{\text{other}}=0$，智能体会不会故意绕路？是不是必须给每一步都加一个负奖励，才会鼓励它尽快到目标？</p></blockquote>
+<p>答案是：<strong>通常不用。折扣率本身已经会惩罚绕路。</strong></p>
+<p>看图 3.5：</p>
+<p><img alt="原书图 3.5(a)：较短路径的最优策略" loading="lazy" src="/books/reinforcement-learning-math/images/11b0ceea4265451c5f69f728f153ddea2d844b37e3ff41a33e09b5b50edf37d3.jpg">
+<img alt="原书图 3.5(b)：绕路策略" loading="lazy" src="/books/reinforcement-learning-math/images/a3fedf3191e2b8a7eb8f057570ae42d045f27c5eb4f18ada0cf19bfd43b5606c.jpg"></p>
+<blockquote>
+<p><strong>原书图 3.5</strong>：两条路径都没有普通移动惩罚，但绕路会更晚拿到目标奖励，因此折扣回报更低。</p></blockquote>
+<p>假设 $\gamma=0.9$。短路径从 $s_2$ 到 $s_4$，马上到目标，回报是</p>
+$$1+\gamma+\gamma^2+\cdots=\frac{1}{1-\gamma}=10.$$<p>绕路路径是</p>
+$$s_2\to s_1\to s_3\to s_4,$$<p>前两步没有目标奖励，到第 3 步才开始拿 $+1$，所以回报是</p>
+$$ 0+\gamma\cdot0+\gamma^2\cdot1+\gamma^3\cdot1+\cdots =\frac{\gamma^2}{1-\gamma} =\frac{0.81}{0.1} =8.1. $$<p>短路径 $10$，绕路 $8.1$，所以最优策略不会无意义绕路。</p>
+<p>⚠️ <strong>关键点</strong>：即使普通移动不给负奖励，晚拿到目标奖励也会因为折扣而变差。折扣率天然鼓励“早点拿到好奖励”。</p>
+<p>那给每一步都加一个 $-1$ 行不行？行，但它不一定改变最优策略。因为“给所有奖励都加同一个常数”是仿射变换</p>
+$$r\mapsto r-1,$$<p>按定理 3.6，在 $\gamma\in(0,1)$ 的折扣设定下不会改变最优策略。它会改变状态值的数值大小，但不改变哪个动作最优。</p>
+<h3 id="35-小结">3.5 小结<a hidden class="anchor" aria-hidden="true" href="#35-小结">#</a></h3>
+<ul>
+<li>最优策略由 BOE 决定，所以会受 <strong>即时奖励 $r$、折扣率 $\gamma$、系统模型 $p$</strong> 影响。</li>
+<li>$\gamma$ 越大，策略越远视；$\gamma$ 越小，策略越短视；$\gamma=0$ 时只看一步即时奖励。</li>
+<li>加重某个特定事件的惩罚（例如把禁止区从 $-1$ 改为 $-10$）会改变相关动作的 $q$ 值，可能改变最优策略。</li>
+<li>但对<strong>所有奖励</strong>做 $r\mapsto\alpha r+\beta,\ \alpha\gt 0$ 的统一仿射变换，不改变最优策略，只会把 $v^*$ 变成
+$$v'=\alpha v^*+\frac{\beta}{1-\gamma}\mathbf 1.$$</li>
+<li>不必迷信“每一步必须加负奖励才会走最短路”。折扣率已经会让晚到目标的路径回报变小。</li>
+</ul>
+<hr>
+<h2 id="36-本章总结">3.6 本章总结<a hidden class="anchor" aria-hidden="true" href="#36-本章总结">#</a></h2>
+<p>第 3 章的核心概念只有两个：<strong>最优策略（optimal policy）</strong> 和 <strong>最优状态值（optimal state value）</strong>。</p>
+<p>最优策略的定义来自状态值比较：</p>
+$$v_{\pi^*}(s)\ge v_\pi(s),\quad \forall s\in\mathcal S,\ \forall \pi.$$<p>也就是说，$\pi^*$ 必须在每一个状态上都不输给任何其它策略。这个定义很强，所以我们不能只凭直觉说“最优策略存在”；
+必须有数学工具证明它存在、说明它怎么求。</p>
+<p>这个工具就是 <strong>贝尔曼最优方程（BOE）</strong>：</p>
+$$v=\max_{\pi\in\Pi}(r_\pi+\gamma P_\pi v).$$<p>这就是本章最重要的桥：</p>
+<blockquote>
+<p><strong>3.2 的“最优”是一个比较型定义；3.3–3.4 把它变成了一个可求解的方程。</strong></p></blockquote>
+<p>BOE 之所以值得单独研究，是因为它同时回答了四个问题：</p>
+<ul>
+<li><strong>存在性</strong>：BOE 的状态值解存在；</li>
+<li><strong>唯一性</strong>：最优状态值 $v^*$ 唯一；</li>
+<li><strong>算法</strong>：可以用迭代
+$$v_{k+1}=f(v_k),\qquad f(v)=\max_{\pi\in\Pi}(r_\pi+\gamma P_\pi v)$$
+从任意初值收敛到 $v^*$；</li>
+<li><strong>最优性</strong>：BOE 的解确实对应 3.2 定义的最优状态值；对 $v^*$ 贪心得到的策略就是最优策略。</li>
+</ul>
+<p>背后的关键数学事实是：</p>
+$$f(v)=\max_{\pi\in\Pi}(r_\pi+\gamma P_\pi v)$$<p>是一个压缩映射：</p>
+$$\|f(v_1)-f(v_2)\|_\infty\le\gamma\|v_1-v_2\|_\infty.$$<p>所以压缩映射定理可以直接套上来，保证不动点存在、唯一，并且迭代收敛。</p>
+<h3 id="本章逻辑闭环">本章逻辑闭环<a hidden class="anchor" aria-hidden="true" href="#本章逻辑闭环">#</a></h3>
+<p>可以把第 3 章压缩成这条链：</p>
+<ol>
+<li><strong>3.1</strong>：用动作值 $q_\pi(s,a)$ 改进策略，直觉是“选更大的动作值”。</li>
+<li><strong>3.2</strong>：定义什么叫最优策略：状态值在所有状态上都不输给任何策略。</li>
+<li><strong>3.3</strong>：写出 BOE，并证明 BOE 右边是压缩映射，所以 $v=f(v)$ 有唯一解且可迭代求。</li>
+<li><strong>3.4</strong>：证明 BOE 的唯一解就是最优状态值 $v^*$，并且对 $v^*$ 贪心得到最优策略。</li>
+<li><strong>3.5</strong>：用 BOE 分析哪些因素会影响最优策略：奖励、折扣率、系统模型。</li>
+</ol>
+<h3 id="最后要记住的三句话">最后要记住的三句话<a hidden class="anchor" aria-hidden="true" href="#最后要记住的三句话">#</a></h3>
+<p><strong>第一句</strong>：最优状态值唯一，最优策略不一定唯一。</p>
+<p>因为多个动作可能并列达到最大 $q^*$，选哪一个都最优；甚至也可以在这些并列动作之间随机。</p>
+<p><strong>第二句</strong>：总存在确定性最优策略。</p>
+<p>因为 $\sum_a\pi(a|s)q^*(s,a)$ 是动作值的加权平均，加权平均不会超过最大值；把全部概率压到最大动作上就能取到最大。</p>
+<p><strong>第三句</strong>：第 4 章的值迭代不是凭空发明的。</p>
+<p>定理 3.3 已经给出了迭代：</p>
+$$v_{k+1}=f(v_k).$$<p>这就是第 4 章 <strong>value iteration（值迭代）</strong> 的数学原型。第 3 章证明它为什么应该收敛，第 4 章会把它变成具体算法。</p>
+<hr>
+<h2 id="要点速记">要点速记<a hidden class="anchor" aria-hidden="true" href="#要点速记">#</a></h2>
+<ul>
+<li><strong>3.1 的核心</strong>：先用贝尔曼方程评价当前策略，再用动作值 $q_\pi(s,a)$ 找更好的动作；在例子里，$s_1$ 处最大动作值是 $a_3$，所以把策略从向右改成向下。</li>
+<li><strong>策略改进的基本套路</strong>：policy evaluation（算 $v_\pi$）→ 计算 $q_\pi$ → policy improvement（选最大 $q_\pi$ 的动作）。</li>
+<li><strong>3.2 的核心定义</strong>：最优策略 $\pi^*$ 要满足 $v_{\pi^*}(s)\ge v_\pi(s)$，对所有状态、所有策略都成立。</li>
+<li>⚠️ <strong>策略比较是偏序</strong>：两个策略可能在不同状态各有优势，所以最优策略是否存在需要证明。</li>
+<li><strong>BOE = 普通贝尔曼方程 + 外层最大化</strong>：
+$$v(s)=\max_{\pi(s)}\sum_a\pi(a|s)q(s,a).$$</li>
+<li><strong>右边最大化的本质</strong>：概率加权平均 $\le$ 最大值，所以最优做法是在每个状态选择 $q(s,a)$ 最大的动作。</li>
+<li><strong>最优策略不一定唯一，但总存在确定性最优策略</strong>：如果多个动作并列最大，可以任选一个，也可以随机。</li>
+<li>⚠️ <strong>BOE 是非线性方程</strong>：因为 $\max$ 使得贪心策略随 $v$ 改变，所以不能像普通贝尔曼方程那样矩阵求逆。</li>
+<li><strong>把 BOE 写成不动点方程</strong>：
+$$v=f(v),\qquad f(v)=\max_{\pi\in\Pi}(r_\pi+\gamma P_\pi v).$$</li>
+<li><strong>压缩映射定理</strong>：若 $f$ 会把任意两点距离缩小到 $\gamma\lt 1$ 倍以内，则 $v=f(v)$ 有唯一不动点，且迭代 $v_{k+1}=f(v_k)$ 从任意初值收敛。</li>
+<li><strong>BOE 的 $f$ 是压缩映射</strong>：
+$$\|f(v_1)-f(v_2)\|_\infty\le\gamma\|v_1-v_2\|_\infty.$$
+证明关键是 $P_\pi$ 每一行都是概率分布，概率加权平均不超过最大分量。</li>
+<li><strong>3.3 + 3.4 闭环</strong>：3.3 证明 BOE 的状态值解存在、唯一、可迭代求；3.4 证明这个解就是最优状态值，且对 $v^*$ 贪心得到最优策略。</li>
+<li><strong>3.5 的核心</strong>：最优策略由 BOE 决定，因此受奖励 $r$、折扣率 $\gamma$、系统模型 $p$ 影响。</li>
+<li><strong>折扣率影响远视程度</strong>：$\gamma$ 大更看重未来，策略更远视；$\gamma$ 小更看重眼前，策略更短视；$\gamma=0$ 只看一步即时奖励。</li>
+<li><strong>奖励设计影响动作偏好</strong>：把某类坏事件惩罚加重（如禁止区 $-1\to-10$）会降低相关动作的 $q$ 值，可能改变最优策略。</li>
+<li><strong>奖励仿射变换不改变最优策略</strong>：若所有奖励统一变成 $\alpha r+\beta,\ \alpha\gt 0$，则
+$$v'=\alpha v^*+\frac{\beta}{1-\gamma}\mathbf1,$$
+但贪心动作的相对大小不变，所以最优策略不变。</li>
+<li><strong>折扣率会自动惩罚绕路</strong>：即使普通移动奖励为 0，晚到目标也会让目标奖励多乘几次 $\gamma$，回报更低。</li>
+</ul>
+<h2 id="37-qa">3.7 Q&amp;A<a hidden class="anchor" aria-hidden="true" href="#37-qa">#</a></h2>
+<p><strong>Q：最优策略的定义是什么？</strong><br>
+如果一个策略 $\pi^*$ 的状态值在所有状态上都不低于任意其它策略：</p>
+$$v_{\pi^*}(s)\ge v_\pi(s),\quad \forall s\in\mathcal S,\ \forall \pi,$$<p>那么 $\pi^*$ 就是最优策略。注意这个定义主要适用于表格型强化学习；到函数近似场景，后面章节会用其它指标定义“最优”。</p>
+<p><strong>Q：为什么 BOE 重要？</strong><br>
+因为 BOE 同时刻画了最优状态值和最优策略。解出 BOE 的唯一状态值解 $v^*$，再对 $v^*$ 做贪心，就能得到最优策略。</p>
+<p><strong>Q：BOE 是贝尔曼方程吗？</strong><br>
+是。普通贝尔曼方程是“给定策略 $\pi$ 的贝尔曼方程”；BOE 是“最优策略对应的贝尔曼方程”，只是多了外层最大化。</p>
+<p><strong>Q：BOE 的解唯一吗？</strong><br>
+要分清两个未知量：</p>
+<ul>
+<li><strong>状态值解 $v^*$ 唯一</strong>；</li>
+<li><strong>策略解 $\pi^*$ 不一定唯一</strong>。</li>
+</ul>
+<p>原因是：某些状态下可能有多个动作并列达到最大 $q^*$，选哪个都能得到同一个 $v^*$。</p>
+<p><strong>Q：BOE 里“第二个未知数 $\pi$ ”到底在哪里？</strong><br>
+它藏在 $\max_{\pi(s)}$ 下面。普通贝尔曼方程里的 $\pi$ 是给定策略；BOE 里的 $\max_{\pi(s)}$ 表示“要从所有可能策略里挑一个，让右边最大”。这个被挑出来的策略就是未知数。</p>
+<p><strong>Q：分析 BOE 的关键性质是什么？</strong><br>
+关键是 BOE 右边</p>
+$$f(v)=\max_{\pi\in\Pi}(r_\pi+\gamma P_\pi v)$$<p>是压缩映射：</p>
+$$\|f(v_1)-f(v_2)\|_\infty\le\gamma\|v_1-v_2\|_\infty.$$<p>因此可以用压缩映射定理证明 $v=f(v)$ 的不动点存在、唯一，并且迭代收敛。</p>
+<p><strong>Q：最优策略一定存在吗？</strong><br>
+存在。3.3 证明 BOE 的唯一状态值解 $v^*$ 存在；3.4 证明对 $v^*$ 贪心得到的策略就是最优策略。</p>
+<p><strong>Q：最优策略唯一吗？</strong><br>
+不一定。最优状态值唯一，但最优策略可以有多个，甚至无限多个。只要不同策略都能达到同一个 $v^*$，它们就都最优。</p>
+<p><strong>Q：最优策略一定是确定性的吗？还是可以随机？</strong><br>
+最优策略可以是确定性的，也可以是随机的。好消息是：<strong>一定存在确定性最优策略</strong>。因为在每个状态，动作值加权平均不会超过最大动作值；把全部概率压到最大动作上就能取到最大。</p>
+<p><strong>Q：为什么最大化 $\sum_a\pi(a|s)q(s,a)$ 会得到确定性策略？</strong><br>
+因为 $\pi(a|s)$ 是一组非负且和为 1 的权重。加权平均永远不超过最大 $q$ 值；要取到最大值，把全部概率放在最大 $q$ 的动作上即可。</p>
+<p><strong>Q：怎样求一个最优策略？</strong><br>
+先求 BOE 的最优状态值 $v^*$，再对 $v^*$ 贪心：</p>
+$$a^*(s)=\arg\max_a q^*(s,a).$$<p>求 $v^*$ 的迭代式是</p>
+$$v_{k+1}=f(v_k),$$<p>这就是第 4 章值迭代算法的原型。</p>
+<p><strong>Q：如果降低折扣率 $\gamma$，最优策略会怎样？</strong><br>
+通常会更短视。$\gamma$ 越小，未来奖励权重越低，智能体越倾向于避免眼前风险，即使远处可能有更大的累计收益。</p>
+<p><strong>Q：如果 $\gamma=0$ 会怎样？</strong><br>
+智能体完全不看未来，只选择即时奖励最大的动作。哪怕这个动作长期来看不好，它也看不到后果。</p>
+<p><strong>Q：把所有奖励都加同一个常数，最优状态值和最优策略会怎样？</strong><br>
+这是奖励仿射变换 $r\mapsto r+\beta$。最优状态值会改变：</p>
+$$v'=v^*+\frac{\beta}{1-\gamma}\mathbf1,$$<p>但最优策略不变。因为所有动作值都加了同一个常数，大小关系没有变。</p>
+<p><strong>Q：把所有奖励都乘同一个正数呢？</strong><br>
+如果 $r\mapsto\alpha r,\ \alpha\gt 0$，最优状态值变成 $\alpha v^*$，最优策略不变。因为正比例缩放不会改变动作值的大小关系。</p>
+<p><strong>Q：普通移动奖励是 0，会不会导致智能体绕路？</strong><br>
+通常不会。即使普通移动没有负奖励，晚到目标也会让目标奖励多乘几次 $\gamma$，折扣回报变小。所以折扣率本身就会惩罚无意义绕路。</p>
+<p><strong>Q：那是不是必须给每一步加负奖励，才能让智能体尽快到目标？</strong><br>
+不是。给每一步都加同一个负奖励，本质上是给所有奖励做同一个平移；按定理 3.6，它不改变最优策略。真正让绕路变差的是折扣率：路径越长，好奖励越晚到，折扣回报越低。</p>
+
+
+    </div>
+  </div>
+<div class="post-meme-tail">
+  <button class="post-meme-trigger" type="button" aria-label="触发表情彩蛋">
+    <img src="/images/memes/wave-fast.gif" alt="" loading="lazy">
+  </button>
+</div>
+
+<style>
+.like-pop{position:fixed;pointer-events:none;z-index:1000;width:50px;animation:likeFloat .8s ease-out forwards}
+@keyframes likeFloat{0%{opacity:1;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(var(--dx),-80px) scale(1.4)}}
+</style>
+<script>
+var memeMode=false;
+function spawnPop(src,x,y){
+  var pop=document.createElement('img');
+  pop.src=src;
+  pop.className='like-pop';
+  pop.style.left=(x-25)+'px';
+  pop.style.top=(y-25)+'px';
+  document.body.appendChild(pop);
+  setTimeout(function(){pop.remove()},800);
+}
+document.addEventListener('DOMContentLoaded',function(){
+  document.querySelectorAll('.post-meme-trigger').forEach(function(trigger){
+    trigger.addEventListener('click',function(e){
+      e.stopPropagation();
+      memeMode=!memeMode;
+      trigger.setAttribute('aria-pressed',memeMode?'true':'false');
+      trigger.classList.toggle('active',memeMode);
+    });
+  });
+
+  document.addEventListener('click',function(e){
+    if(!memeMode){return;}
+    if(e.target.closest('a,button,input,textarea,select,label,summary,iframe,.giscus,.post-meme-tail')){return;}
+    spawnPop('/images/like.jpg',e.clientX,e.clientY);
+    var mirrorX=window.innerWidth-e.clientX;
+    setTimeout(function(){spawnPop('/images/like2.jpg',mirrorX,e.clientY);},200);
+  });
+});
+</script>
+
+<script src="https://giscus.app/client.js"
+        data-repo="qshf/qshf.github.io"
+        data-repo-id="R_kgDOOF9BTA"
+        data-category="Announcements"
+        data-category-id="DIC_kwDOOF9BTM4C8uBn"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="0"
+        data-emit-metadata="0"
+        data-input-position="bottom"
+        data-theme="preferred_color_scheme"
+        data-lang="zh-CN"
+        crossorigin="anonymous"
+        async>
+</script>
+
+
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="http://localhost:1313/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/">强化学习</a></li>
+      <li><a href="http://localhost:1313/tags/%E6%95%B0%E5%AD%A6%E5%8E%9F%E7%90%86/">数学原理</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="prev" href="http://localhost:1313/books/reinforcement-learning-math/summary/03_pitfalls-symbols/">
+    <span class="title">« Prev</span>
+    <span>03 · 易错点与统一符号表</span>
+  </a>
+  <a class="next" href="http://localhost:1313/books/reinforcement-learning-math/summary/04_review-questions/">
+    <span class="title">Next »</span>
+    <span>04 · 二刷问题清单（主动回忆）</span>
+  </a>
+</nav>
+
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2026 <a href="http://localhost:1313/">撒手 &gt;_O </a></span> · 
+
+    
+    
+    <span>
+        Powered by
+        <a href="https://gohugo.io/?utm_source=papermod" rel="noopener" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" id="top-link" class="top-link hidden" aria-label="go to top" title="Go to Top (Alt + G)" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevrons-up">
+        <polyline points="17 11 12 6 7 11"></polyline>
+        <polyline points="17 18 12 13 7 18"></polyline>
+    </svg>
+</a>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.querySelector('.post-content') || document.body, {
+    delimiters: [
+      {left:'$$', right:'$$', display:true},
+      {left:'\\\\[', right:'\\\\]', display:true},
+      {left:'\\\\(', right:'\\\\)', display:false},
+      {left:'$', right:'$', display:false}
+    ],
+    ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+    throwOnError: false,
+    strict: 'warn'
+  })">
+</script>
+
+
+
+<script type="module">
+import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('pre > code.language-mermaid').forEach(function (code) {
+    var diagram = document.createElement('div');
+    diagram.className = 'mermaid';
+    diagram.textContent = code.textContent;
+    code.parentElement.replaceWith(diagram);
+  });
+
+  mermaid.initialize({
+    startOnLoad: false,
+    securityLevel: 'loose',
+    theme: document.documentElement.dataset.theme === 'dark' ? 'dark' : 'default'
+  });
+  mermaid.run({ querySelector: '.mermaid' });
+});
+</script>
+
+
+
+<script>
+    let menu = document.getElementById('menu');
+    if (menu) {
+        
+        const scrollPosition = localStorage.getItem("menu-scroll-position");
+        if (scrollPosition) {
+            menu.scrollLeft = parseInt(scrollPosition, 10);
+        }
+        
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var toplink = document.getElementById("top-link");
+    window.onscroll = function () {
+        const scrollThreshold = window.innerHeight;
+        if (document.body.scrollTop > scrollThreshold || document.documentElement.scrollTop > scrollThreshold) {
+            toplink.classList.remove("hidden");
+        } else {
+            toplink.classList.add("hidden");
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        const html = document.querySelector("html");
+        if (html.dataset.theme === "dark") {
+            html.dataset.theme = 'light';
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            html.dataset.theme = 'dark';
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

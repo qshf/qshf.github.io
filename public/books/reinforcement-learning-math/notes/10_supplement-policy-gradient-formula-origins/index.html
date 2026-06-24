@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto" data-theme="auto">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="noindex, nofollow">
+<title>补充：随机策略梯度与确定性策略梯度公式来源 | 撒手 &gt;_O </title>
+<meta name="keywords" content="强化学习, 数学原理">
+<meta name="description" content="《强化学习的数学原理》学习笔记">
+<meta name="author" content="qshf">
+<link rel="canonical" href="http://localhost:1313/books/reinforcement-learning-math/notes/10_supplement-policy-gradient-formula-origins/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.ac9d367ca23e95d58bd22c4cec025f14e1ceb180140a759f9ff38ae3d70d961d.css" integrity="sha256-rJ02fKI&#43;ldWL0ixM7AJfFOHOsYAUCnWfn/OK49cNlh0=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/books/reinforcement-learning-math/notes/10_supplement-policy-gradient-formula-origins/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+                color-scheme: dark;
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .toc {
+                background: var(--entry);
+            }
+        }
+
+    </style>
+</noscript>
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.querySelector("html").dataset.theme = 'dark';
+    } else if (localStorage.getItem("pref-theme") === "light") {
+       document.querySelector("html").dataset.theme = 'light';
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.querySelector("html").dataset.theme = 'dark';
+    } else {
+        document.querySelector("html").dataset.theme = 'light';
+    }
+
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var tocLinks = document.querySelectorAll('.papers-toc a, .toc-sidebar a');
+  if (!tocLinks.length) return;
+
+  var headings = Array.from(tocLinks).map(function (a) {
+    var id = decodeURIComponent(a.getAttribute('href').slice(1));
+    return document.getElementById(id);
+  }).filter(Boolean);
+
+  function onScroll() {
+    var scrollY = window.scrollY + 80;
+    var current = headings[0];
+    for (var i = 0; i < headings.length; i++) {
+      if (headings[i].offsetTop <= scrollY) current = headings[i];
+    }
+    tocLinks.forEach(function (a) { a.classList.remove('active'); });
+    var activeLink = document.querySelector('.papers-toc a[href="#' + CSS.escape(current.id) + '"], .toc-sidebar a[href="#' + CSS.escape(current.id) + '"]');
+    if (activeLink) activeLink.classList.add('active');
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+});
+</script>
+
+
+</head>
+<body id="top">
+    <header class="header">
+    <nav class="header-nav">
+        <div class="logo">
+            <a href="http://localhost:1313/" accesskey="h" title="撒手 &gt;_O  (Alt + H)">撒手 &gt;_O </a>
+            <div class="logo-switches">
+                <button id="theme-toggle" class="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu" class="menu">
+            <li>
+                <a href="http://localhost:1313/papers/" title="论文笔记">
+                    <span>论文笔记</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/books/" title="书籍笔记">
+                    <span>书籍笔记</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/life/" title="生活">
+                    <span>生活</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <nav class="breadcrumbs" role="navigation" aria-label="Breadcrumb">
+            <a href="/">Home</a>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+            <a href="/books/">书籍笔记</a>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+            <a href="/books/reinforcement-learning-math/">强化学习的数学原理</a>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+            <a href="/books/reinforcement-learning-math/notes/">章笔记与补充</a>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+        <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+</nav>
+    <h1 class="post-title entry-hint-parent">
+      补充：随机策略梯度与确定性策略梯度公式来源
+    </h1>
+    <div class="post-description">《强化学习的数学原理》学习笔记</div>
+    <div class="post-meta">
+
+<span>3 min</span>&nbsp;·&nbsp;<span>qshf</span>
+
+</div>
+  </header> 
+  <div class="post-with-toc">
+    <aside class="toc-sidebar"><details class="toc" >
+    <summary accesskey="c" title="(Alt + C)">
+        <span class="title">Table of Contents</span>
+    </summary>
+
+    <div class="inner"><ul>
+            <li>
+                <a href="#0-%e7%bb%9f%e4%b8%80%e8%ae%b0%e5%8f%b7" aria-label="0. 统一记号">0. 统一记号</a></li>
+            <li>
+                <a href="#1-%e9%9a%8f%e6%9c%ba%e7%ad%96%e7%95%a5%e6%a2%af%e5%ba%a6%e5%85%ac%e5%bc%8f%e4%bb%8e%e5%93%aa%e9%87%8c%e6%9d%a5" aria-label="1. 随机策略梯度公式从哪里来？">1. 随机策略梯度公式从哪里来？</a></li>
+            <li>
+                <a href="#2-%e4%b8%ba%e4%bb%80%e4%b9%88%e7%a1%ae%e5%ae%9a%e6%80%a7%e7%ad%96%e7%95%a5%e4%b8%8d%e8%83%bd%e7%9b%b4%e6%8e%a5%e4%bb%a3%e5%85%a5-" aria-label="2. 为什么确定性策略不能直接代入 $a=\mu_\theta(s)$？">2. 为什么确定性策略不能直接代入 $a=\mu_\theta(s)$？</a></li>
+            <li>
+                <a href="#3-%e7%a1%ae%e5%ae%9a%e6%80%a7%e7%ad%96%e7%95%a5%e7%9a%84%e6%b1%82%e5%af%bc%e8%b7%af%e5%be%84" aria-label="3. 确定性策略的求导路径">3. 确定性策略的求导路径</a></li>
+            <li>
+                <a href="#4-%e7%ac%ac%e4%b8%80%e9%a1%b9%e6%80%8e%e4%b9%88%e5%a4%84%e7%90%86bellman-%e5%b1%95%e5%bc%80" aria-label="4. 第一项怎么处理：Bellman 展开">4. 第一项怎么处理：Bellman 展开</a></li>
+            <li>
+                <a href="#5-%e5%b1%95%e5%bc%80%e9%80%92%e5%bd%92%e5%be%97%e5%88%b0-lemma-101" aria-label="5. 展开递归，得到 Lemma 10.1">5. 展开递归，得到 Lemma 10.1</a></li>
+            <li>
+                <a href="#6-%e4%bb%8e-lemma-%e5%88%b0-deterministic-policy-gradient-theorem" aria-label="6. 从 Lemma 到 deterministic policy gradient theorem">6. 从 Lemma 到 deterministic policy gradient theorem</a></li>
+            <li>
+                <a href="#7-%e6%9c%80%e5%90%8e%e5%af%b9%e6%af%94" aria-label="7. 最后对比">7. 最后对比</a>
+            </li>
+        </ul>
+    </div>
+</details>
+
+    </aside>
+
+    <div class="post-content md-content"><blockquote>
+<p>对应第 10 章 10.4。本文只解释两件事：</p>
+<ol>
+<li>随机策略梯度里的期望公式从哪里来。</li>
+<li>确定性策略梯度为什么是“动作梯度乘 critic 对动作的梯度”。</li>
+</ol></blockquote>
+<h2 id="0-统一记号">0. 统一记号<a hidden class="anchor" aria-hidden="true" href="#0-统一记号">#</a></h2>
+<p>为了避免价值函数记号来回切换，这里统一用下标 $\theta$ 表示“当前参数诱导出的策略”。</p>
+<table>
+  <thead>
+      <tr>
+          <th>场景</th>
+          <th>策略</th>
+          <th>价值函数记号</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>随机策略</td>
+          <td>$\pi_\theta(a\mid s)$</td>
+          <td>$q_\theta(s,a)=q_{\pi_\theta}(s,a)$</td>
+      </tr>
+      <tr>
+          <td>确定性策略</td>
+          <td>$a=\mu_\theta(s)$</td>
+          <td>$q_\theta(s,a)=q_{\mu_\theta}(s,a)$</td>
+      </tr>
+  </tbody>
+</table>
+<p>也就是说，$q_\theta(s,a)$ 不是一个固定函数。它表示“从 $(s,a)$ 出发，之后继续执行当前策略参数 $\theta$ 时的长期价值”。因此 $q_\theta$ 本身依赖 $\theta$。</p>
+<hr>
+<h2 id="1-随机策略梯度公式从哪里来">1. 随机策略梯度公式从哪里来？<a hidden class="anchor" aria-hidden="true" href="#1-随机策略梯度公式从哪里来">#</a></h2>
+<p>第 9 章 policy gradient theorem 的动作层求和形式是：</p>
+$$ \nabla_\theta J(\theta) = \sum_s\eta(s)\sum_a \nabla_\theta\pi_\theta(a\mid s)q_\theta(s,a). \tag{1} $$<p>这里 $\eta(s)$ 是状态分布。它具体是 $\rho_\theta$ 还是 $d_\theta$，不影响下面的动作层转换。</p>
+<p>关键一步是 log-trick：</p>
+$$ \nabla_\theta\pi_\theta(a\mid s) = \pi_\theta(a\mid s)\nabla_\theta\ln\pi_\theta(a\mid s). \tag{2} $$<p>把 (2) 代入 (1)：</p>
+$$ \begin{aligned} \nabla_\theta J(\theta) &= \sum_s\eta(s)\sum_a \pi_\theta(a\mid s) \nabla_\theta\ln\pi_\theta(a\mid s)q_\theta(s,a). \end{aligned} $$<p>这正是期望形式。因为如果</p>
+$$ s\sim\eta,\qquad a\sim\pi_\theta(\cdot\mid s), $$<p>则：</p>
+$$ \boxed{ \nabla_\theta J(\theta) = \mathbb E_{s\sim\eta,\ a\sim\pi_\theta} \left[ \nabla_\theta\ln\pi_\theta(a\mid s)q_\theta(s,a) \right]. } \tag{3} $$<p>所以随机策略公式的来源可以压缩成：</p>
+$$ \boxed{ \nabla_\theta\pi_\theta \xrightarrow{\text{log-trick}} \pi_\theta\nabla_\theta\ln\pi_\theta \xrightarrow{\text{写成采样期望}} \mathbb E_{s,a}[\nabla_\theta\ln\pi_\theta(a\mid s)q_\theta(s,a)] } $$<hr>
+<h2 id="2-为什么确定性策略不能直接代入-">2. 为什么确定性策略不能直接代入 $a=\mu_\theta(s)$？<a hidden class="anchor" aria-hidden="true" href="#2-为什么确定性策略不能直接代入-">#</a></h2>
+<p>随机策略里，参数 $\theta$ 改的是动作概率：</p>
+$$ \pi_\theta(a\mid s). $$<p>所以梯度工具是：</p>
+$$ \nabla_\theta\ln\pi_\theta(a\mid s). $$<p>确定性策略里，参数 $\theta$ 改的是动作本身：</p>
+$$ a=\mu_\theta(s). $$<p>它没有 $\ln\pi_\theta(a\mid s)$ 这个概率项。因此 deterministic policy gradient 不是把 (3) 里的 $a$ 直接替换成 $\mu_\theta(s)$，而是从确定性策略自己的价值关系开始。</p>
+<hr>
+<h2 id="3-确定性策略的求导路径">3. 确定性策略的求导路径<a hidden class="anchor" aria-hidden="true" href="#3-确定性策略的求导路径">#</a></h2>
+<p>确定性策略下：</p>
+$$ v_\theta(s)=q_\theta(s,\mu_\theta(s)). \tag{4} $$<p>为看清楚求导路径，把它想成：</p>
+$$ v_\theta(s)=q_\theta(s,a)\big|_{a=\mu_\theta(s)}. $$<p>依赖树是：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">theta
+</span></span><span class="line"><span class="cl">├─ changes q_theta(s, a) itself
+</span></span><span class="line"><span class="cl">│  └─ gives (∇_theta q_theta(s,a)) |_{a=mu_theta(s)}
+</span></span><span class="line"><span class="cl">└─ changes current action a = mu_theta(s)
+</span></span><span class="line"><span class="cl">   └─ then changes q_theta(s,a)
+</span></span><span class="line"><span class="cl">      └─ gives ∇_theta mu_theta(s) · (∇_a q_theta(s,a)) |_{a=mu_theta(s)}
+</span></span></code></pre></div><p>所以链式法则给出：</p>
+$$ \nabla_\theta v_\theta(s) = \left(\nabla_\theta q_\theta(s,a)\right)\big|_{a=\mu_\theta(s)} + \nabla_\theta\mu_\theta(s)\cdot \left(\nabla_a q_\theta(s,a)\right)\big|_{a=\mu_\theta(s)}. \tag{5} $$<p>第二项是相乘。若 $a\in\mathbb R^d,\theta\in\mathbb R^m$，可以按列向量约定理解为：</p>
+$$ \nabla_\theta\mu_\theta(s)\in\mathbb R^{m\times d}, \qquad \nabla_a q_\theta(s,a)\in\mathbb R^d, $$<p>所以：</p>
+$$ \nabla_\theta\mu_\theta(s)\cdot\nabla_a q_\theta(s,a)\in\mathbb R^m. $$<p>原书把第二项记成：</p>
+$$ \boxed{ u_\theta(s) \doteq \nabla_\theta\mu_\theta(s)\cdot \left(\nabla_a q_\theta(s,a)\right)\big|_{a=\mu_\theta(s)}. } \tag{6} $$<p>区分定理推导和算法更新：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">Theorem proof:
+</span></span><span class="line"><span class="cl">theta -&gt; q_theta(s,a) itself      gives first term
+</span></span><span class="line"><span class="cl">theta -&gt; mu_theta(s) -&gt; q_theta   gives second term u_theta(s)
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Algorithm actor update:
+</span></span><span class="line"><span class="cl">fix critic q(s,a,w_t)
+</span></span><span class="line"><span class="cl">theta -&gt; mu_theta(s) -&gt; q(s,a,w_t)
+</span></span><span class="line"><span class="cl">only uses the second term
+</span></span></code></pre></div><hr>
+<h2 id="4-第一项怎么处理bellman-展开">4. 第一项怎么处理：Bellman 展开<a hidden class="anchor" aria-hidden="true" href="#4-第一项怎么处理bellman-展开">#</a></h2>
+<p>现在处理式 (5) 的第一项：</p>
+$$ \left(\nabla_\theta q_\theta(s,a)\right)\big|_{a=\mu_\theta(s)}. $$<p>动作价值满足 Bellman 关系：</p>
+$$ q_\theta(s,a) = r(s,a) + \gamma\sum_{s'}p(s'\mid s,a)v_\theta(s'). \tag{7} $$<p>环境的 $r(s,a)$ 和 $p(s'\mid s,a)$ 不直接依赖 $\theta$，所以：</p>
+$$ \nabla_\theta q_\theta(s,a) = \gamma\sum_{s'}p(s'\mid s,a)\nabla_\theta v_\theta(s'). \tag{8} $$<p>代入 $a=\mu_\theta(s)$：</p>
+$$ \left(\nabla_\theta q_\theta(s,a)\right)\big|_{a=\mu_\theta(s)} = \gamma\sum_{s'}p(s'\mid s,\mu_\theta(s))\nabla_\theta v_\theta(s'). \tag{9} $$<p>把 (9) 放回 (5)：</p>
+$$ \nabla_\theta v_\theta(s) = u_\theta(s) + \gamma\sum_{s'}p(s'\mid s,\mu_\theta(s))\nabla_\theta v_\theta(s'). \tag{10} $$<p>读法：</p>
+$$ \boxed{ \text{当前价值梯度} = \text{当前动作路径 }u_\theta(s) + \text{未来状态价值梯度的传播} } $$<hr>
+<h2 id="5-展开递归得到-lemma-101">5. 展开递归，得到 Lemma 10.1<a hidden class="anchor" aria-hidden="true" href="#5-展开递归得到-lemma-101">#</a></h2>
+<p>令 $P_\theta$ 表示确定性策略 $\mu_\theta$ 下的状态转移矩阵：</p>
+$$ [P_\theta]_{ss'}=p(s'\mid s,\mu_\theta(s)). $$<p>把所有状态的式 (10) 合起来：</p>
+$$ \nabla_\theta v_\theta = u_\theta+\gamma P_\theta\nabla_\theta v_\theta. $$<p>解这个线性递归：</p>
+$$ \begin{aligned} \nabla_\theta v_\theta &= (I-\gamma P_\theta)^{-1}u_\theta\\ &= \left(I+\gamma P_\theta+\gamma^2P_\theta^2+\cdots\right)u_\theta. \end{aligned} $$<p>第 $s$ 个分量为：</p>
+$$ \nabla_\theta v_\theta(s) = \sum_{s'} \left[(I-\gamma P_\theta)^{-1}\right]_{ss'}u_\theta(s'). $$<p>定义折扣总转移权重：</p>
+$$ \Pr_\theta(s'\mid s) \doteq \left[(I-\gamma P_\theta)^{-1}\right]_{ss'} = \sum_{k=0}^{\infty}\gamma^k[P_\theta^k]_{ss'}. $$<p>于是：</p>
+$$ \boxed{ \nabla_\theta v_\theta(s) = \sum_{s'}\Pr_\theta(s'\mid s) \nabla_\theta\mu_\theta(s')\cdot \left(\nabla_a q_\theta(s',a)\right)\big|_{a=\mu_\theta(s')}. } \tag{11} $$<p>这就是 Lemma 10.1 的内容。</p>
+<hr>
+<h2 id="6-从-lemma-到-deterministic-policy-gradient-theorem">6. 从 Lemma 到 deterministic policy gradient theorem<a hidden class="anchor" aria-hidden="true" href="#6-从-lemma-到-deterministic-policy-gradient-theorem">#</a></h2>
+<p>若目标是折扣平均价值：</p>
+$$ J(\theta)=\sum_s d_0(s)v_\theta(s), $$<p>则：</p>
+$$ \begin{aligned} \nabla_\theta J(\theta) &= \sum_s d_0(s)\nabla_\theta v_\theta(s)\\ &= \sum_s d_0(s) \sum_{s'}\Pr_\theta(s'\mid s)u_\theta(s')\\ &= \sum_{s'} \underbrace{ \left[ \sum_s d_0(s)\Pr_\theta(s'\mid s) \right] }_{\rho_\theta(s')} u_\theta(s'). \end{aligned} $$<p>因此：</p>
+$$ \boxed{ \nabla_\theta J(\theta) = \sum_s\rho_\theta(s) \nabla_\theta\mu_\theta(s)\cdot \left(\nabla_a q_\theta(s,a)\right)\big|_{a=\mu_\theta(s)} } $$<p>也就是：</p>
+$$ \boxed{ \nabla_\theta J(\theta) = \mathbb E_{s\sim\rho_\theta} \left[ \nabla_\theta\mu_\theta(s)\cdot \left(\nabla_a q_\theta(s,a)\right)\big|_{a=\mu_\theta(s)} \right]. } \tag{12} $$<p>平均奖励目标时，把状态分布 $\rho_\theta$ 换成平稳分布 $d_\theta$，局部梯度形状不变。</p>
+<hr>
+<h2 id="7-最后对比">7. 最后对比<a hidden class="anchor" aria-hidden="true" href="#7-最后对比">#</a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>策略</th>
+          <th>参数改变什么</th>
+          <th>梯度形状</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>随机策略 $\pi_\theta(a\mid s)$</td>
+          <td>改动作概率</td>
+          <td>$\mathbb E_{s,a}[\nabla_\theta\ln\pi_\theta(a\mid s)q_\theta(s,a)]$</td>
+      </tr>
+      <tr>
+          <td>确定性策略 $\mu_\theta(s)$</td>
+          <td>改动作本身</td>
+          <td>$\mathbb E_s[\nabla_\theta\mu_\theta(s)\cdot(\nabla_a q_\theta(s,a))\vert_{a=\mu_\theta(s)}]$</td>
+      </tr>
+  </tbody>
+</table>
+<p>一句话：</p>
+$$ \boxed{ \text{随机策略用 log-trick 调概率；确定性策略用链式法则调动作。} } $$
+
+    </div>
+  </div>
+<div class="post-meme-tail">
+  <button class="post-meme-trigger" type="button" aria-label="触发表情彩蛋">
+    <img src="/images/memes/wave-fast.gif" alt="" loading="lazy">
+  </button>
+</div>
+
+<style>
+.like-pop{position:fixed;pointer-events:none;z-index:1000;width:50px;animation:likeFloat .8s ease-out forwards}
+@keyframes likeFloat{0%{opacity:1;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(var(--dx),-80px) scale(1.4)}}
+</style>
+<script>
+var memeMode=false;
+function spawnPop(src,x,y){
+  var pop=document.createElement('img');
+  pop.src=src;
+  pop.className='like-pop';
+  pop.style.left=(x-25)+'px';
+  pop.style.top=(y-25)+'px';
+  document.body.appendChild(pop);
+  setTimeout(function(){pop.remove()},800);
+}
+document.addEventListener('DOMContentLoaded',function(){
+  document.querySelectorAll('.post-meme-trigger').forEach(function(trigger){
+    trigger.addEventListener('click',function(e){
+      e.stopPropagation();
+      memeMode=!memeMode;
+      trigger.setAttribute('aria-pressed',memeMode?'true':'false');
+      trigger.classList.toggle('active',memeMode);
+    });
+  });
+
+  document.addEventListener('click',function(e){
+    if(!memeMode){return;}
+    if(e.target.closest('a,button,input,textarea,select,label,summary,iframe,.giscus,.post-meme-tail')){return;}
+    spawnPop('/images/like.jpg',e.clientX,e.clientY);
+    var mirrorX=window.innerWidth-e.clientX;
+    setTimeout(function(){spawnPop('/images/like2.jpg',mirrorX,e.clientY);},200);
+  });
+});
+</script>
+
+<script src="https://giscus.app/client.js"
+        data-repo="qshf/qshf.github.io"
+        data-repo-id="R_kgDOOF9BTA"
+        data-category="Announcements"
+        data-category-id="DIC_kwDOOF9BTM4C8uBn"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="0"
+        data-emit-metadata="0"
+        data-input-position="bottom"
+        data-theme="preferred_color_scheme"
+        data-lang="zh-CN"
+        crossorigin="anonymous"
+        async>
+</script>
+
+
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="http://localhost:1313/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/">强化学习</a></li>
+      <li><a href="http://localhost:1313/tags/%E6%95%B0%E5%AD%A6%E5%8E%9F%E7%90%86/">数学原理</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="prev" href="http://localhost:1313/books/reinforcement-learning-math/notes/10_chapter10-actor-critic-methods/">
+    <span class="title">« Prev</span>
+    <span>第 10 章 Actor-Critic 方法（Actor-Critic Methods）- 10.1-10.6</span>
+  </a>
+</nav>
+
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2026 <a href="http://localhost:1313/">撒手 &gt;_O </a></span> · 
+
+    
+    
+    <span>
+        Powered by
+        <a href="https://gohugo.io/?utm_source=papermod" rel="noopener" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" id="top-link" class="top-link hidden" aria-label="go to top" title="Go to Top (Alt + G)" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevrons-up">
+        <polyline points="17 11 12 6 7 11"></polyline>
+        <polyline points="17 18 12 13 7 18"></polyline>
+    </svg>
+</a>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.querySelector('.post-content') || document.body, {
+    delimiters: [
+      {left:'$$', right:'$$', display:true},
+      {left:'\\\\[', right:'\\\\]', display:true},
+      {left:'\\\\(', right:'\\\\)', display:false},
+      {left:'$', right:'$', display:false}
+    ],
+    ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+    throwOnError: false,
+    strict: 'warn'
+  })">
+</script>
+
+
+
+<script type="module">
+import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('pre > code.language-mermaid').forEach(function (code) {
+    var diagram = document.createElement('div');
+    diagram.className = 'mermaid';
+    diagram.textContent = code.textContent;
+    code.parentElement.replaceWith(diagram);
+  });
+
+  mermaid.initialize({
+    startOnLoad: false,
+    securityLevel: 'loose',
+    theme: document.documentElement.dataset.theme === 'dark' ? 'dark' : 'default'
+  });
+  mermaid.run({ querySelector: '.mermaid' });
+});
+</script>
+
+
+
+<script>
+    let menu = document.getElementById('menu');
+    if (menu) {
+        
+        const scrollPosition = localStorage.getItem("menu-scroll-position");
+        if (scrollPosition) {
+            menu.scrollLeft = parseInt(scrollPosition, 10);
+        }
+        
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var toplink = document.getElementById("top-link");
+    window.onscroll = function () {
+        const scrollThreshold = window.innerHeight;
+        if (document.body.scrollTop > scrollThreshold || document.documentElement.scrollTop > scrollThreshold) {
+            toplink.classList.remove("hidden");
+        } else {
+            toplink.classList.add("hidden");
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        const html = document.querySelector("html");
+        if (html.dataset.theme === "dark") {
+            html.dataset.theme = 'light';
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            html.dataset.theme = 'dark';
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

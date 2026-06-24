@@ -2,9 +2,38 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
-  onload="renderMathInElement(document.body, {delimiters: [
-    {left:'$$',right:'$$',display:true},
-    {left:'$',right:'$',display:false}
-  ]})">
+  onload="renderMathInElement(document.querySelector('.post-content') || document.body, {
+    delimiters: [
+      {left:'$$', right:'$$', display:true},
+      {left:'\\\\[', right:'\\\\]', display:true},
+      {left:'\\\\(', right:'\\\\)', display:false},
+      {left:'$', right:'$', display:false}
+    ],
+    ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+    throwOnError: false,
+    strict: 'warn'
+  })">
+</script>
+{{ end }}
+
+{{ if .Param "mermaid" }}
+<script type="module">
+import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('pre > code.language-mermaid').forEach(function (code) {
+    var diagram = document.createElement('div');
+    diagram.className = 'mermaid';
+    diagram.textContent = code.textContent;
+    code.parentElement.replaceWith(diagram);
+  });
+
+  mermaid.initialize({
+    startOnLoad: false,
+    securityLevel: 'loose',
+    theme: document.documentElement.dataset.theme === 'dark' ? 'dark' : 'default'
+  });
+  mermaid.run({ querySelector: '.mermaid' });
+});
 </script>
 {{ end }}

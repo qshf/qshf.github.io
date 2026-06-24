@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto" data-theme="auto">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="noindex, nofollow">
+<title>强化学习 | 撒手 &gt;_O </title>
+<meta name="keywords" content="">
+<meta name="description" content="论文笔记、书籍笔记 &amp; 生活随笔">
+<meta name="author" content="qshf">
+<link rel="canonical" href="http://localhost:1313/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.ac9d367ca23e95d58bd22c4cec025f14e1ceb180140a759f9ff38ae3d70d961d.css" integrity="sha256-rJ02fKI&#43;ldWL0ixM7AJfFOHOsYAUCnWfn/OK49cNlh0=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" type="application/rss+xml" href="http://localhost:1313/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/index.xml" title="rss">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+                color-scheme: dark;
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .toc {
+                background: var(--entry);
+            }
+        }
+
+    </style>
+</noscript>
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.querySelector("html").dataset.theme = 'dark';
+    } else if (localStorage.getItem("pref-theme") === "light") {
+       document.querySelector("html").dataset.theme = 'light';
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.querySelector("html").dataset.theme = 'dark';
+    } else {
+        document.querySelector("html").dataset.theme = 'light';
+    }
+
+</script>
+
+</head>
+<body class="list" id="top">
+    <header class="header">
+    <nav class="header-nav">
+        <div class="logo">
+            <a href="http://localhost:1313/" accesskey="h" title="撒手 &gt;_O  (Alt + H)">撒手 &gt;_O </a>
+            <div class="logo-switches">
+                <button id="theme-toggle" class="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu" class="menu">
+            <li>
+                <a href="http://localhost:1313/papers/" title="论文笔记">
+                    <span>论文笔记</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/books/" title="书籍笔记">
+                    <span>书籍笔记</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/life/" title="生活">
+                    <span>生活</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main"> 
+<header class="page-header"><nav class="breadcrumbs" role="navigation" aria-label="Breadcrumb">
+            <a href="/">Home</a>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+            <a href="/tags/">Tags</a>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+        <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+</nav>
+  <h1>
+    强化学习
+  </h1>
+</header>
+
+<article class="post-entry tag-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">补充：Lemma 8.1 中 b - Aw_t 的详细推导
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p> 对应原书 8.2.5 / Box 8.3 · 学习日期 2026-06-16
+本补充要解释为什么：
+$$ \mathbb E\!\left[ \left( r_{t&#43;1} &#43;\gamma\phi^T(s_{t&#43;1})w_t -\phi^T(s_t)w_t \right)\phi(s_t) \right] = b-Aw_t. $$0. 要解决的问题 我们要看懂这一行：
+$$ \mathbb {E} \left[ \left( r _ {t &#43; 1} &#43; \gamma \phi^ {T} (s _ {t &#43; 1}) w _ {t} - \phi^ {T} (s _ {t}) w _ {t} \right) \phi (s _ {t}) \right] = b - A w _ {t}. $$其中：
+$$ A \doteq \Phi^T D(I-\gamma P_\pi)\Phi, \qquad b \doteq \Phi^T D r_\pi. $$这一步的作用是：把“随机样本的平均 TD 更新方向”写成一个简单的线性形式：
+...</p>
+  </div>
+  <footer class="entry-footer">
+
+<span>5 min</span>&nbsp;·&nbsp;<span>qshf</span></footer>
+  <a class="entry-link" aria-label="post link to 补充：Lemma 8.1 中 b - Aw_t 的详细推导" href="http://localhost:1313/books/reinforcement-learning-math/notes/08_supplement-lemma-8-1-b-minus-aw-derivation/"></a>
+</article>
+
+<article class="post-entry tag-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">第 9 章 策略梯度方法（Policy Gradient Methods）- 9.1-9.6
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p> 原书 p199-223 · 学习日期 2026-06-18 · 涵盖 9.1-9.6（全章完）
+本章在全书的位置（先读这段） 第 8 章把 value function 价值函数从表格推进到了 function approximation 函数近似：不再为每个状态或状态-动作对存一个独立数值，而是用 $\hat v(s,w)$ 或 $\hat q(s,a,w)$ 这样的参数化函数输出价值。
+第 9 章继续做同一件事，但对象换成 policy 策略。过去的策略是表：
+$$ \pi(a\mid s) $$表示“在状态 $s$ 下选动作 $a$ 的概率”。从本章开始，策略也变成带参数的函数：
+$$ \pi(a\mid s,\theta), $$其中 $\theta \in \mathbb{R}^m$ 是要学习的参数向量。
+本章主线：第 8 章让“评价动作好不好”的 value 变成函数；第 9 章让“直接决定怎么行动”的 policy 变成函数。于是学习不再只是更新价值估计，而是直接沿着某个标量目标 $J(\theta)$ 的梯度，调整策略参数 $\theta$。
+这也是本书的一次换挡：前面章节主要是 value-based methods 基于价值的方法，先学习 $v$ 或 $q$，再从价值里导出策略；第 9 章进入 policy-based methods 基于策略的方法，直接优化策略本身。第 10 章 actor-critic 会把这两条线合起来：actor 更新策略，critic 估计价值。
+...</p>
+  </div>
+  <footer class="entry-footer">
+
+<span>17 min</span>&nbsp;·&nbsp;<span>qshf</span></footer>
+  <a class="entry-link" aria-label="post link to 第 9 章 策略梯度方法（Policy Gradient Methods）- 9.1-9.6" href="http://localhost:1313/books/reinforcement-learning-math/notes/09_chapter9-policy-gradient-methods/"></a>
+</article>
+
+<article class="post-entry tag-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">补充：Lemma 9.2 里的 $\Pr_\pi(s&#39;|s)$ 到底是什么
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p> 对应原书 9.3 / Lemma 9.2。主题：为什么
+$$ \Pr_\pi(s&#39;|s) \doteq \sum_{k=0}^{\infty}\gamma^k[P_\pi^k]_{ss&#39;} = [(I-\gamma P_\pi)^{-1}]_{ss&#39;} $$ 不是普通的一步转移概率，而是 discounted total probability 折扣总访问权重。
+1. 先把梯度拿掉：只看“未来状态加权汇总” 先不要看 Lemma 9.2 里的梯度。我们先看一个更简单的骨架：
+$$ H(s) = \sum_{s&#39;} \Pr_\pi(s&#39;|s)g(s&#39;). $$这个式子读作：
+从 $s$ 出发，未来会以多大折扣权重经过每个状态 $s&#39;$；每经过一个 $s&#39;$，就把那个状态自己的局部贡献 $g(s&#39;)$ 算进来。
+这里的重点不是 $g(s&#39;)$ 具体是什么，而是外层结构：
+符号 含义 $s$ 出发状态 $s&#39;$ 未来可能经过的状态 Pr(s’ from s) 从 $s$ 出发，未来经过 $s&#39;$ 的折扣总访问权重，也就是 $\Pr_\pi(s&#39; $g(s&#39;)$ 状态 $s&#39;$ 自己贡献的某个量 $H(s)$ 从 $s$ 出发，把未来所有状态贡献加权汇总后的结果 所以这一类公式的核心句子是：
+起点是 $s$，但结果要看未来经过哪些 $s&#39;$；越常经过、越早经过的状态，权重越大。
+...</p>
+  </div>
+  <footer class="entry-footer">
+
+<span>4 min</span>&nbsp;·&nbsp;<span>qshf</span></footer>
+  <a class="entry-link" aria-label="post link to 补充：Lemma 9.2 里的 $\Pr_\pi(s&#39;|s)$ 到底是什么" href="http://localhost:1313/books/reinforcement-learning-math/notes/09_supplement-lemma-9-2-discounted-total-probability/"></a>
+</article>
+
+<article class="post-entry tag-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">第 9 章补充：Theorem 9.2 和 9.3 的梯度推导
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p> 对应主笔记：第 9 章策略梯度方法 · 补充主题：把 Theorem 9.2 / 9.3 的代数推导单独展开
+1. Theorem 9.2：固定初始分布 $d_0$ 时的严格推导 先把 $\bar v_\pi$ 的概念垫一下。策略 $\pi$ 不只在一个状态上有表现，而是在很多状态上都有 state value 状态价值：
+$$ v_\pi(s_1),\ v_\pi(s_2),\ \cdots $$策略梯度需要一个 scalar objective 标量目标 $J(\theta)$，不能拿一整列状态价值直接做最大化。所以我们先选一个状态分布 $d$，说明“我更关心哪些状态”，再把这些状态价值加权平均：
+$$ \bar v_\pi = \sum_{s\in\mathcal S}d(s)v_\pi(s) = d^Tv_\pi. $$Theorem 9.2 讨论的是一个特殊选择：把这个权重分布 $d$ 固定为 initial distribution 初始分布 $d_0$。于是平均状态价值写成：
+$$ \bar v_\pi^0=d_0^Tv_\pi. $$这里上标 $0$ 不是平方或幂，而是在提醒我们：这个平均价值用的是“时刻 0 的起点分布” $d_0$。
+展开看就是：
+$$ \bar v_\pi^0 = \sum_{s_0}d_0(s_0)v_\pi(s_0). $$因为 $d_0$ 不依赖策略参数 $\theta$，所以梯度只作用在 $v_\pi(s_0)$ 上：
+...</p>
+  </div>
+  <footer class="entry-footer">
+
+<span>3 min</span>&nbsp;·&nbsp;<span>qshf</span></footer>
+  <a class="entry-link" aria-label="post link to 第 9 章补充：Theorem 9.2 和 9.3 的梯度推导" href="http://localhost:1313/books/reinforcement-learning-math/notes/09_supplement-theorem-9-2-9-3-gradient-derivations/"></a>
+</article>
+
+<article class="post-entry tag-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">补充：为什么 $\nabla_\theta v_\pi(s)$ 不是只看当前状态 $s$
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p> 对应第 9 章 Lemma 9.2。主题：图 1 的
+$$ v_\pi(s)=\sum_a\pi(a\mid s,\theta)q_\pi(s,a) $$ 图 2 的
+$$ \nabla_\theta v_\pi(s) = \sum_{s&#39;}\Pr_\pi(s&#39;\mid s) \sum_a\nabla_\theta\pi(a\mid s&#39;,\theta)q_\pi(s&#39;,a) $$到底有什么区别。
+1. 先说最容易误解的点 看到普通值函数公式：
+$$ v_\pi(s) = \sum_a\pi(a\mid s,\theta)q_\pi(s,a), $$很容易产生一个直觉：
+既然右边只写了当前状态 $s$，那对 $\theta$ 求导时，是不是也只需要看当前状态 $s$ 的策略 $\pi(a\mid s,\theta)$？
+这个直觉的问题在于：它忽略了 $q_\pi(s,a)$ 里面也依赖策略参数 $\theta$。
+更完整地说：
+$$ v_\pi(s) = \sum_a \pi(a\mid s,\theta) q_\pi(s,a;\theta). $$这里我临时把 $q_\pi$ 写成 $q_\pi(s,a;\theta)$，是为了提醒你：
+动作价值 $q_\pi(s,a)$ 是“先在 $s$ 做动作 $a$，之后继续按策略 $\pi_\theta$ 行动”的长期回报，所以它也会随着 $\theta$ 变化。
+原书通常不把这个 $\theta$ 显式写出来，是为了记号简洁；但理解求导时，必须记住它藏在里面。
+...</p>
+  </div>
+  <footer class="entry-footer">
+
+<span>4 min</span>&nbsp;·&nbsp;<span>qshf</span></footer>
+  <a class="entry-link" aria-label="post link to 补充：为什么 $\nabla_\theta v_\pi(s)$ 不是只看当前状态 $s$" href="http://localhost:1313/books/reinforcement-learning-math/notes/09_supplement-why-gradient-of-v-sees-future-states/"></a>
+</article>
+
+<article class="post-entry tag-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">第 10 章 Actor-Critic 方法（Actor-Critic Methods）- 10.1-10.6
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p> 原书 p224-245 · 学习日期 2026-06-20 · 涵盖 10.1-10.6（全章完）
+本章在全书的位置（先读这段） 第 8 章解决的是 value function approximation 价值函数近似：用参数 $w$ 表示 $\hat v(s,w)$ 或 $\hat q(s,a,w)$，让价值估计能推广到大状态空间。
+第 9 章解决的是 policy gradient 策略梯度：用参数 $\theta$ 表示策略 $\pi(a\mid s,\theta)$，直接沿着
+$$ \nabla_\theta J(\theta) \approx \mathbb E \left[ \nabla_\theta\ln\pi(A\mid S,\theta)q_\pi(S,A) \right] $$来更新策略。
+第 10 章把这两条线合起来：
+actor 演员负责更新策略 $\pi(a\mid s,\theta)$；critic 评论家负责估计价值 $q_\pi(s,a)$ 或优势函数。actor 问“我该怎么改策略”，critic 回答“刚才这个动作到底值多少”。
+这也是为什么 actor-critic 是自然出现的：第 9 章的策略梯度公式里本来就需要 $q_\pi(S,A)$，而第 8 章已经教过我们怎样用 TD 和函数近似估计动作价值。
+10.1 The simplest actor-critic algorithm (QAC)（最简单的 Actor-Critic：QAC） 要解决的问题：REINFORCE 用一整段 Monte Carlo 回报估计 $q_\pi(s_t,a_t)$，方差很大。本节要说明：如果改用 TD learning 学出来的动作价值函数 $q(s,a,w)$ 来替代这个回报估计，就自然得到最简单的 actor-critic 算法。
+...</p>
+  </div>
+  <footer class="entry-footer">
+
+<span>21 min</span>&nbsp;·&nbsp;<span>qshf</span></footer>
+  <a class="entry-link" aria-label="post link to 第 10 章 Actor-Critic 方法（Actor-Critic Methods）- 10.1-10.6" href="http://localhost:1313/books/reinforcement-learning-math/notes/10_chapter10-actor-critic-methods/"></a>
+</article>
+
+<article class="post-entry tag-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">补充：随机策略梯度与确定性策略梯度公式来源
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p> 对应第 10 章 10.4。本文只解释两件事：
+随机策略梯度里的期望公式从哪里来。 确定性策略梯度为什么是“动作梯度乘 critic 对动作的梯度”。 0. 统一记号 为了避免价值函数记号来回切换，这里统一用下标 $\theta$ 表示“当前参数诱导出的策略”。
+场景 策略 价值函数记号 随机策略 $\pi_\theta(a\mid s)$ $q_\theta(s,a)=q_{\pi_\theta}(s,a)$ 确定性策略 $a=\mu_\theta(s)$ $q_\theta(s,a)=q_{\mu_\theta}(s,a)$ 也就是说，$q_\theta(s,a)$ 不是一个固定函数。它表示“从 $(s,a)$ 出发，之后继续执行当前策略参数 $\theta$ 时的长期价值”。因此 $q_\theta$ 本身依赖 $\theta$。
+1. 随机策略梯度公式从哪里来？ 第 9 章 policy gradient theorem 的动作层求和形式是：
+$$ \nabla_\theta J(\theta) = \sum_s\eta(s)\sum_a \nabla_\theta\pi_\theta(a\mid s)q_\theta(s,a). \tag{1} $$这里 $\eta(s)$ 是状态分布。它具体是 $\rho_\theta$ 还是 $d_\theta$，不影响下面的动作层转换。
+关键一步是 log-trick：
+$$ \nabla_\theta\pi_\theta(a\mid s) = \pi_\theta(a\mid s)\nabla_\theta\ln\pi_\theta(a\mid s). \tag{2} $$把 (2) 代入 (1)：
+...</p>
+  </div>
+  <footer class="entry-footer">
+
+<span>3 min</span>&nbsp;·&nbsp;<span>qshf</span></footer>
+  <a class="entry-link" aria-label="post link to 补充：随机策略梯度与确定性策略梯度公式来源" href="http://localhost:1313/books/reinforcement-learning-math/notes/10_supplement-policy-gradient-formula-origins/"></a>
+</article>
+<footer class="page-footer">
+  <nav class="pagination">
+    <a class="prev" href="http://localhost:1313/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/page/2/">
+      «&nbsp;Prev&nbsp;
+    </a>
+  </nav>
+</footer>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2026 <a href="http://localhost:1313/">撒手 &gt;_O </a></span> · 
+
+    
+    
+    <span>
+        Powered by
+        <a href="https://gohugo.io/?utm_source=papermod" rel="noopener" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" id="top-link" class="top-link hidden" aria-label="go to top" title="Go to Top (Alt + G)" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevrons-up">
+        <polyline points="17 11 12 6 7 11"></polyline>
+        <polyline points="17 18 12 13 7 18"></polyline>
+    </svg>
+</a>
+
+
+
+
+<script>
+    let menu = document.getElementById('menu');
+    if (menu) {
+        
+        const scrollPosition = localStorage.getItem("menu-scroll-position");
+        if (scrollPosition) {
+            menu.scrollLeft = parseInt(scrollPosition, 10);
+        }
+        
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var toplink = document.getElementById("top-link");
+    window.onscroll = function () {
+        const scrollThreshold = window.innerHeight;
+        if (document.body.scrollTop > scrollThreshold || document.documentElement.scrollTop > scrollThreshold) {
+            toplink.classList.remove("hidden");
+        } else {
+            toplink.classList.add("hidden");
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        const html = document.querySelector("html");
+        if (html.dataset.theme === "dark") {
+            html.dataset.theme = 'light';
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            html.dataset.theme = 'dark';
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

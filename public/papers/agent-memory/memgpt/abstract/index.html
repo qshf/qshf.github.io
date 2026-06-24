@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" dir="auto" data-theme="auto">
 
-<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=61927&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="robots" content="noindex, nofollow">
@@ -65,16 +65,16 @@ External context：archival storage（归档）和 recall storage（检索历史
 
 示意：Figure 1 展示上下文不足时写入持久记忆；Figure 2 展示检索外部数据换入上下文；Figure 3 给出完整系统流程。">
 <meta name="author" content="qshf">
-<link rel="canonical" href="http://localhost:61927/papers/agent-memory/memgpt/abstract/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.a5335217ac89600fae9e66fa8b1fa02c5cb480e273de49cfca71b60e23d5d25c.css" integrity="sha256-pTNSF6yJYA&#43;unmb6ix&#43;gLFy0gOJz3knPynG2DiPV0lw=" rel="preload stylesheet" as="style">
-<link rel="icon" href="http://localhost:61927/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:61927/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:61927/favicon-32x32.png">
-<link rel="apple-touch-icon" href="http://localhost:61927/apple-touch-icon.png">
-<link rel="mask-icon" href="http://localhost:61927/safari-pinned-tab.svg">
+<link rel="canonical" href="http://localhost:1313/papers/agent-memory/memgpt/abstract/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.ac9d367ca23e95d58bd22c4cec025f14e1ceb180140a759f9ff38ae3d70d961d.css" integrity="sha256-rJ02fKI&#43;ldWL0ixM7AJfFOHOsYAUCnWfn/OK49cNlh0=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" hreflang="en" href="http://localhost:61927/papers/agent-memory/memgpt/abstract/">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/papers/agent-memory/memgpt/abstract/">
 <noscript>
     <style>
         #theme-toggle,
@@ -153,7 +153,7 @@ document.addEventListener('DOMContentLoaded', function () {
     <header class="header">
     <nav class="header-nav">
         <div class="logo">
-            <a href="http://localhost:61927/" accesskey="h" title="撒手 &gt;_O  (Alt + H)">撒手 &gt;_O </a>
+            <a href="http://localhost:1313/" accesskey="h" title="撒手 &gt;_O  (Alt + H)">撒手 &gt;_O </a>
             <div class="logo-switches">
                 <button id="theme-toggle" class="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
                     <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
@@ -179,12 +179,17 @@ document.addEventListener('DOMContentLoaded', function () {
         </div>
         <ul id="menu" class="menu">
             <li>
-                <a href="http://localhost:61927/papers/" title="论文笔记">
+                <a href="http://localhost:1313/papers/" title="论文笔记">
                     <span>论文笔记</span>
                 </a>
             </li>
             <li>
-                <a href="http://localhost:61927/life/" title="生活">
+                <a href="http://localhost:1313/books/" title="书籍笔记">
+                    <span>书籍笔记</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/life/" title="生活">
                     <span>生活</span>
                 </a>
             </li>
@@ -364,12 +369,6 @@ document.addEventListener('DOMContentLoaded',function(){
     <footer class="post-footer">
       <ul class="post-tags">
       </ul>
-<nav class="paginav">
-  <a class="next" href="http://localhost:61927/papers/dataset-eval/crud-rag/abstract/">
-    <span class="title">Next »</span>
-    <span>Abstract &#43; 相关工作</span>
-  </a>
-</nav>
 
     </footer>
   </article>
@@ -404,7 +403,7 @@ document.addEventListener('DOMContentLoaded',function(){
     </main>
     
 <footer class="footer">
-        <span>&copy; 2026 <a href="http://localhost:61927/">撒手 &gt;_O </a></span> · 
+        <span>&copy; 2026 <a href="http://localhost:1313/">撒手 &gt;_O </a></span> · 
 
     
     
@@ -421,6 +420,44 @@ document.addEventListener('DOMContentLoaded',function(){
         <polyline points="17 18 12 13 7 18"></polyline>
     </svg>
 </a>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.querySelector('.post-content') || document.body, {
+    delimiters: [
+      {left:'$$', right:'$$', display:true},
+      {left:'\\\\[', right:'\\\\]', display:true},
+      {left:'\\\\(', right:'\\\\)', display:false},
+      {left:'$', right:'$', display:false}
+    ],
+    ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+    throwOnError: false,
+    strict: 'warn'
+  })">
+</script>
+
+
+
+<script type="module">
+import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('pre > code.language-mermaid').forEach(function (code) {
+    var diagram = document.createElement('div');
+    diagram.className = 'mermaid';
+    diagram.textContent = code.textContent;
+    code.parentElement.replaceWith(diagram);
+  });
+
+  mermaid.initialize({
+    startOnLoad: false,
+    securityLevel: 'loose',
+    theme: document.documentElement.dataset.theme === 'dark' ? 'dark' : 'default'
+  });
+  mermaid.run({ querySelector: '.mermaid' });
+});
+</script>
+
 
 
 <script>

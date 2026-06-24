@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto" data-theme="auto">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="noindex, nofollow">
+<title>补充：Lemma 8.1 中 b - Aw_t 的详细推导 | 撒手 &gt;_O </title>
+<meta name="keywords" content="强化学习, 数学原理">
+<meta name="description" content="《强化学习的数学原理》学习笔记">
+<meta name="author" content="qshf">
+<link rel="canonical" href="http://localhost:1313/books/reinforcement-learning-math/notes/08_supplement-lemma-8-1-b-minus-aw-derivation/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.ac9d367ca23e95d58bd22c4cec025f14e1ceb180140a759f9ff38ae3d70d961d.css" integrity="sha256-rJ02fKI&#43;ldWL0ixM7AJfFOHOsYAUCnWfn/OK49cNlh0=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/books/reinforcement-learning-math/notes/08_supplement-lemma-8-1-b-minus-aw-derivation/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+                color-scheme: dark;
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .toc {
+                background: var(--entry);
+            }
+        }
+
+    </style>
+</noscript>
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.querySelector("html").dataset.theme = 'dark';
+    } else if (localStorage.getItem("pref-theme") === "light") {
+       document.querySelector("html").dataset.theme = 'light';
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.querySelector("html").dataset.theme = 'dark';
+    } else {
+        document.querySelector("html").dataset.theme = 'light';
+    }
+
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var tocLinks = document.querySelectorAll('.papers-toc a, .toc-sidebar a');
+  if (!tocLinks.length) return;
+
+  var headings = Array.from(tocLinks).map(function (a) {
+    var id = decodeURIComponent(a.getAttribute('href').slice(1));
+    return document.getElementById(id);
+  }).filter(Boolean);
+
+  function onScroll() {
+    var scrollY = window.scrollY + 80;
+    var current = headings[0];
+    for (var i = 0; i < headings.length; i++) {
+      if (headings[i].offsetTop <= scrollY) current = headings[i];
+    }
+    tocLinks.forEach(function (a) { a.classList.remove('active'); });
+    var activeLink = document.querySelector('.papers-toc a[href="#' + CSS.escape(current.id) + '"], .toc-sidebar a[href="#' + CSS.escape(current.id) + '"]');
+    if (activeLink) activeLink.classList.add('active');
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+});
+</script>
+
+
+</head>
+<body id="top">
+    <header class="header">
+    <nav class="header-nav">
+        <div class="logo">
+            <a href="http://localhost:1313/" accesskey="h" title="撒手 &gt;_O  (Alt + H)">撒手 &gt;_O </a>
+            <div class="logo-switches">
+                <button id="theme-toggle" class="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu" class="menu">
+            <li>
+                <a href="http://localhost:1313/papers/" title="论文笔记">
+                    <span>论文笔记</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/books/" title="书籍笔记">
+                    <span>书籍笔记</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/life/" title="生活">
+                    <span>生活</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <nav class="breadcrumbs" role="navigation" aria-label="Breadcrumb">
+            <a href="/">Home</a>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+            <a href="/books/">书籍笔记</a>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+            <a href="/books/reinforcement-learning-math/">强化学习的数学原理</a>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+            <a href="/books/reinforcement-learning-math/notes/">章笔记与补充</a>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+        <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+</nav>
+    <h1 class="post-title entry-hint-parent">
+      补充：Lemma 8.1 中 b - Aw_t 的详细推导
+    </h1>
+    <div class="post-description">《强化学习的数学原理》学习笔记</div>
+    <div class="post-meta">
+
+<span>5 min</span>&nbsp;·&nbsp;<span>qshf</span>
+
+</div>
+  </header> 
+  <div class="post-with-toc">
+    <aside class="toc-sidebar"><details class="toc" >
+    <summary accesskey="c" title="(Alt + C)">
+        <span class="title">Table of Contents</span>
+    </summary>
+
+    <div class="inner"><ul>
+            <li>
+                <a href="#0-%e8%a6%81%e8%a7%a3%e5%86%b3%e7%9a%84%e9%97%ae%e9%a2%98" aria-label="0. 要解决的问题">0. 要解决的问题</a></li>
+            <li>
+                <a href="#1-%e5%85%88%e6%8a%8a%e6%89%80%e6%9c%89%e7%ac%a6%e5%8f%b7%e5%92%8c%e7%bb%b4%e5%ba%a6%e6%91%86%e6%b8%85%e6%a5%9a" aria-label="1. 先把所有符号和维度摆清楚">1. 先把所有符号和维度摆清楚</a></li>
+            <li>
+                <a href="#2-%e5%8e%9f%e5%bc%8f%e5%85%88%e6%8b%86%e6%88%90-reward-%e9%a1%b9%e5%92%8c-td-%e9%a1%b9" aria-label="2. 原式先拆成 reward 项和 TD 项">2. 原式先拆成 reward 项和 TD 项</a></li>
+            <li>
+                <a href="#3-%e4%b8%ba%e4%bb%80%e4%b9%88%e5%8f%af%e4%bb%a5%e6%8c%89--%e5%88%86%e8%a7%a3" aria-label="3. 为什么可以按 $s_t=s$ 分解">3. 为什么可以按 $s_t=s$ 分解</a></li>
+            <li>
+                <a href="#4-reward-%e9%a1%b9%e4%b8%ba%e4%bb%80%e4%b9%88%e7%ad%89%e4%ba%8e" aria-label="4. reward 项为什么等于 $\Phi^TDr_\pi$">4. reward 项为什么等于 $\Phi^TDr_\pi$</a></li>
+            <li>
+                <a href="#5-td-%e9%a1%b9%e4%b8%ba%e4%bb%80%e4%b9%88%e7%ad%89%e4%ba%8e" aria-label="5. TD 项为什么等于 $-\Phi^TD(I-\gamma P_\pi)\Phi w_t$">5. TD 项为什么等于 $-\Phi^TD(I-\gamma P_\pi)\Phi w_t$</a></li>
+            <li>
+                <a href="#6-%e5%90%88%e5%b9%b6-reward-%e9%a1%b9%e5%92%8c-td-%e9%a1%b9" aria-label="6. 合并 reward 项和 TD 项">6. 合并 reward 项和 TD 项</a></li>
+            <li>
+                <a href="#7-%e4%b8%80%e4%b8%aa-2-%e7%8a%b6%e6%80%811-%e7%bb%b4%e7%89%b9%e5%be%81%e7%9a%84%e5%b0%8f%e6%95%b0%e5%80%bc%e4%be%8b%e5%ad%90" aria-label="7. 一个 2 状态、1 维特征的小数值例子">7. 一个 2 状态、1 维特征的小数值例子</a></li>
+            <li>
+                <a href="#8-%e6%9c%80%e5%ae%b9%e6%98%93%e5%8d%a1%e4%bd%8f%e7%9a%84%e4%b8%89%e7%82%b9" aria-label="8. 最容易卡住的三点">8. 最容易卡住的三点</a></li>
+            <li>
+                <a href="#9-%e4%b8%80%e5%8f%a5%e8%af%9d%e6%80%bb%e7%bb%93" aria-label="9. 一句话总结">9. 一句话总结</a>
+            </li>
+        </ul>
+    </div>
+</details>
+
+    </aside>
+
+    <div class="post-content md-content"><blockquote>
+<p>对应原书 8.2.5 / Box 8.3 · 学习日期 2026-06-16</p></blockquote>
+<p>本补充要解释为什么：</p>
+$$ \mathbb E\!\left[ \left( r_{t+1} +\gamma\phi^T(s_{t+1})w_t -\phi^T(s_t)w_t \right)\phi(s_t) \right] = b-Aw_t. $$<h2 id="0-要解决的问题">0. 要解决的问题<a hidden class="anchor" aria-hidden="true" href="#0-要解决的问题">#</a></h2>
+<p>我们要看懂这一行：</p>
+$$ \mathbb {E} \left[ \left( r _ {t + 1} + \gamma \phi^ {T} (s _ {t + 1}) w _ {t} - \phi^ {T} (s _ {t}) w _ {t} \right) \phi (s _ {t}) \right] = b - A w _ {t}. $$<p>其中：</p>
+$$ A \doteq \Phi^T D(I-\gamma P_\pi)\Phi, \qquad b \doteq \Phi^T D r_\pi. $$<p>这一步的作用是：把“随机样本的平均 TD 更新方向”写成一个简单的线性形式：</p>
+$$ b-Aw_t. $$<p>这样后面的确定性 TD 更新就能写成：</p>
+$$ w_{t+1}=w_t+\alpha_t(b-Aw_t). $$<h2 id="1-先把所有符号和维度摆清楚">1. 先把所有符号和维度摆清楚<a hidden class="anchor" aria-hidden="true" href="#1-先把所有符号和维度摆清楚">#</a></h2>
+<p>设状态数是 $n$，特征维度是 $m$。</p>
+<table>
+  <thead>
+      <tr>
+          <th>符号</th>
+          <th>含义</th>
+          <th style="text-align: right">维度</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>$s_t$</td>
+          <td>时刻 $t$ 的状态</td>
+          <td style="text-align: right">一个状态</td>
+      </tr>
+      <tr>
+          <td>$s_{t+1}$</td>
+          <td>下一时刻状态</td>
+          <td style="text-align: right">一个状态</td>
+      </tr>
+      <tr>
+          <td>$r_{t+1}$</td>
+          <td>从 $s_t$ 到 $s_{t+1}$ 得到的奖励</td>
+          <td style="text-align: right">scalar</td>
+      </tr>
+      <tr>
+          <td>$\phi(s)$</td>
+          <td>状态 $s$ 的 feature vector 特征向量</td>
+          <td style="text-align: right">$m\times 1$</td>
+      </tr>
+      <tr>
+          <td>$\phi^T(s)$</td>
+          <td>特征行向量</td>
+          <td style="text-align: right">$1\times m$</td>
+      </tr>
+      <tr>
+          <td>$w_t$</td>
+          <td>当前参数</td>
+          <td style="text-align: right">$m\times 1$</td>
+      </tr>
+      <tr>
+          <td>$\phi^T(s)w_t$</td>
+          <td>状态 $s$ 的估计价值</td>
+          <td style="text-align: right">scalar</td>
+      </tr>
+      <tr>
+          <td>$P_\pi$</td>
+          <td>策略 $\pi$ 下的状态转移矩阵</td>
+          <td style="text-align: right">$n\times n$</td>
+      </tr>
+      <tr>
+          <td>$[P_\pi]_{ss'}$</td>
+          <td>从 $s$ 到 $s'$ 的概率</td>
+          <td style="text-align: right">scalar</td>
+      </tr>
+      <tr>
+          <td>$d_\pi(s)$</td>
+          <td>策略 $\pi$ 下长期访问状态 $s$ 的概率</td>
+          <td style="text-align: right">scalar</td>
+      </tr>
+      <tr>
+          <td>$D$</td>
+          <td>平稳分布对角矩阵</td>
+          <td style="text-align: right">$n\times n$</td>
+      </tr>
+      <tr>
+          <td>$r_\pi$</td>
+          <td>每个状态的期望即时奖励向量</td>
+          <td style="text-align: right">$n\times 1$</td>
+      </tr>
+      <tr>
+          <td>$\Phi$</td>
+          <td>所有状态特征按行叠成的矩阵</td>
+          <td style="text-align: right">$n\times m$</td>
+      </tr>
+  </tbody>
+</table>
+<p>其中：</p>
+$$ \Phi = \begin{bmatrix} \phi^T(s_1)\\ \phi^T(s_2)\\ \vdots\\ \phi^T(s_n) \end{bmatrix} \in\mathbb R^{n\times m}, \qquad D= \operatorname{diag}(d_\pi(s_1),\dots,d_\pi(s_n)). $$<p>$r_\pi$ 的第 $s$ 个分量是：</p>
+$$ r_\pi(s) = \mathbb E[r_{t+1}\mid s_t=s]. $$<p>它的意思是：当前状态固定为 $s$ 时，下一步奖励的期望。</p>
+<h2 id="2-原式先拆成-reward-项和-td-项">2. 原式先拆成 reward 项和 TD 项<a hidden class="anchor" aria-hidden="true" href="#2-原式先拆成-reward-项和-td-项">#</a></h2>
+<p>原式是：</p>
+$$ \mathbb {E} \left[ \left( r _ {t + 1} + \gamma \phi^ {T} (s _ {t + 1}) w _ {t} - \phi^ {T} (s _ {t}) w _ {t} \right) \phi (s _ {t}) \right]. $$<p>把括号乘到 $\phi(s_t)$ 上：</p>
+$$ \mathbb E\left[ r_{t+1}\phi(s_t) + \left( \gamma\phi^T(s_{t+1})w_t - \phi^T(s_t)w_t \right)\phi(s_t) \right]. $$<p>为了和原书矩阵形式一致，通常把第二项写成：</p>
+$$ \phi(s_t) \left( \gamma\phi^T(s_{t+1}) - \phi^T(s_t) \right)w_t. $$<p>于是整体拆成：</p>
+$$ \underbrace{ \mathbb E[r_{t+1}\phi(s_t)] }_{\text{reward 项}} + \underbrace{ \mathbb E\left[ \phi(s_t) \left( \gamma\phi^T(s_{t+1}) - \phi^T(s_t) \right)w_t \right] }_{\text{TD 项}}. $$<p>⚠️ <strong>这里有一个容易迷糊的方向问题。</strong><br>
+$\phi(s_t)$ 是 $m\times 1$ 列向量，$\phi^T(s_{t+1})$ 是 $1\times m$ 行向量，所以：</p>
+$$ \phi(s_t)\phi^T(s_{t+1}) $$<p>是 $m\times m$ 矩阵，再乘 $w_t$ 才得到 $m\times 1$ 向量。这个方向正好和参数更新方向一致。</p>
+<h2 id="3-为什么可以按--分解">3. 为什么可以按 $s_t=s$ 分解<a hidden class="anchor" aria-hidden="true" href="#3-为什么可以按--分解">#</a></h2>
+<p>这里使用 law of total expectation 全期望公式：</p>
+$$ \mathbb E[X] = \sum_{s\in\mathcal S}P(s_t=s)\mathbb E[X\mid s_t=s]. $$<p>在这段理论分析中，原书假设：</p>
+$$ s_t\sim d_\pi. $$<p>所以：</p>
+$$ P(s_t=s)=d_\pi(s). $$<p>因此原式可以写成：</p>
+$$ \sum_{s\in\mathcal S} d_\pi(s) \mathbb E\left[ \left( r_{t+1} +\gamma\phi^T(s_{t+1})w_t -\phi^T(s_t)w_t \right) \phi(s_t) \mid s_t=s \right]. $$<p>一旦条件里固定了 $s_t=s$，那么：</p>
+$$ \phi(s_t)=\phi(s) $$<p>就不再是随机的，可以从条件期望里拿出来。</p>
+<h2 id="4-reward-项为什么等于">4. reward 项为什么等于 $\Phi^TDr_\pi$<a hidden class="anchor" aria-hidden="true" href="#4-reward-项为什么等于">#</a></h2>
+<p>先看 reward 项：</p>
+$$ \mathbb E[r_{t+1}\phi(s_t)]. $$<p>按 $s_t=s$ 分解：</p>
+$$ \mathbb E[r_{t+1}\phi(s_t)] = \sum_{s\in\mathcal S} d_\pi(s) \mathbb E[r_{t+1}\phi(s_t)\mid s_t=s]. $$<p>在条件 $s_t=s$ 下，$\phi(s_t)=\phi(s)$ 是常量：</p>
+$$ \mathbb E[r_{t+1}\phi(s_t)\mid s_t=s] = \phi(s)\mathbb E[r_{t+1}\mid s_t=s]. $$<p>而：</p>
+$$ \mathbb E[r_{t+1}\mid s_t=s] =r_\pi(s). $$<p>所以：</p>
+$$ \mathbb E[r_{t+1}\phi(s_t)] = \sum_{s\in\mathcal S} d_\pi(s)\phi(s)r_\pi(s). $$<p>现在看它为什么等于矩阵形式 $\Phi^TDr_\pi$。</p>
+<p>先算：</p>
+$$ Dr_\pi = \begin{bmatrix} d_\pi(s_1)r_\pi(s_1)\\ d_\pi(s_2)r_\pi(s_2)\\ \vdots\\ d_\pi(s_n)r_\pi(s_n) \end{bmatrix}. $$<p>再左乘：</p>
+$$ \Phi^T = \begin{bmatrix} \phi(s_1) & \phi(s_2) & \cdots & \phi(s_n) \end{bmatrix}. $$<p>于是：</p>
+$$ \Phi^TDr_\pi = \begin{bmatrix} \phi(s_1) & \phi(s_2) & \cdots & \phi(s_n) \end{bmatrix} \begin{bmatrix} d_\pi(s_1)r_\pi(s_1)\\ d_\pi(s_2)r_\pi(s_2)\\ \vdots\\ d_\pi(s_n)r_\pi(s_n) \end{bmatrix}. $$<p>矩阵乘法展开就是：</p>
+$$ \Phi^TDr_\pi = \sum_{s\in\mathcal S} d_\pi(s)\phi(s)r_\pi(s). $$<p>所以 reward 项：</p>
+$$ \mathbb E[r_{t+1}\phi(s_t)] = \Phi^TDr_\pi \doteq b. $$<h2 id="5-td-项为什么等于">5. TD 项为什么等于 $-\Phi^TD(I-\gamma P_\pi)\Phi w_t$<a hidden class="anchor" aria-hidden="true" href="#5-td-项为什么等于">#</a></h2>
+<p>TD 项是：</p>
+$$ \mathbb E\left[ \phi(s_t) \left( \gamma\phi^T(s_{t+1}) - \phi^T(s_t) \right)w_t \right]. $$<p>同样按 $s_t=s$ 分解：</p>
+$$ \sum_{s\in\mathcal S} d_\pi(s) \mathbb E\left[ \phi(s_t) \left( \gamma\phi^T(s_{t+1}) - \phi^T(s_t) \right)w_t \mid s_t=s \right]. $$<p>条件 $s_t=s$ 后，$\phi(s_t)=\phi(s)$：</p>
+$$ \sum_{s\in\mathcal S} d_\pi(s) \phi(s) \mathbb E\left[ \gamma\phi^T(s_{t+1}) - \phi^T(s) \mid s_t=s \right] w_t. $$<p>拆开：</p>
+$$ \sum_{s\in\mathcal S} d_\pi(s)\phi(s) \left[ \gamma\mathbb E[\phi^T(s_{t+1})\mid s_t=s] - \phi^T(s) \right] w_t. $$<p>下一状态 $s_{t+1}$ 按 $P_\pi$ 的第 $s$ 行分布：</p>
+$$ P(s_{t+1}=s'\mid s_t=s)=P_\pi(s,s'). $$<p>所以：</p>
+$$ \mathbb E[\phi^T(s_{t+1})\mid s_t=s] = \sum_{s'\in\mathcal S} P_\pi(s,s')\phi^T(s'). $$<p>代回：</p>
+$$ \sum_{s\in\mathcal S} d_\pi(s)\phi(s) \left[ \gamma \sum_{s'\in\mathcal S} P_\pi(s,s')\phi^T(s') - \phi^T(s) \right]w_t. $$<p>现在把它拆成两块：</p>
+$$ \gamma \sum_s d_\pi(s)\phi(s) \left[ \sum_{s'}P_\pi(s,s')\phi^T(s') \right]w_t - \sum_s d_\pi(s)\phi(s)\phi^T(s)w_t. $$<p>第二块比较容易：</p>
+$$ \sum_s d_\pi(s)\phi(s)\phi^T(s) = \Phi^TD\Phi. $$<p>所以：</p>
+$$ - \sum_s d_\pi(s)\phi(s)\phi^T(s)w_t = -\Phi^TD\Phi w_t. $$<p>第一块对应：</p>
+$$ \gamma \Phi^TDP_\pi\Phi w_t. $$<p>为什么？直接把矩阵和向量写出来看。先有：</p>
+$$ P_\pi= \begin{bmatrix} P_\pi(s_1,s_1) & \cdots & P_\pi(s_1,s_n)\\ \vdots & \ddots & \vdots\\ P_\pi(s_n,s_1) & \cdots & P_\pi(s_n,s_n) \end{bmatrix}, \qquad \Phi= \begin{bmatrix} \phi^T(s_1)\\ \vdots\\ \phi^T(s_n) \end{bmatrix}. $$<p>因此：</p>
+$$ P_\pi\Phi = \begin{bmatrix} \sum_{s'}P_\pi(s_1,s')\phi^T(s')\\ \vdots\\ \sum_{s'}P_\pi(s_n,s')\phi^T(s') \end{bmatrix}. $$<p>也就是说，$P_\pi\Phi$ 的第 $s$ 行是：</p>
+$$ \sum_{s'}P_\pi(s,s')\phi^T(s'). $$<p>这正是“从 $s$ 出发，下一状态特征行向量的期望”。</p>
+<p>再写出 $D$ 和 $\Phi^T$：</p>
+$$ D= \begin{bmatrix} d_\pi(s_1) & & \\ & \ddots & \\ & & d_\pi(s_n) \end{bmatrix}, \qquad \Phi^T= \begin{bmatrix} \phi(s_1) & \cdots & \phi(s_n) \end{bmatrix}. $$<p>于是多写一层等号：</p>
+$$ \Phi^TDP_\pi\Phi = \begin{bmatrix} \phi(s_1) & \cdots & \phi(s_n) \end{bmatrix} \begin{bmatrix} d_\pi(s_1)\sum_{s'}P_\pi(s_1,s')\phi^T(s')\\ \vdots\\ d_\pi(s_n)\sum_{s'}P_\pi(s_n,s')\phi^T(s') \end{bmatrix} = \sum_s d_\pi(s)\phi(s) \left[ \sum_{s'}P_\pi(s,s')\phi^T(s') \right]. $$<p>所以 TD 项等于：</p>
+$$ \gamma\Phi^TDP_\pi\Phi w_t - \Phi^TD\Phi w_t. $$<p>把公共因子 $\Phi^TD$ 和 $\Phi w_t$ 提出来：</p>
+$$ \gamma\Phi^TDP_\pi\Phi w_t - \Phi^TD\Phi w_t = \Phi^TD(\gamma P_\pi-I)\Phi w_t. $$<p>也可以写成：</p>
+$$ - \Phi^TD(I-\gamma P_\pi)\Phi w_t. $$<p>因此：</p>
+$$ \text{TD 项} = - \Phi^TD(I-\gamma P_\pi)\Phi w_t = -Aw_t. $$<h2 id="6-合并-reward-项和-td-项">6. 合并 reward 项和 TD 项<a hidden class="anchor" aria-hidden="true" href="#6-合并-reward-项和-td-项">#</a></h2>
+<p>我们已经得到：</p>
+$$ \text{reward 项} = \Phi^TDr_\pi =b, $$<p>以及：</p>
+$$ \text{TD 项} = - \Phi^TD(I-\gamma P_\pi)\Phi w_t = -Aw_t. $$<p>所以：</p>
+$$ \mathbb {E} \left[ \left( r _ {t + 1} + \gamma \phi^ {T} (s _ {t + 1}) w _ {t} - \phi^ {T} (s _ {t}) w _ {t} \right) \phi (s _ {t}) \right] = b-Aw_t. $$<p>这就是 Lemma 8.1。</p>
+<h2 id="7-一个-2-状态1-维特征的小数值例子">7. 一个 2 状态、1 维特征的小数值例子<a hidden class="anchor" aria-hidden="true" href="#7-一个-2-状态1-维特征的小数值例子">#</a></h2>
+<p>为了让矩阵形式更有手感，设有两个状态：</p>
+$$ P_\pi= \begin{bmatrix} 0.8 & 0.2\\ 0.4 & 0.6 \end{bmatrix}, \qquad d_\pi= \begin{bmatrix} 2/3\\ 1/3 \end{bmatrix}. $$<p>用 1 维特征：</p>
+$$ \phi(s_1)=1, \qquad \phi(s_2)=2. $$<p>于是：</p>
+$$ \Phi= \begin{bmatrix} 1\\ 2 \end{bmatrix}, \qquad D= \begin{bmatrix} 2/3 & 0\\ 0 & 1/3 \end{bmatrix}. $$<p>设：</p>
+$$ r_\pi= \begin{bmatrix} 3\\ 0 \end{bmatrix}, \qquad \gamma=0.9. $$<p>先算：</p>
+$$ b=\Phi^TDr_\pi = \begin{bmatrix} 1 & 2 \end{bmatrix} \begin{bmatrix} 2/3 & 0\\ 0 & 1/3 \end{bmatrix} \begin{bmatrix} 3\\ 0 \end{bmatrix} =2. $$<p>再算：</p>
+$$ A=\Phi^TD(I-\gamma P_\pi)\Phi. $$<p>先有：</p>
+$$ I-\gamma P_\pi = \begin{bmatrix} 1 & 0\\ 0 & 1 \end{bmatrix} -0.9 \begin{bmatrix} 0.8 & 0.2\\ 0.4 & 0.6 \end{bmatrix} = \begin{bmatrix} 0.28 & -0.18\\ -0.36 & 0.46 \end{bmatrix}. $$<p>然后：</p>
+$$ (I-\gamma P_\pi)\Phi = \begin{bmatrix} 0.28 & -0.18\\ -0.36 & 0.46 \end{bmatrix} \begin{bmatrix} 1\\ 2 \end{bmatrix} = \begin{bmatrix} -0.08\\ 0.56 \end{bmatrix}. $$<p>再乘 $D$：</p>
+$$ D(I-\gamma P_\pi)\Phi = \begin{bmatrix} 2/3 & 0\\ 0 & 1/3 \end{bmatrix} \begin{bmatrix} -0.08\\ 0.56 \end{bmatrix} = \begin{bmatrix} -0.0533\\ 0.1867 \end{bmatrix}. $$<p>最后左乘 $\Phi^T$：</p>
+$$ A = \begin{bmatrix} 1 & 2 \end{bmatrix} \begin{bmatrix} -0.0533\\ 0.1867 \end{bmatrix} = 0.32. $$<p>所以平均更新方向是：</p>
+$$ b-Aw_t=2-0.32w_t. $$<p>如果当前参数 $w_t=1$，那么：</p>
+$$ b-Aw_t=1.68. $$<p>这表示在当前参数下，平均 TD 更新方向是正的，会把 $w$ 往大的方向推。</p>
+<h2 id="8-最容易卡住的三点">8. 最容易卡住的三点<a hidden class="anchor" aria-hidden="true" href="#8-最容易卡住的三点">#</a></h2>
+<ol>
+<li>
+<p><strong>为什么 $\phi(s_t)$ 可以变成 $\phi(s)$？</strong><br>
+因为条件期望里已经给定 $s_t=s$，所以当前状态的特征不再随机。</p>
+</li>
+<li>
+<p><strong>为什么会出现 $P_\pi\Phi$？</strong><br>
+因为下一状态 $s_{t+1}$ 是随机的，条件在 $s_t=s$ 下，它的分布就是 $P_\pi$ 第 $s$ 行。$P_\pi\Phi$ 的第 $s$ 行正是下一状态特征的期望。</p>
+</li>
+<li>
+<p><strong>为什么最后有负号 $-A w_t$？</strong><br>
+TD 项里是
+</p>
+$$ \gamma\Phi^TDP_\pi\Phi w_t-\Phi^TD\Phi w_t, $$<p>
+它等于
+</p>
+$$ -\Phi^TD(I-\gamma P_\pi)\Phi w_t. $$<p>
+而 $A=\Phi^TD(I-\gamma P_\pi)\Phi$，所以就是 $-Aw_t$。</p>
+</li>
+</ol>
+<h2 id="9-一句话总结">9. 一句话总结<a hidden class="anchor" aria-hidden="true" href="#9-一句话总结">#</a></h2>
+<p>Lemma 8.1 做的事情是把“平均 TD 更新方向”矩阵化：</p>
+$$ \mathbb E[\delta_t\phi(s_t)] = \underbrace{\Phi^TDr_\pi}_{b} - \underbrace{\Phi^TD(I-\gamma P_\pi)\Phi}_{A}w_t. $$<p>它不是凭空变出来的：$D$ 来自当前状态的平稳分布，$P_\pi$ 来自下一状态的条件分布，$\Phi$ 来自把每个状态的特征向量按行堆起来。</p>
+
+
+    </div>
+  </div>
+<div class="post-meme-tail">
+  <button class="post-meme-trigger" type="button" aria-label="触发表情彩蛋">
+    <img src="/images/memes/wave-fast.gif" alt="" loading="lazy">
+  </button>
+</div>
+
+<style>
+.like-pop{position:fixed;pointer-events:none;z-index:1000;width:50px;animation:likeFloat .8s ease-out forwards}
+@keyframes likeFloat{0%{opacity:1;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(var(--dx),-80px) scale(1.4)}}
+</style>
+<script>
+var memeMode=false;
+function spawnPop(src,x,y){
+  var pop=document.createElement('img');
+  pop.src=src;
+  pop.className='like-pop';
+  pop.style.left=(x-25)+'px';
+  pop.style.top=(y-25)+'px';
+  document.body.appendChild(pop);
+  setTimeout(function(){pop.remove()},800);
+}
+document.addEventListener('DOMContentLoaded',function(){
+  document.querySelectorAll('.post-meme-trigger').forEach(function(trigger){
+    trigger.addEventListener('click',function(e){
+      e.stopPropagation();
+      memeMode=!memeMode;
+      trigger.setAttribute('aria-pressed',memeMode?'true':'false');
+      trigger.classList.toggle('active',memeMode);
+    });
+  });
+
+  document.addEventListener('click',function(e){
+    if(!memeMode){return;}
+    if(e.target.closest('a,button,input,textarea,select,label,summary,iframe,.giscus,.post-meme-tail')){return;}
+    spawnPop('/images/like.jpg',e.clientX,e.clientY);
+    var mirrorX=window.innerWidth-e.clientX;
+    setTimeout(function(){spawnPop('/images/like2.jpg',mirrorX,e.clientY);},200);
+  });
+});
+</script>
+
+<script src="https://giscus.app/client.js"
+        data-repo="qshf/qshf.github.io"
+        data-repo-id="R_kgDOOF9BTA"
+        data-category="Announcements"
+        data-category-id="DIC_kwDOOF9BTM4C8uBn"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="0"
+        data-emit-metadata="0"
+        data-input-position="bottom"
+        data-theme="preferred_color_scheme"
+        data-lang="zh-CN"
+        crossorigin="anonymous"
+        async>
+</script>
+
+
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="http://localhost:1313/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/">强化学习</a></li>
+      <li><a href="http://localhost:1313/tags/%E6%95%B0%E5%AD%A6%E5%8E%9F%E7%90%86/">数学原理</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="prev" href="http://localhost:1313/books/reinforcement-learning-math/notes/08_supplement-from-true-error-to-bellman-target/">
+    <span class="title">« Prev</span>
+    <span>补充：从“估计值减真值”到 Bellman target</span>
+  </a>
+  <a class="next" href="http://localhost:1313/books/reinforcement-learning-math/notes/09_chapter9-policy-gradient-methods/">
+    <span class="title">Next »</span>
+    <span>第 9 章 策略梯度方法（Policy Gradient Methods）- 9.1-9.6</span>
+  </a>
+</nav>
+
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2026 <a href="http://localhost:1313/">撒手 &gt;_O </a></span> · 
+
+    
+    
+    <span>
+        Powered by
+        <a href="https://gohugo.io/?utm_source=papermod" rel="noopener" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" id="top-link" class="top-link hidden" aria-label="go to top" title="Go to Top (Alt + G)" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevrons-up">
+        <polyline points="17 11 12 6 7 11"></polyline>
+        <polyline points="17 18 12 13 7 18"></polyline>
+    </svg>
+</a>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.querySelector('.post-content') || document.body, {
+    delimiters: [
+      {left:'$$', right:'$$', display:true},
+      {left:'\\\\[', right:'\\\\]', display:true},
+      {left:'\\\\(', right:'\\\\)', display:false},
+      {left:'$', right:'$', display:false}
+    ],
+    ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+    throwOnError: false,
+    strict: 'warn'
+  })">
+</script>
+
+
+
+<script type="module">
+import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('pre > code.language-mermaid').forEach(function (code) {
+    var diagram = document.createElement('div');
+    diagram.className = 'mermaid';
+    diagram.textContent = code.textContent;
+    code.parentElement.replaceWith(diagram);
+  });
+
+  mermaid.initialize({
+    startOnLoad: false,
+    securityLevel: 'loose',
+    theme: document.documentElement.dataset.theme === 'dark' ? 'dark' : 'default'
+  });
+  mermaid.run({ querySelector: '.mermaid' });
+});
+</script>
+
+
+
+<script>
+    let menu = document.getElementById('menu');
+    if (menu) {
+        
+        const scrollPosition = localStorage.getItem("menu-scroll-position");
+        if (scrollPosition) {
+            menu.scrollLeft = parseInt(scrollPosition, 10);
+        }
+        
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var toplink = document.getElementById("top-link");
+    window.onscroll = function () {
+        const scrollThreshold = window.innerHeight;
+        if (document.body.scrollTop > scrollThreshold || document.documentElement.scrollTop > scrollThreshold) {
+            toplink.classList.remove("hidden");
+        } else {
+            toplink.classList.add("hidden");
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        const html = document.querySelector("html");
+        if (html.dataset.theme === "dark") {
+            html.dataset.theme = 'light';
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            html.dataset.theme = 'dark';
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

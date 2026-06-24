@@ -1,0 +1,1987 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto" data-theme="auto">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="noindex, nofollow">
+<title>第 10 章 Actor-Critic 方法（Actor-Critic Methods）- 10.1-10.6 | 撒手 &gt;_O </title>
+<meta name="keywords" content="强化学习, 数学原理">
+<meta name="description" content="《强化学习的数学原理》学习笔记">
+<meta name="author" content="qshf">
+<link rel="canonical" href="http://localhost:1313/books/reinforcement-learning-math/notes/10_chapter10-actor-critic-methods/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.ac9d367ca23e95d58bd22c4cec025f14e1ceb180140a759f9ff38ae3d70d961d.css" integrity="sha256-rJ02fKI&#43;ldWL0ixM7AJfFOHOsYAUCnWfn/OK49cNlh0=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/books/reinforcement-learning-math/notes/10_chapter10-actor-critic-methods/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+                color-scheme: dark;
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .toc {
+                background: var(--entry);
+            }
+        }
+
+    </style>
+</noscript>
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.querySelector("html").dataset.theme = 'dark';
+    } else if (localStorage.getItem("pref-theme") === "light") {
+       document.querySelector("html").dataset.theme = 'light';
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.querySelector("html").dataset.theme = 'dark';
+    } else {
+        document.querySelector("html").dataset.theme = 'light';
+    }
+
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var tocLinks = document.querySelectorAll('.papers-toc a, .toc-sidebar a');
+  if (!tocLinks.length) return;
+
+  var headings = Array.from(tocLinks).map(function (a) {
+    var id = decodeURIComponent(a.getAttribute('href').slice(1));
+    return document.getElementById(id);
+  }).filter(Boolean);
+
+  function onScroll() {
+    var scrollY = window.scrollY + 80;
+    var current = headings[0];
+    for (var i = 0; i < headings.length; i++) {
+      if (headings[i].offsetTop <= scrollY) current = headings[i];
+    }
+    tocLinks.forEach(function (a) { a.classList.remove('active'); });
+    var activeLink = document.querySelector('.papers-toc a[href="#' + CSS.escape(current.id) + '"], .toc-sidebar a[href="#' + CSS.escape(current.id) + '"]');
+    if (activeLink) activeLink.classList.add('active');
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+});
+</script>
+
+
+</head>
+<body id="top">
+    <header class="header">
+    <nav class="header-nav">
+        <div class="logo">
+            <a href="http://localhost:1313/" accesskey="h" title="撒手 &gt;_O  (Alt + H)">撒手 &gt;_O </a>
+            <div class="logo-switches">
+                <button id="theme-toggle" class="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu" class="menu">
+            <li>
+                <a href="http://localhost:1313/papers/" title="论文笔记">
+                    <span>论文笔记</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/books/" title="书籍笔记">
+                    <span>书籍笔记</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/life/" title="生活">
+                    <span>生活</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <nav class="breadcrumbs" role="navigation" aria-label="Breadcrumb">
+            <a href="/">Home</a>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+            <a href="/books/">书籍笔记</a>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+            <a href="/books/reinforcement-learning-math/">强化学习的数学原理</a>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+            <a href="/books/reinforcement-learning-math/notes/">章笔记与补充</a>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+        <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+</nav>
+    <h1 class="post-title entry-hint-parent">
+      第 10 章 Actor-Critic 方法（Actor-Critic Methods）- 10.1-10.6
+    </h1>
+    <div class="post-description">《强化学习的数学原理》学习笔记</div>
+    <div class="post-meta">
+
+<span>21 min</span>&nbsp;·&nbsp;<span>qshf</span>
+
+</div>
+  </header> 
+  <div class="post-with-toc">
+    <aside class="toc-sidebar"><details class="toc" >
+    <summary accesskey="c" title="(Alt + C)">
+        <span class="title">Table of Contents</span>
+    </summary>
+
+    <div class="inner"><ul>
+            <li>
+                <a href="#%e6%9c%ac%e7%ab%a0%e5%9c%a8%e5%85%a8%e4%b9%a6%e7%9a%84%e4%bd%8d%e7%bd%ae%e5%85%88%e8%af%bb%e8%bf%99%e6%ae%b5" aria-label="本章在全书的位置（先读这段）">本章在全书的位置（先读这段）</a></li>
+            <li>
+                <a href="#101-the-simplest-actor-critic-algorithm-qac%e6%9c%80%e7%ae%80%e5%8d%95%e7%9a%84-actor-criticqac" aria-label="10.1 The simplest actor-critic algorithm (QAC)（最简单的 Actor-Critic：QAC）">10.1 The simplest actor-critic algorithm (QAC)（最简单的 Actor-Critic：QAC）</a><ul>
+                    
+            <li>
+                <a href="#1-%e4%bb%8e%e7%ac%ac-9-%e7%ab%a0%e7%9a%84%e7%ad%96%e7%95%a5%e6%a2%af%e5%ba%a6%e6%9b%b4%e6%96%b0%e5%bc%80%e5%a7%8b" aria-label="1. 从第 9 章的策略梯度更新开始">1. 从第 9 章的策略梯度更新开始</a></li>
+            <li>
+                <a href="#2-reinforce-%e5%92%8c-actor-critic-%e7%9a%84%e5%88%86%e5%8f%89%e7%82%b9" aria-label="2. REINFORCE 和 actor-critic 的分叉点">2. REINFORCE 和 actor-critic 的分叉点</a></li>
+            <li>
+                <a href="#3-actor-%e5%92%8c-critic-%e5%88%86%e5%88%ab%e5%81%9a%e4%bb%80%e4%b9%88" aria-label="3. actor 和 critic 分别做什么？">3. actor 和 critic 分别做什么？</a></li>
+            <li>
+                <a href="#4-qac%e7%94%a8-sarsa-%e5%81%9a-critic" aria-label="4. QAC：用 Sarsa 做 critic">4. QAC：用 Sarsa 做 critic</a></li>
+            <li>
+                <a href="#5-algorithm-101%e6%9c%80%e7%ae%80%e5%8d%95%e7%9a%84-qac-%e6%b5%81%e7%a8%8b" aria-label="5. Algorithm 10.1：最简单的 QAC 流程">5. Algorithm 10.1：最简单的 QAC 流程</a></li>
+            <li>
+                <a href="#6-%e4%b8%80%e4%b8%aa%e6%9c%80%e5%b0%8f%e6%95%b0%e5%80%bc%e4%be%8b%e5%ad%90%e6%8c%89-algorithm-101-%e8%b7%91%e4%b8%80%e8%bd%ae" aria-label="6. 一个最小数值例子：按 Algorithm 10.1 跑一轮">6. 一个最小数值例子：按 Algorithm 10.1 跑一轮</a><ul>
+                    
+            <li>
+                <a href="#%e7%ac%ac-1-%e6%ad%a5actor-%e6%8c%89%e5%bd%93%e5%89%8d%e7%ad%96%e7%95%a5%e9%87%87%e6%a0%b7%e5%8a%a8%e4%bd%9c" aria-label="第 1 步：actor 按当前策略采样动作">第 1 步：actor 按当前策略采样动作</a></li>
+            <li>
+                <a href="#%e7%ac%ac-2-%e6%ad%a5%e6%89%a7%e8%a1%8c%e5%8a%a8%e4%bd%9c%e8%a7%82%e5%af%9f%e7%8e%af%e5%a2%83%e5%8f%8d%e9%a6%88" aria-label="第 2 步：执行动作，观察环境反馈">第 2 步：执行动作，观察环境反馈</a></li>
+            <li>
+                <a href="#%e7%ac%ac-3-%e6%ad%a5%e5%9c%a8%e4%b8%8b%e4%b8%80%e7%8a%b6%e6%80%81%e7%bb%a7%e7%bb%ad%e6%8c%89-actor-%e9%87%87%e6%a0%b7%e5%8a%a8%e4%bd%9c" aria-label="第 3 步：在下一状态继续按 actor 采样动作">第 3 步：在下一状态继续按 actor 采样动作</a></li>
+            <li>
+                <a href="#%e7%ac%ac-4-%e6%ad%a5actor-%e7%94%a8-critic-%e7%9a%84%e5%bd%93%e5%89%8d%e8%af%84%e4%bb%b7%e6%9b%b4%e6%96%b0%e7%ad%96%e7%95%a5" aria-label="第 4 步：actor 用 critic 的当前评价更新策略">第 4 步：actor 用 critic 的当前评价更新策略</a></li>
+            <li>
+                <a href="#%e7%ac%ac-5-%e6%ad%a5critic-%e7%94%a8-sarsa-%e7%9a%84-td-error-%e6%9b%b4%e6%96%b0%e4%bb%b7%e5%80%bc%e4%bc%b0%e8%ae%a1" aria-label="第 5 步：critic 用 Sarsa 的 TD error 更新价值估计">第 5 步：critic 用 Sarsa 的 TD error 更新价值估计</a></li></ul>
+            </li>
+            <li>
+                <a href="#7-%e5%92%8c%e5%89%8d%e4%b8%a4%e7%ab%a0%e7%9a%84%e9%97%ad%e7%8e%af" aria-label="7. 和前两章的闭环">7. 和前两章的闭环</a></li></ul>
+            </li>
+            <li>
+                <a href="#102-advantage-actor-critic-a2c%e4%bc%98%e5%8a%bf-actor-critic" aria-label="10.2 Advantage actor-critic (A2C)（优势 Actor-Critic）">10.2 Advantage actor-critic (A2C)（优势 Actor-Critic）</a><ul>
+                    
+            <li>
+                <a href="#1-%e4%b8%ba%e4%bb%80%e4%b9%88%e5%8f%af%e4%bb%a5%e5%87%8f-baseline" aria-label="1. 为什么可以减 baseline？">1. 为什么可以减 baseline？</a></li>
+            <li>
+                <a href="#2-baseline-%e6%9c%89%e4%bb%80%e4%b9%88%e7%94%a8%e4%b8%8d%e6%94%b9%e5%9d%87%e5%80%bc%e9%99%8d%e4%bd%8e%e6%96%b9%e5%b7%ae" aria-label="2. baseline 有什么用：不改均值，降低方差">2. baseline 有什么用：不改均值，降低方差</a></li>
+            <li>
+                <a href="#3-%e6%9c%80%e4%bc%98-baseline-%e5%92%8c%e5%ae%9e%e7%94%a8-baseline" aria-label="3. 最优 baseline 和实用 baseline">3. 最优 baseline 和实用 baseline</a></li>
+            <li>
+                <a href="#4-advantage-function%e5%8a%a8%e4%bd%9c%e6%af%94%e5%b9%b3%e5%9d%87%e6%b0%b4%e5%b9%b3%e5%a5%bd%e5%a4%9a%e5%b0%91" aria-label="4. advantage function：动作比平均水平好多少">4. advantage function：动作比平均水平好多少</a></li>
+            <li>
+                <a href="#5-%e4%bb%8e-advantage-%e5%88%b0-a2c-%e6%9b%b4%e6%96%b0%e5%bc%8f" aria-label="5. 从 advantage 到 A2C 更新式">5. 从 advantage 到 A2C 更新式</a></li>
+            <li>
+                <a href="#6-%e4%b8%ba%e4%bb%80%e4%b9%88-a2c-%e5%8f%af%e4%bb%a5%e5%8f%aa%e5%ad%a6-" aria-label="6. 为什么 A2C 可以只学 $v(s,w)$？">6. 为什么 A2C 可以只学 $v(s,w)$？</a></li>
+            <li>
+                <a href="#7-algorithm-102a2c--td-actor-critic" aria-label="7. Algorithm 10.2：A2C / TD Actor-Critic">7. Algorithm 10.2：A2C / TD Actor-Critic</a></li>
+            <li>
+                <a href="#8-%e4%b8%80%e4%b8%aa%e6%9c%80%e5%b0%8f%e6%95%b0%e5%80%bc%e4%be%8b%e5%ad%90%e4%b8%ba%e4%bb%80%e4%b9%88-advantage-%e6%9b%b4%e5%90%88%e7%90%86" aria-label="8. 一个最小数值例子：为什么 advantage 更合理">8. 一个最小数值例子：为什么 advantage 更合理</a></li>
+            <li>
+                <a href="#9-%e5%92%8c-101-%e7%9a%84%e9%97%ad%e7%8e%af" aria-label="9. 和 10.1 的闭环">9. 和 10.1 的闭环</a></li></ul>
+            </li>
+            <li>
+                <a href="#103-off-policy-actor-critic%e7%a6%bb%e7%ad%96%e7%95%a5-actor-critic" aria-label="10.3 Off-policy actor-critic（离策略 Actor-Critic）">10.3 Off-policy actor-critic（离策略 Actor-Critic）</a><ul>
+                    
+            <li>
+                <a href="#1-%e4%b8%ba%e4%bb%80%e4%b9%88%e5%89%8d%e9%9d%a2%e7%9a%84-actor-critic-%e6%98%af-on-policy" aria-label="1. 为什么前面的 actor-critic 是 on-policy？">1. 为什么前面的 actor-critic 是 on-policy？</a></li>
+            <li>
+                <a href="#2-importance-sampling%e7%94%a8--%e7%9a%84%e6%a0%b7%e6%9c%ac%e4%bc%b0%e8%ae%a1--%e7%9a%84%e6%9c%9f%e6%9c%9b" aria-label="2. importance sampling：用 $p_1$ 的样本估计 $p_0$ 的期望">2. importance sampling：用 $p_1$ 的样本估计 $p_0$ 的期望</a></li>
+            <li>
+                <a href="#3-%e4%b8%80%e4%b8%aa%e6%9c%80%e5%b0%8f%e6%95%b0%e5%80%bc%e4%be%8b%e5%ad%90%e4%b8%ba%e4%bb%80%e4%b9%88%e8%a6%81%e5%8a%a0%e6%9d%83" aria-label="3. 一个最小数值例子：为什么要加权">3. 一个最小数值例子：为什么要加权</a></li>
+            <li>
+                <a href="#4-%e5%9b%9e%e5%88%b0-off-policy-policy-gradient" aria-label="4. 回到 off-policy policy gradient">4. 回到 off-policy policy gradient</a></li>
+            <li>
+                <a href="#5-%e7%8a%b6%e6%80%81%e5%88%86%e5%b8%83--%e6%98%af%e4%bb%80%e4%b9%88" aria-label="5. 状态分布 $\rho$ 是什么？">5. 状态分布 $\rho$ 是什么？</a></li>
+            <li>
+                <a href="#6-off-policy-actor-critic-%e7%9a%84%e6%9b%b4%e6%96%b0%e5%bc%8f" aria-label="6. off-policy actor-critic 的更新式">6. off-policy actor-critic 的更新式</a></li>
+            <li>
+                <a href="#7-algorithm-103off-policy-actor-critic" aria-label="7. Algorithm 10.3：Off-policy actor-critic">7. Algorithm 10.3：Off-policy actor-critic</a></li>
+            <li>
+                <a href="#8-%e4%b8%80%e4%b8%aa%e6%9c%80%e5%b0%8f%e6%95%b0%e5%80%bc%e4%be%8b%e5%ad%90%e9%87%8d%e8%a6%81%e6%80%a7%e6%9d%83%e9%87%8d%e6%80%8e%e4%b9%88%e6%94%b9%e5%8f%98%e6%9b%b4%e6%96%b0%e5%8a%9b%e5%ba%a6" aria-label="8. 一个最小数值例子：重要性权重怎么改变更新力度">8. 一个最小数值例子：重要性权重怎么改变更新力度</a></li>
+            <li>
+                <a href="#9-%e5%92%8c-102-%e7%9a%84%e9%97%ad%e7%8e%af" aria-label="9. 和 10.2 的闭环">9. 和 10.2 的闭环</a></li></ul>
+            </li>
+            <li>
+                <a href="#104-deterministic-actor-critic%e7%a1%ae%e5%ae%9a%e6%80%a7-actor-critic" aria-label="10.4 Deterministic actor-critic（确定性 Actor-Critic）">10.4 Deterministic actor-critic（确定性 Actor-Critic）</a><ul>
+                    
+            <li>
+                <a href="#1-%e4%bb%8e%e9%9a%8f%e6%9c%ba%e7%ad%96%e7%95%a5%e5%88%b0%e7%a1%ae%e5%ae%9a%e6%80%a7%e7%ad%96%e7%95%a5actor-%e5%88%b0%e5%ba%95%e8%be%93%e5%87%ba%e4%bb%80%e4%b9%88" aria-label="1. 从随机策略到确定性策略：actor 到底输出什么？">1. 从随机策略到确定性策略：actor 到底输出什么？</a></li>
+            <li>
+                <a href="#2-%e7%a1%ae%e5%ae%9a%e6%80%a7%e7%ad%96%e7%95%a5%e6%a2%af%e5%ba%a6%e9%95%bf%e4%bb%80%e4%b9%88%e6%a0%b7" aria-label="2. 确定性策略梯度长什么样？">2. 确定性策略梯度长什么样？</a></li>
+            <li>
+                <a href="#3-%e4%b8%a4%e4%b8%aa%e6%a2%af%e5%ba%a6%e5%85%ac%e5%bc%8f%e4%bb%8e%e5%93%aa%e9%87%8c%e6%9d%a5%e6%ad%a3%e6%96%87%e5%8f%aa%e7%9c%8b%e4%b8%bb%e7%ba%bf" aria-label="3. 两个梯度公式从哪里来？正文只看主线">3. 两个梯度公式从哪里来？正文只看主线</a></li>
+            <li>
+                <a href="#4-%e4%b8%a4%e4%b8%aa%e7%9b%ae%e6%a0%87%e4%b8%8b%e7%9a%84%e7%8a%b6%e6%80%81%e5%88%86%e5%b8%83" aria-label="4. 两个目标下的状态分布 $\eta$">4. 两个目标下的状态分布 $\eta$</a></li>
+            <li>
+                <a href="#5-lemma-101-%e5%9c%a8%e8%af%b4%e4%bb%80%e4%b9%88" aria-label="5. Lemma 10.1 在说什么？">5. Lemma 10.1 在说什么？</a></li>
+            <li>
+                <a href="#6-algorithm-104%e7%a1%ae%e5%ae%9a%e6%80%a7-actor-critic-%e6%80%8e%e4%b9%88%e8%b7%91" aria-label="6. Algorithm 10.4：确定性 actor-critic 怎么跑？">6. Algorithm 10.4：确定性 actor-critic 怎么跑？</a></li>
+            <li>
+                <a href="#7-%e4%b8%ba%e4%bb%80%e4%b9%88%e8%bf%99%e9%87%8c-off-policy-%e5%8d%b4%e6%b2%a1%e6%9c%89-importance-sampling" aria-label="7. 为什么这里 off-policy 却没有 importance sampling？">7. 为什么这里 off-policy 却没有 importance sampling？</a></li>
+            <li>
+                <a href="#8-%e4%b8%80%e4%b8%aa%e6%9c%80%e5%b0%8f%e6%95%b0%e5%80%bc%e4%be%8b%e5%ad%90%e8%a1%8c%e4%b8%ba%e5%8a%a8%e4%bd%9c%e6%8e%a2%e7%b4%a2%e7%9b%ae%e6%a0%87%e5%8a%a8%e4%bd%9c%e5%81%9a-bootstrap" aria-label="8. 一个最小数值例子：行为动作探索，目标动作做 bootstrap">8. 一个最小数值例子：行为动作探索，目标动作做 bootstrap</a></li>
+            <li>
+                <a href="#9-%e5%92%8c%e5%89%8d%e9%9d%a2%e4%b8%89%e8%8a%82%e7%9a%84%e9%97%ad%e7%8e%af" aria-label="9. 和前面三节的闭环">9. 和前面三节的闭环</a></li></ul>
+            </li>
+            <li>
+                <a href="#105-summary%e6%9c%ac%e7%ab%a0%e5%b0%8f%e7%bb%93" aria-label="10.5 Summary（本章小结）">10.5 Summary（本章小结）</a><ul>
+                    
+            <li>
+                <a href="#1-%e6%9c%ac%e7%ab%a0%e7%9c%9f%e6%ad%a3%e5%90%88%e5%b9%b6%e4%ba%86%e5%93%aa%e4%b8%a4%e6%9d%a1%e7%ba%bf" aria-label="1. 本章真正合并了哪两条线？">1. 本章真正合并了哪两条线？</a></li>
+            <li>
+                <a href="#2-101qac%e6%8a%8a-monte-carlo-%e5%9b%9e%e6%8a%a5%e6%8d%a2%e6%88%90-td-critic" aria-label="2. 10.1：QAC，把 Monte Carlo 回报换成 TD critic">2. 10.1：QAC，把 Monte Carlo 回报换成 TD critic</a></li>
+            <li>
+                <a href="#3-102a2c%e6%8a%8a%e7%bb%9d%e5%af%b9%e5%a5%bd%e6%94%b9%e6%88%90%e6%af%94%e9%a2%84%e6%9c%9f%e6%9b%b4%e5%a5%bd" aria-label="3. 10.2：A2C，把“绝对好”改成“比预期更好”">3. 10.2：A2C，把“绝对好”改成“比预期更好”</a></li>
+            <li>
+                <a href="#4-103off-policy-ac%e6%a0%b7%e6%9c%ac%e6%9d%a5%e8%87%aa-%e7%9b%ae%e6%a0%87%e4%bc%98%e5%8c%96" aria-label="4. 10.3：Off-policy AC，样本来自 $\beta$，目标优化 $\pi$">4. 10.3：Off-policy AC，样本来自 $\beta$，目标优化 $\pi$</a></li>
+            <li>
+                <a href="#5-104deterministic-ac%e4%bb%8e%e8%b0%83%e6%a6%82%e7%8e%87%e5%8f%98%e6%88%90%e8%b0%83%e5%8a%a8%e4%bd%9c%e6%9c%ac%e8%ba%ab" aria-label="5. 10.4：Deterministic AC，从调概率变成调动作本身">5. 10.4：Deterministic AC，从调概率变成调动作本身</a></li>
+            <li>
+                <a href="#6-%e5%9b%9b%e7%a7%8d%e7%ae%97%e6%b3%95%e6%94%be%e5%9c%a8%e4%b8%80%e5%bc%a0%e8%a1%a8%e9%87%8c" aria-label="6. 四种算法放在一张表里">6. 四种算法放在一张表里</a></li>
+            <li>
+                <a href="#7-%e5%92%8c%e7%8e%b0%e4%bb%a3%e5%bc%ba%e5%8c%96%e5%ad%a6%e4%b9%a0%e7%ae%97%e6%b3%95%e7%9a%84%e5%85%b3%e7%b3%bb" aria-label="7. 和现代强化学习算法的关系">7. 和现代强化学习算法的关系</a></li>
+            <li>
+                <a href="#8-%e7%ab%a0%e6%9c%ab%e9%97%ad%e7%8e%af" aria-label="8. 章末闭环">8. 章末闭环</a></li></ul>
+            </li>
+            <li>
+                <a href="#106-qa%e9%97%ae%e7%ad%94" aria-label="10.6 Q&amp;A（问答）">10.6 Q&amp;A（问答）</a><ul>
+                    
+            <li>
+                <a href="#q1-actor-critic-%e5%92%8c-policy-gradient-methods-%e6%98%af%e4%bb%80%e4%b9%88%e5%85%b3%e7%b3%bb" aria-label="Q1. Actor-critic 和 policy gradient methods 是什么关系？">Q1. Actor-critic 和 policy gradient methods 是什么关系？</a></li>
+            <li>
+                <a href="#q2-%e4%b8%ba%e4%bb%80%e4%b9%88%e8%a6%81%e7%bb%99-actor-critic-%e5%bc%95%e5%85%a5%e9%a2%9d%e5%a4%96-baseline" aria-label="Q2. 为什么要给 actor-critic 引入额外 baseline？">Q2. 为什么要给 actor-critic 引入额外 baseline？</a></li>
+            <li>
+                <a href="#q3-importance-sampling-%e5%8f%aa%e8%83%bd%e7%94%a8%e5%9c%a8-policy-based-algorithms-%e5%90%97" aria-label="Q3. Importance sampling 只能用在 policy-based algorithms 吗？">Q3. Importance sampling 只能用在 policy-based algorithms 吗？</a></li>
+            <li>
+                <a href="#q4-%e4%b8%ba%e4%bb%80%e4%b9%88-deterministic-policy-gradient-method-%e6%98%af-off-policy" aria-label="Q4. 为什么 deterministic policy gradient method 是 off-policy？">Q4. 为什么 deterministic policy gradient method 是 off-policy？</a></li>
+            <li>
+                <a href="#%e6%9c%ac%e8%8a%82%e9%97%ad%e7%8e%af" aria-label="本节闭环">本节闭环</a></li></ul>
+            </li>
+            <li>
+                <a href="#%e6%88%91%e7%9a%84%e7%96%91%e9%97%ae%e4%b8%8e%e8%a7%a3%e7%ad%94" aria-label="我的疑问与解答">我的疑问与解答</a></li>
+            <li>
+                <a href="#%e8%84%89%e7%bb%9c%e6%80%bb%e7%bb%93--%e8%a6%81%e7%82%b9%e9%80%9f%e8%ae%b0" aria-label="脉络总结 / 要点速记">脉络总结 / 要点速记</a>
+            </li>
+        </ul>
+    </div>
+</details>
+
+    </aside>
+
+    <div class="post-content md-content"><blockquote>
+<p>原书 p224-245 · 学习日期 2026-06-20 · 涵盖 10.1-10.6（全章完）</p></blockquote>
+<h2 id="本章在全书的位置先读这段">本章在全书的位置（先读这段）<a hidden class="anchor" aria-hidden="true" href="#本章在全书的位置先读这段">#</a></h2>
+<p>第 8 章解决的是 value function approximation 价值函数近似：用参数 $w$ 表示 $\hat v(s,w)$ 或 $\hat q(s,a,w)$，让价值估计能推广到大状态空间。</p>
+<p>第 9 章解决的是 policy gradient 策略梯度：用参数 $\theta$ 表示策略 $\pi(a\mid s,\theta)$，直接沿着</p>
+$$ \nabla_\theta J(\theta) \approx \mathbb E \left[ \nabla_\theta\ln\pi(A\mid S,\theta)q_\pi(S,A) \right] $$<p>来更新策略。</p>
+<p>第 10 章把这两条线合起来：</p>
+<blockquote>
+<p>actor 演员负责更新策略 $\pi(a\mid s,\theta)$；critic 评论家负责估计价值 $q_\pi(s,a)$ 或优势函数。actor 问“我该怎么改策略”，critic 回答“刚才这个动作到底值多少”。</p></blockquote>
+<p>这也是为什么 actor-critic 是自然出现的：第 9 章的策略梯度公式里本来就需要 $q_\pi(S,A)$，而第 8 章已经教过我们怎样用 TD 和函数近似估计动作价值。</p>
+<hr>
+<h2 id="101-the-simplest-actor-critic-algorithm-qac最简单的-actor-criticqac">10.1 The simplest actor-critic algorithm (QAC)（最简单的 Actor-Critic：QAC）<a hidden class="anchor" aria-hidden="true" href="#101-the-simplest-actor-critic-algorithm-qac最简单的-actor-criticqac">#</a></h2>
+<p><strong>要解决的问题</strong>：REINFORCE 用一整段 Monte Carlo 回报估计 $q_\pi(s_t,a_t)$，方差很大。本节要说明：如果改用 TD learning 学出来的动作价值函数 $q(s,a,w)$ 来替代这个回报估计，就自然得到最简单的 actor-critic 算法。</p>
+<h3 id="1-从第-9-章的策略梯度更新开始">1. 从第 9 章的策略梯度更新开始<a hidden class="anchor" aria-hidden="true" href="#1-从第-9-章的策略梯度更新开始">#</a></h3>
+<p>第 9 章给出的策略梯度更新是：</p>
+$$ \begin{aligned} \theta_{t+1} &= \theta_t+\alpha\nabla_\theta J(\theta_t)\\ &= \theta_t+\alpha \mathbb E_{S\sim\eta,\ A\sim\pi} \left[ \nabla_\theta\ln\pi(A\mid S,\theta_t)q_\pi(S,A) \right]. \tag{10.1} \end{aligned} $$<p>其中 $\eta$ 是状态分布，可以根据具体目标理解成 $\rho_\pi$ 或 $d_\pi$。</p>
+<p>真实梯度通常不知道，所以用样本梯度近似：</p>
+$$ \theta_{t+1} = \theta_t + \alpha \nabla_\theta\ln\pi(a_t\mid s_t,\theta_t) q_t(s_t,a_t). \tag{10.2} $$<p>这其实就是第 9 章的 (9.32)。所以 10.1 不是从零开始，而是在问：</p>
+<blockquote>
+<p>这个 $q_t(s_t,a_t)$ 到底怎么来？</p></blockquote>
+<h3 id="2-reinforce-和-actor-critic-的分叉点">2. REINFORCE 和 actor-critic 的分叉点<a hidden class="anchor" aria-hidden="true" href="#2-reinforce-和-actor-critic-的分叉点">#</a></h3>
+<p>第 9 章 REINFORCE 的做法是用 Monte Carlo return 蒙特卡洛回报：</p>
+$$ q_t(s_t,a_t) = \sum_{k=t+1}^{T}\gamma^{k-t-1}r_k. $$<p>这意味着要等 episode 结束，才能知道每一步后面的完整回报。</p>
+<p>actor-critic 的想法是：不要等整局结束，改用一个由 TD learning 学出来的动作价值近似：</p>
+$$ q_t(s_t,a_t) \approx q(s_t,a_t,w_t). $$<p>于是 (10.2) 变成：</p>
+$$ \theta_{t+1} = \theta_t + \alpha_\theta \nabla_\theta\ln\pi(a_t\mid s_t,\theta_t) q(s_t,a_t,w_t). $$<p>这就是 actor 更新。它仍然是策略梯度，只是把 $q_\pi$ 的估计交给了另一个模块。</p>
+<p>两条路线可以并排看：</p>
+<table>
+  <thead>
+      <tr>
+          <th>方法</th>
+          <th>$q_t(s_t,a_t)$ 怎么估计</th>
+          <th>特点</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>REINFORCE / Monte Carlo policy gradient</td>
+          <td>用 episode 结束后的完整折扣回报</td>
+          <td>无偏但方差大，通常要等回合结束</td>
+      </tr>
+      <tr>
+          <td>actor-critic</td>
+          <td>用 TD 学出来的 $q(s_t,a_t,w_t)$</td>
+          <td>可在线更新，方差更低，但引入价值估计偏差</td>
+      </tr>
+  </tbody>
+</table>
+<h3 id="3-actor-和-critic-分别做什么">3. actor 和 critic 分别做什么？<a hidden class="anchor" aria-hidden="true" href="#3-actor-和-critic-分别做什么">#</a></h3>
+<p>actor-critic 这个名字正好对应两个参数化对象：</p>
+<table>
+  <thead>
+      <tr>
+          <th>角色</th>
+          <th>参数</th>
+          <th>函数</th>
+          <th>负责什么</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>actor 演员</td>
+          <td>$\theta$</td>
+          <td>$\pi(a\mid s,\theta)$</td>
+          <td>直接决定动作概率，更新策略</td>
+      </tr>
+      <tr>
+          <td>critic 评论家</td>
+          <td>$w$</td>
+          <td>$q(s,a,w)$</td>
+          <td>估计动作价值，评价 actor 的动作好不好</td>
+      </tr>
+  </tbody>
+</table>
+<p>actor 的更新式是：</p>
+$$ \theta_{t+1} = \theta_t + \alpha_\theta \nabla_\theta\ln\pi(a_t\mid s_t,\theta_t) q(s_t,a_t,w_t). $$<p>读法：critic 如果认为当前样本 $(s_t,a_t)$ 的动作价值高，actor 就更倾向于增加这类动作的概率；如果动作价值低，actor 的更新方向会相应变弱或反向。</p>
+<p>critic 的任务是更新 $w$，让 $q(s,a,w)$ 更接近当前策略下的动作价值。</p>
+<h3 id="4-qac用-sarsa-做-critic">4. QAC：用 Sarsa 做 critic<a hidden class="anchor" aria-hidden="true" href="#4-qac用-sarsa-做-critic">#</a></h3>
+<p>最简单的 actor-critic 叫 Q actor-critic，简称 QAC。这里的 Q 表示 critic 估计的是 action value 动作价值：</p>
+$$ q(s,a,w). $$<p>⚠️ 记号说明：你可能会觉得这里少了一个帽子。第 8 章讲 function approximation 时，为了强调“这是对真实 $q_\pi(s,a)$ 的近似”，常写成</p>
+$$ \hat q(s,a,w). $$<p>第 10 章原书在 actor-critic 里把 critic 的近似动作价值函数简写成</p>
+$$ q(s,a,w). $$<p>所以这里的 $q(s,a,w)$ 不是 tabular true value 真值表，也不是已经等于真实的 $q_\pi(s,a)$；它就是 critic 用参数 $w$ 表示的近似函数。也可以按第 8 章记法理解成：</p>
+$$ q(s,a,w)\equiv \hat q(s,a,w)\approx q_\pi(s,a). $$<p>原书说 critic 使用的是第 8 章的 Sarsa with function approximation。第 8 章的 Sarsa 更新是：</p>
+$$ w_{t+1} = w_t + \alpha_w \left[ r_{t+1} + \gamma q(s_{t+1},a_{t+1},w_t) - q(s_t,a_t,w_t) \right] \nabla_w q(s_t,a_t,w_t). $$<p>中括号里的量是 TD error 时间差分误差：</p>
+$$ \delta_t = r_{t+1} + \gamma q(s_{t+1},a_{t+1},w_t) - q(s_t,a_t,w_t). $$<p>所以 critic 更新也可以写成：</p>
+$$ w_{t+1} = w_t+\alpha_w\delta_t\nabla_w q(s_t,a_t,w_t). $$<p>读法：如果当前估计 $q(s_t,a_t,w_t)$ 比 TD target</p>
+$$ r_{t+1}+\gamma q(s_{t+1},a_{t+1},w_t) $$<p>偏低，就把它往上推；如果偏高，就往下拉。</p>
+<p>⚠️ 易错点：这里的 Sarsa 是 on-policy 的，因为 $a_{t+1}$ 是按当前 actor 策略 $\pi(a\mid s_{t+1},\theta_t)$ 实际采样出来的，不是取 $\arg\max_a q(s_{t+1},a,w_t)$。</p>
+<h3 id="5-algorithm-101最简单的-qac-流程">5. Algorithm 10.1：最简单的 QAC 流程<a hidden class="anchor" aria-hidden="true" href="#5-algorithm-101最简单的-qac-流程">#</a></h3>
+<p><strong>输入</strong>：</p>
+<ul>
+<li>policy 策略函数 $\pi(a\mid s,\theta_0)$，初始参数 $\theta_0$</li>
+<li>action value 动作价值函数 $q(s,a,w_0)$，初始参数 $w_0$</li>
+<li>学习率 $\alpha_\theta,\alpha_w\gt 0$</li>
+</ul>
+<p>每个时间步 $t$：</p>
+<ol>
+<li>按 actor 采样动作：</li>
+</ol>
+$$ a_t\sim\pi(\cdot\mid s_t,\theta_t). $$<ol start="2">
+<li>
+<p>执行动作，观察 $r_{t+1},s_{t+1}$。</p>
+</li>
+<li>
+<p>再按当前 actor 在下一状态采样：</p>
+</li>
+</ol>
+$$ a_{t+1}\sim\pi(\cdot\mid s_{t+1},\theta_t). $$<ol start="4">
+<li>actor 更新策略参数：</li>
+</ol>
+$$ \theta_{t+1} = \theta_t + \alpha_\theta \nabla_\theta\ln\pi(a_t\mid s_t,\theta_t) q(s_t,a_t,w_t). $$<ol start="5">
+<li>critic 用 Sarsa 更新价值参数：</li>
+</ol>
+$$ w_{t+1} = w_t + \alpha_w \left[ r_{t+1} + \gamma q(s_{t+1},a_{t+1},w_t) - q(s_t,a_t,w_t) \right] \nabla_w q(s_t,a_t,w_t). $$<h3 id="6-一个最小数值例子按-algorithm-101-跑一轮">6. 一个最小数值例子：按 Algorithm 10.1 跑一轮<a hidden class="anchor" aria-hidden="true" href="#6-一个最小数值例子按-algorithm-101-跑一轮">#</a></h3>
+<p>为了让上面的 5 个步骤真正落地，考虑一个极简例子。当前在状态 $s_1$，有两个动作 $a_1,a_2$。actor 当前策略是：</p>
+<table>
+  <thead>
+      <tr>
+          <th>状态</th>
+          <th style="text-align: right">$\pi(a_1\mid s,\theta_t)$</th>
+          <th style="text-align: right">$\pi(a_2\mid s,\theta_t)$</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>$s_1$</td>
+          <td style="text-align: right">0.70</td>
+          <td style="text-align: right">0.30</td>
+      </tr>
+  </tbody>
+</table>
+<p>critic 当前对动作价值的估计是：</p>
+<table>
+  <thead>
+      <tr>
+          <th>动作价值估计</th>
+          <th style="text-align: right">数值</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>$q(s_1,a_1,w_t)$</td>
+          <td style="text-align: right">2.0</td>
+      </tr>
+      <tr>
+          <td>$q(s_1,a_2,w_t)$</td>
+          <td style="text-align: right">0.5</td>
+      </tr>
+  </tbody>
+</table>
+<p>再假设：</p>
+$$ \alpha_\theta=0.1,\qquad \alpha_w=0.2,\qquad \gamma=0.9. $$<p>为了只看清流程，假设 actor 这一刻的 log-policy gradient 是一个一维数：</p>
+$$ \nabla_\theta\ln\pi(a_1\mid s_1,\theta_t)=0.4, $$<p>critic 的函数梯度也先取成一维：</p>
+$$ \nabla_w q(s_1,a_1,w_t)=0.5. $$<h4 id="第-1-步actor-按当前策略采样动作">第 1 步：actor 按当前策略采样动作<a hidden class="anchor" aria-hidden="true" href="#第-1-步actor-按当前策略采样动作">#</a></h4>
+<p>当前在 $s_1$，按策略抽动作：</p>
+$$ a_t\sim\pi(\cdot\mid s_1,\theta_t). $$<p>假设这次抽到了 $a_t=a_1$。注意：这里不是选最大 $q$ 的动作，而是按 actor 的概率分布采样。</p>
+<h4 id="第-2-步执行动作观察环境反馈">第 2 步：执行动作，观察环境反馈<a hidden class="anchor" aria-hidden="true" href="#第-2-步执行动作观察环境反馈">#</a></h4>
+<p>执行 $a_1$ 后，环境给出：</p>
+$$ r_{t+1}=1,\qquad s_{t+1}=s_2. $$<h4 id="第-3-步在下一状态继续按-actor-采样动作">第 3 步：在下一状态继续按 actor 采样动作<a hidden class="anchor" aria-hidden="true" href="#第-3-步在下一状态继续按-actor-采样动作">#</a></h4>
+<p>假设在 $s_2$，actor 抽到：</p>
+$$ a_{t+1}=a_2. $$<p>critic 对下一状态-动作的估计是：</p>
+$$ q(s_2,a_2,w_t)=3.0. $$<h4 id="第-4-步actor-用-critic-的当前评价更新策略">第 4 步：actor 用 critic 的当前评价更新策略<a hidden class="anchor" aria-hidden="true" href="#第-4-步actor-用-critic-的当前评价更新策略">#</a></h4>
+<p>actor 更新用的是当前 critic 对 $(s_1,a_1)$ 的评价：</p>
+$$ q(s_1,a_1,w_t)=2.0. $$<p>所以：</p>
+$$ \begin{aligned} \theta_{t+1} &= \theta_t + \alpha_\theta \nabla_\theta\ln\pi(a_1\mid s_1,\theta_t) q(s_1,a_1,w_t)\\ &= \theta_t + 0.1\times 0.4\times 2.0\\ &= \theta_t+0.08. \end{aligned} $$<p>读法：critic 认为 $(s_1,a_1)$ 的动作价值是正的，而且不小，所以 actor 沿着“提高这次动作概率”的方向走了一步。</p>
+<h4 id="第-5-步critic-用-sarsa-的-td-error-更新价值估计">第 5 步：critic 用 Sarsa 的 TD error 更新价值估计<a hidden class="anchor" aria-hidden="true" href="#第-5-步critic-用-sarsa-的-td-error-更新价值估计">#</a></h4>
+<p>critic 的 TD target 是：</p>
+$$ r_{t+1}+\gamma q(s_{t+1},a_{t+1},w_t) = 1+0.9\times 3.0 = 3.7. $$<p>当前 critic 对 $(s_1,a_1)$ 的估计是：</p>
+$$ q(s_1,a_1,w_t)=2.0. $$<p>所以 TD error 是：</p>
+$$ \delta_t = 3.7-2.0 = 1.7. $$<p>critic 更新：</p>
+$$ \begin{aligned} w_{t+1} &= w_t + \alpha_w\delta_t\nabla_w q(s_1,a_1,w_t)\\ &= w_t + 0.2\times1.7\times0.5\\ &= w_t+0.17. \end{aligned} $$<p>读法：环境反馈和下一步价值说明，critic 原来把 $(s_1,a_1)$ 估低了，所以 $w$ 被往“提高 $q(s_1,a_1,w)$”的方向推。</p>
+<p>把一轮流程合起来看：</p>
+<table>
+  <thead>
+      <tr>
+          <th>步骤</th>
+          <th>用到什么</th>
+          <th>公式 / 为什么需要</th>
+          <th>更新谁</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>1. 采样 $a_t$</td>
+          <td>actor 的 $\pi(a\mid s_t,\theta_t)$</td>
+          <td>得到当前动作样本 $(s_t,a_t)$</td>
+          <td>暂不更新</td>
+      </tr>
+      <tr>
+          <td>2. 观察 $r_{t+1},s_{t+1}$</td>
+          <td>环境反馈</td>
+          <td>得到 TD target 的即时奖励和下一状态</td>
+          <td>暂不更新</td>
+      </tr>
+      <tr>
+          <td>3. 采样 $a_{t+1}$</td>
+          <td>actor 的 $\pi(a\mid s_{t+1},\theta_t)$</td>
+          <td>为 Sarsa target 准备 $q(s_{t+1},a_{t+1},w_t)$</td>
+          <td>暂不更新</td>
+      </tr>
+      <tr>
+          <td>4. actor 更新</td>
+          <td>$q(s_t,a_t,w_t)$</td>
+          <td>$\theta_{t+1}=\theta_t+\alpha_\theta\nabla_\theta\ln\pi(a_t\mid s_t,\theta_t)q(s_t,a_t,w_t)$</td>
+          <td>更新 $\theta$</td>
+      </tr>
+      <tr>
+          <td>5. critic 更新</td>
+          <td>TD error $\delta_t$</td>
+          <td>$\delta_t=r_{t+1}+\gamma q(s_{t+1},a_{t+1},w_t)-q(s_t,a_t,w_t)$</td>
+          <td>更新 $w$</td>
+      </tr>
+  </tbody>
+</table>
+<p>第 3 步之所以要采样 $a_{t+1}$，不是为了马上更新 actor，而是因为这里的 critic 用的是 Sarsa 形式。Sarsa 的 TD target 必须沿着当前策略实际采样到的下一步动作往前看：</p>
+$$ r_{t+1}+\gamma q(s_{t+1},a_{t+1},w_t). $$<p>如果不采样 $a_{t+1}$，critic 就缺少 target 里的下一步动作价值项，也就无法计算：</p>
+$$ \delta_t = r_{t+1}+\gamma q(s_{t+1},a_{t+1},w_t)-q(s_t,a_t,w_t). $$<p>这个例子体现了 QAC 的核心：actor 负责按概率行动并更新策略，critic 负责根据 TD 误差修正价值评价。下一轮 actor 再更新时，就会用到更好的 critic 评价。</p>
+<h3 id="7-和前两章的闭环">7. 和前两章的闭环<a hidden class="anchor" aria-hidden="true" href="#7-和前两章的闭环">#</a></h3>
+<p>QAC 可以看成两条旧线的拼接：</p>
+<table>
+  <thead>
+      <tr>
+          <th>来源</th>
+          <th>旧知识</th>
+          <th>在 QAC 里的角色</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>第 9 章</td>
+          <td>policy gradient / REINFORCE 更新 $\theta$</td>
+          <td>actor</td>
+      </tr>
+      <tr>
+          <td>第 8 章</td>
+          <td>Sarsa with function approximation 更新 $w$</td>
+          <td>critic</td>
+      </tr>
+  </tbody>
+</table>
+<p>所以 QAC 的核心不是一个全新的公式，而是这个结构：</p>
+$$ \boxed{ \text{policy gradient 更新策略} + \text{TD learning 估计动作价值} } $$<p>这也解释了为什么第 10 章会成为第 8 章和第 9 章的交汇点。</p>
+<p>⚠️ 易错点：actor-critic 不是“有 actor 就不需要价值”。恰好相反，它显式让 critic 学价值，只是这个价值不再用于贪心选动作，而是用于给 actor 的策略梯度提供评价信号。</p>
+<hr>
+<h2 id="102-advantage-actor-critic-a2c优势-actor-critic">10.2 Advantage actor-critic (A2C)（优势 Actor-Critic）<a hidden class="anchor" aria-hidden="true" href="#102-advantage-actor-critic-a2c优势-actor-critic">#</a></h2>
+<p><strong>要解决的问题</strong>：10.1 的 QAC 直接用 $q(s_t,a_t,w_t)$ 乘策略梯度，但绝对动作价值可能方差很大。本节要说明：把动作价值减去一个 baseline 基线，不改变策略梯度的期望，却能降低样本估计的方差；当 baseline 选成 $v_\pi(s)$ 时，就得到 advantage function 优势函数和 A2C。</p>
+<h3 id="1-为什么可以减-baseline">1. 为什么可以减 baseline？<a hidden class="anchor" aria-hidden="true" href="#1-为什么可以减-baseline">#</a></h3>
+<p>第 9 章的策略梯度核心形式是：</p>
+$$ \mathbb E_{S\sim\eta,\ A\sim\pi} \left[ \nabla_\theta\ln\pi(A\mid S,\theta_t)q_\pi(S,A) \right]. $$<p>A2C 的第一步是说：可以从 $q_\pi(S,A)$ 里减去一个只依赖状态的函数 $b(S)$：</p>
+$$ \mathbb E \left[ \nabla_\theta\ln\pi(A\mid S,\theta_t)q_\pi(S,A) \right] = \mathbb E \left[ \nabla_\theta\ln\pi(A\mid S,\theta_t) \left(q_\pi(S,A)-b(S)\right) \right]. \tag{10.3} $$<p>这叫 baseline invariance 基线不变性：减去 baseline 后，期望梯度不变。</p>
+<p>为什么？只要证明多减掉的那一项期望为 0：</p>
+$$ \mathbb E \left[ \nabla_\theta\ln\pi(A\mid S,\theta_t)b(S) \right] =0. $$<p>展开看：</p>
+$$ \begin{aligned} &\mathbb E_{S\sim\eta,\ A\sim\pi} \left[ \nabla_\theta\ln\pi(A\mid S,\theta_t)b(S) \right]\\ &= \sum_s\eta(s)\sum_a \pi(a\mid s,\theta_t) \nabla_\theta\ln\pi(a\mid s,\theta_t)b(s). \end{aligned} $$<p>用 log-trick 反过来：</p>
+$$ \pi(a\mid s,\theta_t) \nabla_\theta\ln\pi(a\mid s,\theta_t) = \nabla_\theta\pi(a\mid s,\theta_t). $$<p>所以：</p>
+$$ \begin{aligned} &\sum_s\eta(s)\sum_a \pi(a\mid s,\theta_t) \nabla_\theta\ln\pi(a\mid s,\theta_t)b(s)\\ &= \sum_s\eta(s)b(s) \sum_a\nabla_\theta\pi(a\mid s,\theta_t)\\ &= \sum_s\eta(s)b(s) \nabla_\theta \sum_a\pi(a\mid s,\theta_t)\\ &= \sum_s\eta(s)b(s)\nabla_\theta 1 =0. \end{aligned} $$<p>关键点是：对固定状态 $s$，baseline $b(s)$ 对所有动作都一样，所以它不会偏向某个动作；而所有动作概率加起来永远是 1，导数就是 0。</p>
+<p>⚠️ 易错点：baseline 只能依赖状态 $S$，不能随动作 $A$ 任意变化。因为如果 $b=b(S,A)$，它就可能改变不同动作之间的相对更新权重，期望梯度不再保证不变。</p>
+<h3 id="2-baseline-有什么用不改均值降低方差">2. baseline 有什么用：不改均值，降低方差<a hidden class="anchor" aria-hidden="true" href="#2-baseline-有什么用不改均值降低方差">#</a></h3>
+<p>定义随机梯度样本：</p>
+$$ X(S,A) \doteq \nabla_\theta\ln\pi(A\mid S,\theta_t) \left[ q_\pi(S,A)-b(S) \right]. \tag{10.4} $$<p>真实梯度是：</p>
+$$ \mathbb E[X(S,A)]. $$<p>baseline invariance 告诉我们：换不同的 $b(S)$，这个期望不变。但样本方差会变。</p>
+<p>这件事非常像估计一个数：如果随机样本上下波动很大，单个样本就很不可靠；如果样本围绕均值波动很小，单个样本更接近真实期望。</p>
+<table>
+  <thead>
+      <tr>
+          <th>baseline 选择</th>
+          <th>期望梯度</th>
+          <th>样本方差</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>$b(S)=0$</td>
+          <td>不变</td>
+          <td>可能很大</td>
+      </tr>
+      <tr>
+          <td>合适的 $b(S)$</td>
+          <td>不变</td>
+          <td>可以更小</td>
+      </tr>
+  </tbody>
+</table>
+<p>REINFORCE 和 QAC 可以看成默认用 $b=0$。A2C 的改进，就是选一个更好的 baseline。</p>
+<h3 id="3-最优-baseline-和实用-baseline">3. 最优 baseline 和实用 baseline<a hidden class="anchor" aria-hidden="true" href="#3-最优-baseline-和实用-baseline">#</a></h3>
+<p>原书给出能最小化方差的 optimal baseline 最优基线：</p>
+$$ b^*(s) = \frac{ \mathbb E_{A\sim\pi} \left[ \left\| \nabla_\theta\ln\pi(A\mid s,\theta_t) \right\|^2 q_\pi(s,A) \right] }{ \mathbb E_{A\sim\pi} \left[ \left\| \nabla_\theta\ln\pi(A\mid s,\theta_t) \right\|^2 \right] }. \tag{10.5} $$<p>这个式子的直觉是：不是简单平均动作价值，而是按 $\|\nabla_\theta\ln\pi\|^2$ 给不同动作加权。哪个动作对策略参数更敏感，它的价值就对方差影响更大。</p>
+<p>但这个最优 baseline 太复杂，实践中不方便用。于是原书说：如果去掉权重 $\|\nabla_\theta\ln\pi\|^2$，得到一个简洁的次优 baseline：</p>
+$$ b^\dagger(s) = \mathbb E_{A\sim\pi} \left[ q_\pi(s,A) \right] = v_\pi(s). $$<p>这就是 state value 状态价值。</p>
+<p>这里不矛盾。虽然 $v_\pi(s)$ 可以展开成含动作符号的式子，但那个动作只是“求和用的哑变量”，不是当前样本动作 $A$：</p>
+$$ v_\pi(s) = \sum_{a'\in\mathcal A} \pi(a'\mid s)q_\pi(s,a'). $$<p>读法是：固定状态 $s$ 后，把这个状态下所有可能动作的 $q_\pi(s,a')$ 按策略概率加权平均。平均完成以后，结果就是一个数，只由 $s$ 决定，不再随“这次实际采到了哪个动作 $A$”改变。</p>
+<p>对比一下就清楚了：</p>
+<table>
+  <thead>
+      <tr>
+          <th>写法</th>
+          <th>是否允许做 baseline</th>
+          <th>原因</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>$b(s)=v_\pi(s)=\sum_{a'}\pi(a'\mid s)q_\pi(s,a')$</td>
+          <td>允许</td>
+          <td>对固定 $s$，它已经对所有动作求平均，是同一个数</td>
+      </tr>
+      <tr>
+          <td>$b(s,A)=q_\pi(s,A)$</td>
+          <td>不允许随便当 baseline</td>
+          <td>它会随当前采样动作 $A$ 变化，会改变动作之间的相对权重</td>
+      </tr>
+  </tbody>
+</table>
+<p>所以 baseline 条件里的“不依赖动作”更准确地说是：不能依赖当前被采样出来的随机动作 $A$。公式内部用 $a'$ 把所有动作求和，不算违反这个条件。</p>
+<p>读法：在状态 $s$ 下，所有动作价值按当前策略平均，就是这个状态本身的价值。用它做 baseline 等于问：</p>
+<blockquote>
+<p>这次动作比当前状态下的平均水平好多少？</p></blockquote>
+<h3 id="4-advantage-function动作比平均水平好多少">4. advantage function：动作比平均水平好多少<a hidden class="anchor" aria-hidden="true" href="#4-advantage-function动作比平均水平好多少">#</a></h3>
+<p>当 baseline 取成 $v_\pi(S)$ 时，策略梯度变成：</p>
+$$ \theta_{t+1} = \theta_t + \alpha \mathbb E \left[ \nabla_\theta\ln\pi(A\mid S,\theta_t) \left( q_\pi(S,A)-v_\pi(S) \right) \right]. $$<p>定义 advantage function 优势函数：</p>
+$$ \delta_\pi(S,A) \doteq q_\pi(S,A)-v_\pi(S). \tag{10.7} $$<p>它的含义是：动作 $A$ 相对于状态 $S$ 下平均动作表现的优势。</p>
+<p>因为</p>
+$$ v_\pi(s) = \sum_{a'}\pi(a'\mid s)q_\pi(s,a'), $$<p>所以 $v_\pi(s)$ 是当前策略下动作价值的平均值。</p>
+<table>
+  <thead>
+      <tr>
+          <th>情况</th>
+          <th>含义</th>
+          <th>actor 应该怎样</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>$\delta_\pi(s,a)\gt 0$</td>
+          <td>这个动作比平均动作更好</td>
+          <td>增强这个动作概率</td>
+      </tr>
+      <tr>
+          <td>$\delta_\pi(s,a)\lt 0$</td>
+          <td>这个动作比平均动作更差</td>
+          <td>降低这个动作概率</td>
+      </tr>
+      <tr>
+          <td>$\delta_\pi(s,a)=0$</td>
+          <td>这个动作差不多就是平均水平</td>
+          <td>不需要强烈调整</td>
+      </tr>
+  </tbody>
+</table>
+<p>这比 QAC 直接用 $q(s,a,w)$ 更合理：actor 真正关心的不是“动作价值绝对值是多少”，而是“这个动作相对同状态下其他动作是否更好”。</p>
+<h3 id="5-从-advantage-到-a2c-更新式">5. 从 advantage 到 A2C 更新式<a hidden class="anchor" aria-hidden="true" href="#5-从-advantage-到-a2c-更新式">#</a></h3>
+<p>理论版本是：</p>
+$$ \theta_{t+1} = \theta_t + \alpha \mathbb E \left[ \nabla_\theta\ln\pi(A\mid S,\theta_t) \delta_\pi(S,A) \right]. $$<p>样本版本是：</p>
+$$ \theta_{t+1} = \theta_t + \alpha \nabla_\theta\ln\pi(a_t\mid s_t,\theta_t) \delta_t(s_t,a_t). \tag{10.8} $$<p>其中：</p>
+$$ \delta_t(s_t,a_t) = q_t(s_t,a_t)-v_t(s_t). $$<p>如果 $q_t$ 和 $v_t$ 都用 Monte Carlo 估计，这叫 REINFORCE with a baseline。</p>
+<p>如果 $q_t$ 和 $v_t$ 都用 TD learning 估计，就是 advantage actor-critic，简称 A2C。</p>
+<h3 id="6-为什么-a2c-可以只学-">6. 为什么 A2C 可以只学 $v(s,w)$？<a hidden class="anchor" aria-hidden="true" href="#6-为什么-a2c-可以只学-">#</a></h3>
+<p>直接估计 advantage 似乎需要两个网络：</p>
+$$ q_t(s_t,a_t)-v_t(s_t). $$<p>一个估计 $q_\pi(s,a)$，一个估计 $v_\pi(s)$。</p>
+<p>但 A2C 常用 TD error 直接近似 advantage：</p>
+$$ q_t(s_t,a_t)-v_t(s_t) \approx r_{t+1} + \gamma v(s_{t+1},w_t) - v(s_t,w_t). $$<p>为什么合理？因为根据动作价值定义：</p>
+$$ q_\pi(s_t,a_t) = \mathbb E \left[ R_{t+1}+\gamma v_\pi(S_{t+1}) \mid S_t=s_t,A_t=a_t \right]. $$<p>所以：</p>
+$$ q_\pi(s_t,a_t)-v_\pi(s_t) = \mathbb E \left[ R_{t+1} + \gamma v_\pi(S_{t+1}) - v_\pi(S_t) \mid S_t=s_t,A_t=a_t \right]. $$<p>也就是说，单步 TD error：</p>
+$$ \delta_t = r_{t+1} + \gamma v(s_{t+1},w_t) - v(s_t,w_t) $$<p>正是在用一条样本估计 advantage。</p>
+<p>这有一个重要好处：A2C 只需要一个 critic 网络 $v(s,w)$，不用同时维护 $q(s,a,w)$ 和 $v(s,w)$ 两个价值网络。</p>
+<h3 id="7-algorithm-102a2c--td-actor-critic">7. Algorithm 10.2：A2C / TD Actor-Critic<a hidden class="anchor" aria-hidden="true" href="#7-algorithm-102a2c--td-actor-critic">#</a></h3>
+<p><strong>输入</strong>：</p>
+<ul>
+<li>policy 函数 $\pi(a\mid s,\theta_0)$</li>
+<li>value 函数 $v(s,w_0)$</li>
+<li>学习率 $\alpha_\theta,\alpha_w\gt 0$</li>
+</ul>
+<p>每个时间步 $t$：</p>
+<ol>
+<li>按当前策略采样动作：</li>
+</ol>
+$$ a_t\sim\pi(\cdot\mid s_t,\theta_t). $$<ol start="2">
+<li>执行动作，观察：</li>
+</ol>
+$$ r_{t+1},\ s_{t+1}. $$<ol start="3">
+<li>计算 advantage / TD error：</li>
+</ol>
+$$ \delta_t = r_{t+1} + \gamma v(s_{t+1},w_t) - v(s_t,w_t). $$<ol start="4">
+<li>actor 更新策略：</li>
+</ol>
+$$ \theta_{t+1} = \theta_t + \alpha_\theta \delta_t \nabla_\theta\ln\pi(a_t\mid s_t,\theta_t). $$<ol start="5">
+<li>critic 更新状态价值：</li>
+</ol>
+$$ w_{t+1} = w_t + \alpha_w \delta_t \nabla_w v(s_t,w_t). $$<p>和 QAC 对比：</p>
+<table>
+  <thead>
+      <tr>
+          <th>对比点</th>
+          <th>QAC</th>
+          <th>A2C</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>critic 学什么</td>
+          <td>$q(s,a,w)$</td>
+          <td>$v(s,w)$</td>
+      </tr>
+      <tr>
+          <td>actor 乘什么信号</td>
+          <td>动作价值 $q(s_t,a_t,w_t)$</td>
+          <td>advantage / TD error $\delta_t$</td>
+      </tr>
+      <tr>
+          <td>是否要采样 $a_{t+1}$</td>
+          <td>需要，用于 Sarsa target</td>
+          <td>不需要，只用 $v(s_{t+1},w_t)$</td>
+      </tr>
+      <tr>
+          <td>更新直觉</td>
+          <td>绝对动作价值越大越增强</td>
+          <td>比平均水平好才增强</td>
+      </tr>
+  </tbody>
+</table>
+<p>⚠️ 易错点：A2C 的 $\delta_t$ 在这里有两层意义。对 critic 来说，它是 TD error，用来修正 $v(s,w)$；对 actor 来说，它是 advantage 的样本估计，用来判断当前动作相对平均表现好不好。</p>
+<h3 id="8-一个最小数值例子为什么-advantage-更合理">8. 一个最小数值例子：为什么 advantage 更合理<a hidden class="anchor" aria-hidden="true" href="#8-一个最小数值例子为什么-advantage-更合理">#</a></h3>
+<p>假设在同一个状态 $s$，critic 估计：</p>
+$$ v(s,w_t)=10. $$<p>现在 actor 采到动作 $a$，环境给出：</p>
+$$ r_{t+1}=1,\qquad v(s_{t+1},w_t)=12,\qquad \gamma=0.9. $$<p>TD error 是：</p>
+$$ \delta_t = 1+0.9\times12-10 = 1.8. $$<p>虽然当前状态价值已经很高，$v(s,w_t)=10$，但这个动作带来的结果比当前平均水平还要好，所以 $\delta_t\gt 0$，actor 会增强这个动作。</p>
+<p>再看另一个动作 $a'$。假设采到它后：</p>
+$$ r_{t+1}=1,\qquad v(s_{t+1},w_t)=9. $$<p>则：</p>
+$$ \delta_t = 1+0.9\times9-10 = -0.9. $$<p>虽然仍然拿到了正奖励 $1$，但相对于状态 $s$ 的平均水平 $10$ 来说，这个动作结果不好，所以 actor 会降低它的概率。</p>
+<p>这就是 advantage 的核心直觉：</p>
+<blockquote>
+<p>不看“绝对回报是不是正”，而看“比这个状态下的平均表现好不好”。</p></blockquote>
+<h3 id="9-和-101-的闭环">9. 和 10.1 的闭环<a hidden class="anchor" aria-hidden="true" href="#9-和-101-的闭环">#</a></h3>
+<p>10.1 的 QAC 说：</p>
+$$ \text{actor 更新用 }q(s_t,a_t,w_t). $$<p>10.2 的 A2C 改成：</p>
+$$ \text{actor 更新用 }\delta_t = r_{t+1}+\gamma v(s_{t+1},w_t)-v(s_t,w_t). $$<p>所以 A2C 的进步是：</p>
+$$ \text{用相对优势代替绝对价值} \quad+\quad \text{用一个 }v(s,w)\text{ critic 同时服务 actor 和 critic}. $$<p>另外，A2C 的策略 $\pi(a\mid s,\theta)$ 本身就是随机的，所以它可以直接用于探索，不需要像某些 value-based 控制方法那样额外加 $\varepsilon$-greedy。</p>
+<hr>
+<h2 id="103-off-policy-actor-critic离策略-actor-critic">10.3 Off-policy actor-critic（离策略 Actor-Critic）<a hidden class="anchor" aria-hidden="true" href="#103-off-policy-actor-critic离策略-actor-critic">#</a></h2>
+<p><strong>要解决的问题</strong>：前面的 REINFORCE、QAC、A2C 都是 on-policy 同策略方法：用当前策略 $\pi$ 采样，也更新同一个 $\pi$。本节要回答：如果样本不是由目标策略 $\pi$ 产生，而是由另一个 behavior policy 行为策略 $\beta$ 产生，还能不能用这些样本来更新 $\pi$？</p>
+<h3 id="1-为什么前面的-actor-critic-是-on-policy">1. 为什么前面的 actor-critic 是 on-policy？<a hidden class="anchor" aria-hidden="true" href="#1-为什么前面的-actor-critic-是-on-policy">#</a></h3>
+<p>A2C 的理论梯度形状是：</p>
+$$ \nabla_\theta J(\theta) = \mathbb E_{S\sim\eta,\ A\sim\pi} \left[ \nabla_\theta\ln\pi(A\mid S,\theta_t) \left(q_\pi(S,A)-v_\pi(S)\right) \right]. $$<p>注意动作分布是：</p>
+$$ A\sim\pi. $$<p>也就是说，如果我们想用样本近似这个期望，动作样本应该按当前目标策略 $\pi$ 生成。于是：</p>
+<table>
+  <thead>
+      <tr>
+          <th>角色</th>
+          <th>on-policy 情形</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>采样数据的策略</td>
+          <td>$\pi$</td>
+      </tr>
+      <tr>
+          <td>正在优化的目标策略</td>
+          <td>$\pi$</td>
+      </tr>
+  </tbody>
+</table>
+<p>两者是同一个，所以叫 on-policy。</p>
+<p>off-policy 离策略情形则是：</p>
+<table>
+  <thead>
+      <tr>
+          <th>角色</th>
+          <th>off-policy 情形</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>采样数据的行为策略</td>
+          <td>$\beta$</td>
+      </tr>
+      <tr>
+          <td>正在优化的目标策略</td>
+          <td>$\pi$</td>
+      </tr>
+  </tbody>
+</table>
+<p>问题来了：样本动作来自 $\beta$，但梯度期望想要的是 $\pi$ 下的动作分布。中间的分布不一致，就需要 importance sampling 重要性采样来校正。</p>
+<h3 id="2-importance-sampling用--的样本估计--的期望">2. importance sampling：用 $p_1$ 的样本估计 $p_0$ 的期望<a hidden class="anchor" aria-hidden="true" href="#2-importance-sampling用--的样本估计--的期望">#</a></h3>
+<p>先离开强化学习，看一个普通期望。目标是：</p>
+$$ \mathbb E_{X\sim p_0}[X]. $$<p>如果样本 $x_i$ 本来就是按 $p_0$ 采的，那么直接平均：</p>
+$$ \frac{1}{n}\sum_{i=1}^n x_i $$<p>就可以估计这个期望。</p>
+<p>但现在样本不是从 $p_0$ 来的，而是从另一个分布 $p_1$ 来的。直接平均会估计成：</p>
+$$ \mathbb E_{X\sim p_1}[X], $$<p>不是我们想要的 $\mathbb E_{X\sim p_0}[X]$。</p>
+<p>importance sampling 的技巧是乘上一个权重：</p>
+$$ \frac{p_0(x)}{p_1(x)}. $$<p>推导很短：</p>
+$$ \begin{aligned} \mathbb E_{X\sim p_0}[X] &= \sum_x p_0(x)x\\ &= \sum_x p_1(x) \frac{p_0(x)}{p_1(x)}x\\ &= \mathbb E_{X\sim p_1} \left[ \frac{p_0(X)}{p_1(X)}X \right]. \tag{10.9} \end{aligned} $$<p>所以用 $p_1$ 的样本估计 $p_0$ 的期望时，应当算加权平均：</p>
+$$ \frac{1}{n}\sum_{i=1}^n \frac{p_0(x_i)}{p_1(x_i)}x_i. \tag{10.10} $$<p>其中</p>
+$$ \frac{p_0(x_i)}{p_1(x_i)} $$<p>叫 importance weight 重要性权重。</p>
+<p>直觉：</p>
+<table>
+  <thead>
+      <tr>
+          <th>情况</th>
+          <th style="text-align: right">权重</th>
+          <th>含义</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>$p_0(x)\gt p_1(x)$</td>
+          <td style="text-align: right">$\gt 1$</td>
+          <td>这个样本在目标分布中更常见，要放大</td>
+      </tr>
+      <tr>
+          <td>$p_0(x)\lt p_1(x)$</td>
+          <td style="text-align: right">$\lt 1$</td>
+          <td>这个样本在目标分布中过度出现，要缩小</td>
+      </tr>
+      <tr>
+          <td>$p_0(x)=p_1(x)$</td>
+          <td style="text-align: right">$=1$</td>
+          <td>两个分布一致，普通平均即可</td>
+      </tr>
+  </tbody>
+</table>
+<p>⚠️ 易错点：必须满足 support coverage 支撑覆盖：如果 $p_0(x)\gt 0$，就必须有 $p_1(x)\gt 0$。否则目标分布里可能出现的样本，行为分布永远采不到，再怎么加权也估不出来。</p>
+<h3 id="3-一个最小数值例子为什么要加权">3. 一个最小数值例子：为什么要加权<a hidden class="anchor" aria-hidden="true" href="#3-一个最小数值例子为什么要加权">#</a></h3>
+<p>原书用 $X\in\{+1,-1\}$ 举例。</p>
+<p>目标分布 $p_0$ 是：</p>
+<table>
+  <thead>
+      <tr>
+          <th>$X$</th>
+          <th style="text-align: right">$p_0(X)$</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>$+1$</td>
+          <td style="text-align: right">0.5</td>
+      </tr>
+      <tr>
+          <td>$-1$</td>
+          <td style="text-align: right">0.5</td>
+      </tr>
+  </tbody>
+</table>
+<p>所以真实目标期望是：</p>
+$$ \mathbb E_{p_0}[X] = 1\times0.5+(-1)\times0.5 =0. $$<p>但样本来自行为分布 $p_1$：</p>
+<table>
+  <thead>
+      <tr>
+          <th>$X$</th>
+          <th style="text-align: right">$p_1(X)$</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>$+1$</td>
+          <td style="text-align: right">0.8</td>
+      </tr>
+      <tr>
+          <td>$-1$</td>
+          <td style="text-align: right">0.2</td>
+      </tr>
+  </tbody>
+</table>
+<p>如果直接平均，长期会得到：</p>
+$$ \mathbb E_{p_1}[X] = 1\times0.8+(-1)\times0.2 =0.6. $$<p>这明显偏离目标期望 0。</p>
+<p>用 importance weight：</p>
+<table>
+  <thead>
+      <tr>
+          <th>$X$</th>
+          <th style="text-align: right">权重 $\frac{p_0(X)}{p_1(X)}$</th>
+          <th style="text-align: right">加权后的贡献</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>$+1$</td>
+          <td style="text-align: right">$0.5/0.8=0.625$</td>
+          <td style="text-align: right">$0.625\times(+1)$</td>
+      </tr>
+      <tr>
+          <td>$-1$</td>
+          <td style="text-align: right">$0.5/0.2=2.5$</td>
+          <td style="text-align: right">$2.5\times(-1)$</td>
+      </tr>
+  </tbody>
+</table>
+<p>直觉上，$+1$ 在行为分布里被采得太多，所以权重要压小；$-1$ 被采得太少，所以权重要放大。</p>
+<h3 id="4-回到-off-policy-policy-gradient">4. 回到 off-policy policy gradient<a hidden class="anchor" aria-hidden="true" href="#4-回到-off-policy-policy-gradient">#</a></h3>
+<p>在 off-policy actor-critic 中：</p>
+<table>
+  <thead>
+      <tr>
+          <th>记号</th>
+          <th>含义</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>$\beta(a\mid s)$</td>
+          <td>behavior policy 行为策略，负责生成样本</td>
+      </tr>
+      <tr>
+          <td>$\pi(a\mid s,\theta)$</td>
+          <td>target policy 目标策略，我们真正想优化</td>
+      </tr>
+      <tr>
+          <td>$d_\beta$</td>
+          <td>行为策略 $\beta$ 下的平稳状态分布</td>
+      </tr>
+      <tr>
+          <td>$\rho$</td>
+          <td>从 $d_\beta$ 出发、按目标策略 $\pi$ 未来折扣访问到的状态分布</td>
+      </tr>
+  </tbody>
+</table>
+<p>本节选择的目标函数是：</p>
+$$ J(\theta) = \sum_s d_\beta(s)v_\pi(s) = \mathbb E_{S\sim d_\beta}[v_\pi(S)]. $$<p>读法：起点状态按行为策略 $\beta$ 的长期分布来加权，但状态价值看的是目标策略 $\pi$ 的价值。</p>
+<p>Theorem 10.1 给出 off-policy policy gradient：</p>
+$$ \nabla_\theta J(\theta) = \mathbb E_{S\sim\rho,\ A\sim\beta} \left[ \underbrace{ \frac{\pi(A\mid S,\theta)} {\beta(A\mid S)} }_{\text{importance weight}} \nabla_\theta\ln\pi(A\mid S,\theta) q_\pi(S,A) \right]. \tag{10.11} $$<p>和 on-policy 版本相比：</p>
+$$ \mathbb E_{S,\ A\sim\pi} \left[ \nabla_\theta\ln\pi(A\mid S,\theta)q_\pi(S,A) \right], $$<p>差别只有两个：</p>
+<table>
+  <thead>
+      <tr>
+          <th>对比点</th>
+          <th>on-policy</th>
+          <th>off-policy</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>动作样本来自</td>
+          <td>$A\sim\pi$</td>
+          <td>$A\sim\beta$</td>
+      </tr>
+      <tr>
+          <td>是否需要重要性权重</td>
+          <td>不需要</td>
+          <td>需要 $\frac{\pi(A\mid S,\theta)}{\beta(A\mid S)}$</td>
+      </tr>
+  </tbody>
+</table>
+<p>这个比值的作用就是：把行为策略 $\beta$ 采出来的动作样本，校正成目标策略 $\pi$ 下的期望。</p>
+<h3 id="5-状态分布--是什么">5. 状态分布 $\rho$ 是什么？<a hidden class="anchor" aria-hidden="true" href="#5-状态分布--是什么">#</a></h3>
+<p>Theorem 10.1 里的状态分布是：</p>
+$$ \rho(s) \doteq \sum_{s'\in\mathcal S} d_\beta(s') \Pr_\pi(s\mid s'). $$<p>读法：先按 $d_\beta$ 选择起点 $s'$，再看如果以后按目标策略 $\pi$ 走，未来折扣访问到 $s$ 的总权重。</p>
+<p>这和第 9 章 Theorem 9.2 的 $\rho_\pi$ 很像：</p>
+<table>
+  <thead>
+      <tr>
+          <th>分布</th>
+          <th>起点分布</th>
+          <th>未来按谁走</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>$\rho_\pi$</td>
+          <td>$d_0$</td>
+          <td>$\pi$</td>
+      </tr>
+      <tr>
+          <td>$\rho$</td>
+          <td>$d_\beta$</td>
+          <td>$\pi$</td>
+      </tr>
+  </tbody>
+</table>
+<p>所以 off-policy 并不是说状态和动作都完全来自 $\beta$ 后就结束了。理论梯度里，动作采样用 $\beta$，再用 $\pi/\beta$ 校正；状态分布则是“从 $\beta$ 的长期状态分布出发，按 $\pi$ 的未来影响展开”。</p>
+<h3 id="6-off-policy-actor-critic-的更新式">6. off-policy actor-critic 的更新式<a hidden class="anchor" aria-hidden="true" href="#6-off-policy-actor-critic-的更新式">#</a></h3>
+<p>和 10.2 一样，可以加入 baseline：</p>
+$$ q_\pi(S,A)-v_\pi(S). $$<p>于是样本版 actor 更新是：</p>
+$$ \theta_{t+1} = \theta_t + \alpha_\theta \frac{\pi(a_t\mid s_t,\theta_t)} {\beta(a_t\mid s_t)} \nabla_\theta\ln\pi(a_t\mid s_t,\theta_t) \left(q_t(s_t,a_t)-v_t(s_t)\right). $$<p>再用 TD error 近似 advantage：</p>
+$$ \delta_t = r_{t+1} + \gamma v(s_{t+1},w_t) - v(s_t,w_t). $$<p>得到：</p>
+$$ \theta_{t+1} = \theta_t + \alpha_\theta \frac{\pi(a_t\mid s_t,\theta_t)} {\beta(a_t\mid s_t)} \delta_t \nabla_\theta\ln\pi(a_t\mid s_t,\theta_t). $$<p>critic 也用同样的 importance weight：</p>
+$$ w_{t+1} = w_t + \alpha_w \frac{\pi(a_t\mid s_t,\theta_t)} {\beta(a_t\mid s_t)} \delta_t \nabla_w v(s_t,w_t). $$<p>⚠️ 易错点：重要性采样不只修正 actor。原书强调，critic 也从 on-policy 变成 off-policy，因此 critic 的 TD 更新也乘上同一个 importance weight。</p>
+<h3 id="7-algorithm-103off-policy-actor-critic">7. Algorithm 10.3：Off-policy actor-critic<a hidden class="anchor" aria-hidden="true" href="#7-algorithm-103off-policy-actor-critic">#</a></h3>
+<p><strong>输入</strong>：</p>
+<ul>
+<li>已给定的行为策略 $\beta(a\mid s)$</li>
+<li>目标策略 $\pi(a\mid s,\theta_0)$</li>
+<li>value 函数 $v(s,w_0)$</li>
+<li>学习率 $\alpha_\theta,\alpha_w\gt 0$</li>
+</ul>
+<p>每个时间步：</p>
+<ol>
+<li>用行为策略采样动作：</li>
+</ol>
+$$ a_t\sim\beta(\cdot\mid s_t). $$<ol start="2">
+<li>执行动作，观察：</li>
+</ol>
+$$ r_{t+1},s_{t+1}. $$<ol start="3">
+<li>计算 TD error：</li>
+</ol>
+$$ \delta_t = r_{t+1} + \gamma v(s_{t+1},w_t) - v(s_t,w_t). $$<ol start="4">
+<li>计算 importance weight：</li>
+</ol>
+$$ c_t = \frac{\pi(a_t\mid s_t,\theta_t)} {\beta(a_t\mid s_t)}. $$<ol start="5">
+<li>actor 更新：</li>
+</ol>
+$$ \theta_{t+1} = \theta_t + \alpha_\theta c_t\delta_t \nabla_\theta\ln\pi(a_t\mid s_t,\theta_t). $$<ol start="6">
+<li>critic 更新：</li>
+</ol>
+$$ w_{t+1} = w_t + \alpha_w c_t\delta_t \nabla_w v(s_t,w_t). $$<h3 id="8-一个最小数值例子重要性权重怎么改变更新力度">8. 一个最小数值例子：重要性权重怎么改变更新力度<a hidden class="anchor" aria-hidden="true" href="#8-一个最小数值例子重要性权重怎么改变更新力度">#</a></h3>
+<p>假设在状态 $s$，行为策略和目标策略对动作 $a$ 的概率是：</p>
+$$ \beta(a\mid s)=0.20,\qquad \pi(a\mid s,\theta_t)=0.60. $$<p>那么 importance weight 是：</p>
+$$ c_t = \frac{0.60}{0.20} =3. $$<p>如果这一步 TD error 是：</p>
+$$ \delta_t=1.5, $$<p>那么 actor 实际乘上的信号是：</p>
+$$ c_t\delta_t=3\times1.5=4.5. $$<p>直觉：这个动作在目标策略 $\pi$ 里比在行为策略 $\beta$ 里更常出现。既然我们用的是 $\beta$ 的样本，而 $\beta$ 采到这个动作偏少，那么一旦采到了，就要放大它的贡献。</p>
+<p>反过来，如果：</p>
+$$ \beta(a\mid s)=0.60,\qquad \pi(a\mid s,\theta_t)=0.20, $$<p>则：</p>
+$$ c_t=\frac{0.20}{0.60}=\frac13. $$<p>同样的 $\delta_t=1.5$，实际信号变成：</p>
+$$ c_t\delta_t=0.5. $$<p>直觉：这个动作在行为策略里被采得太多，但目标策略并不那么常选它，所以要降低这类样本对目标策略更新的影响。</p>
+<h3 id="9-和-102-的闭环">9. 和 10.2 的闭环<a hidden class="anchor" aria-hidden="true" href="#9-和-102-的闭环">#</a></h3>
+<p>A2C 是：</p>
+$$ \theta_{t+1} = \theta_t+\alpha_\theta\delta_t\nabla_\theta\ln\pi(a_t\mid s_t,\theta_t). $$<p>Off-policy actor-critic 只是多了一个校正项：</p>
+$$ \theta_{t+1} = \theta_t + \alpha_\theta \underbrace{ \frac{\pi(a_t\mid s_t,\theta_t)} {\beta(a_t\mid s_t)} }_{\text{校正 }\beta\text{ 和 }\pi\text{ 的差异}} \delta_t \nabla_\theta\ln\pi(a_t\mid s_t,\theta_t). $$<p>所以这一节的核心可以记成：</p>
+$$ \boxed{ \text{off-policy} = \text{on-policy actor-critic} + \text{importance weight } \frac{\pi}{\beta} } $$<hr>
+<h2 id="104-deterministic-actor-critic确定性-actor-critic">10.4 Deterministic actor-critic（确定性 Actor-Critic）<a hidden class="anchor" aria-hidden="true" href="#104-deterministic-actor-critic确定性-actor-critic">#</a></h2>
+<p><strong>要解决的问题</strong>：前面几节的 actor 都是 stochastic policy 随机策略 $\pi(a\mid s,\theta)$，它输出的是“每个动作的概率”。本节换成 deterministic policy 确定性策略 $\mu(s,\theta)$，它直接输出一个动作。这样特别适合连续动作空间，也自然引出 deterministic policy gradient 确定性策略梯度。</p>
+<h3 id="1-从随机策略到确定性策略actor-到底输出什么">1. 从随机策略到确定性策略：actor 到底输出什么？<a hidden class="anchor" aria-hidden="true" href="#1-从随机策略到确定性策略actor-到底输出什么">#</a></h3>
+<p>前面 10.1-10.3 的 actor 是：</p>
+$$ \pi(a\mid s,\theta). $$<p>给定状态 $s$，它输出的是一个动作分布。例如：</p>
+$$ \pi(a_1\mid s,\theta)=0.7,\qquad \pi(a_2\mid s,\theta)=0.3. $$<p>所以 stochastic actor 的更新逻辑是：</p>
+<blockquote>
+<p>这次采到了动作 $a_t$，critic 觉得它好不好？如果好，就提高它的概率；如果不好，就降低它的概率。</p></blockquote>
+<p>确定性策略改成：</p>
+$$ a=\mu(s,\theta). $$<p>给定状态 $s$，它不再输出概率，而是直接输出动作本身。例如连续控制里：</p>
+$$ \mu(s,\theta)=1.37 $$<p>就表示 actor 直接选择动作 $a=1.37$。</p>
+<p>两者对比一下：</p>
+<table>
+  <thead>
+      <tr>
+          <th>策略类型</th>
+          <th>记号</th>
+          <th>actor 输出</th>
+          <th>actor 更新的直觉</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>stochastic policy 随机策略</td>
+          <td>$\pi(a\mid s,\theta)$</td>
+          <td>每个动作的概率</td>
+          <td>调整“采到某动作的概率”</td>
+      </tr>
+      <tr>
+          <td>deterministic policy 确定性策略</td>
+          <td>$\mu(s,\theta)$</td>
+          <td>一个具体动作</td>
+          <td>直接把输出动作往更好的方向推</td>
+      </tr>
+  </tbody>
+</table>
+<p>⚠️ 易错点：确定性策略不是“不需要探索”。它只是 target policy 目标策略 $\mu$ 是确定性的。实际收集数据时，仍然可以用带噪声的 behavior policy 行为策略 $\beta$ 来探索。</p>
+<h3 id="2-确定性策略梯度长什么样">2. 确定性策略梯度长什么样？<a hidden class="anchor" aria-hidden="true" href="#2-确定性策略梯度长什么样">#</a></h3>
+<p>随机策略梯度的核心形状是：</p>
+$$ \nabla_\theta J(\theta) \approx \mathbb E \left[ \nabla_\theta\ln\pi(A\mid S,\theta)q_\pi(S,A) \right]. $$<p>这里有两个关键对象：</p>
+<ul>
+<li>$\nabla_\theta\ln\pi(A\mid S,\theta)$：告诉 actor 怎样改变“动作概率”。</li>
+<li>$q_\pi(S,A)$：critic 评价这个动作好不好。</li>
+</ul>
+<p>确定性策略没有 $\ln\pi(A\mid S,\theta)$，因为它不输出概率。它输出的是动作：</p>
+$$ A=\mu(S,\theta). $$<p>所以更新方向要换成 chain rule 链式法则：</p>
+$$ \theta \longrightarrow \mu(S,\theta) \longrightarrow q_\mu(S,\mu(S,\theta)). $$<p>也就是：</p>
+$$ \boxed{ \nabla_\theta J(\theta) = \mathbb E_{S\sim\eta} \left[ \nabla_\theta\mu(S) \left(\nabla_a q_\mu(S,a)\right)\big|_{a=\mu(S)} \right] } \tag{10.14} $$<p>读法：</p>
+<ul>
+<li>$\nabla_a q_\mu(S,a)\big|_{a=\mu(S)}$：critic 告诉我们，在当前动作附近，动作 $a$ 往哪里改能让 $q$ 变大。</li>
+<li>$\nabla_\theta\mu(S)$：actor 告诉我们，参数 $\theta$ 怎么改会让输出动作 $\mu(S,\theta)$ 往那个方向动。</li>
+</ul>
+<p>所以 deterministic actor 的一句话版本是：</p>
+$$ \boxed{ \text{critic 对动作求梯度，actor 用链式法则把这个动作梯度传回 }\theta } $$<p>⚠️ 记号小心：原书写</p>
+$$ \left(\nabla_a q_\mu(S,a)\right)\big|_{a=\mu(S)} $$<p>而不写成 $\nabla_a q_\mu(S,\mu(S))$。原因是前者明确表示“先把 $q_\mu(S,a)$ 当作 $a$ 的函数求导，再代入 $a=\mu(S)$”。后者容易让人误以为 $q_\mu(S,\mu(S))$ 已经不是关于 $a$ 的函数了。</p>
+<h3 id="3-两个梯度公式从哪里来正文只看主线">3. 两个梯度公式从哪里来？正文只看主线<a hidden class="anchor" aria-hidden="true" href="#3-两个梯度公式从哪里来正文只看主线">#</a></h3>
+<p>随机策略梯度里的</p>
+$$ \mathbb E_{S,A} \left[ \nabla_\theta\ln\pi(A\mid S,\theta)q_\pi(S,A) \right] $$<p>来自第 9 章的 policy gradient theorem。先有求和形式：</p>
+$$ \sum_s\eta(s)\sum_a\nabla_\theta\pi(a\mid s,\theta)q_\pi(s,a), $$<p>再用 log-trick：</p>
+$$ \nabla_\theta\pi(a\mid s,\theta) = \pi(a\mid s,\theta)\nabla_\theta\ln\pi(a\mid s,\theta), $$<p>于是它变成“按 $S\sim\eta,\ A\sim\pi$ 采样”的期望。</p>
+<p>确定性策略梯度不是把上式直接代入 $A=\mu(S)$。它从另一个起点来：</p>
+$$ v_\mu(s)=q_\mu(s,\mu(s,\theta)). $$<p>为了看清求导路径，也可以把 $q_\mu$ 对策略参数的依赖显式写成：</p>
+$$ v_\mu(s)=Q(s,\mu(s,\theta);\theta), \qquad Q(s,a;\theta)\doteq q_{\mu_\theta}(s,a). $$<p>对这个复合函数求导，会出现当前状态的局部 actor 方向：</p>
+$$ u(s) = \nabla_\theta\mu(s)\cdot \left(\nabla_a q_\mu(s,a)\right)\big|_{a=\mu(s)}. $$<p>这里正文只写 actor 真正用于更新的局部方向 $u(s)$。完整推导里还有一项 $\nabla_\theta q_\mu(s,a)$，它表示“真实 $q_\mu$ 会因为未来策略改变而改变”；这项会通过 Bellman 递归展开到未来状态，最后被整理进状态分布 $\eta$ 里。</p>
+<p>再把未来状态影响用 Bellman 递归展开，最后得到：</p>
+$$ \nabla_\theta J(\theta) = \mathbb E_{S\sim\eta} \left[ u(S) \right] = \mathbb E_{S\sim\eta} \left[ \nabla_\theta\mu(S) \left(\nabla_a q_\mu(S,a)\right)\big|_{a=\mu(S)} \right]. $$<p>完整推导，包括随机策略公式的来源、log-trick 怎么变成期望、以及确定性策略里 $A=\mu(s)$ 与 $u(s)$ 的关系，放在补充笔记：</p>
+<blockquote>
+<p>[[10_supplement-policy-gradient-formula-origins|补充：随机策略梯度与确定性策略梯度公式来源]]</p></blockquote>
+<p>这也是确定性策略适合连续动作空间的原因之一。随机策略在连续动作空间里常常要处理概率密度、采样和高方差问题；确定性策略每个状态只输出一个动作，critic 再告诉这个动作该往哪边挪。</p>
+<h3 id="4-两个目标下的状态分布">4. 两个目标下的状态分布 $\eta$<a hidden class="anchor" aria-hidden="true" href="#4-两个目标下的状态分布">#</a></h3>
+<p>Theorem 10.2 先把结论写成统一形式：</p>
+$$ \nabla_\theta J(\theta) = \sum_{s\in\mathcal S} \eta(s) \nabla_\theta\mu(s) \left(\nabla_a q_\mu(s,a)\right)\big|_{a=\mu(s)}. $$<p>这里 $\eta$ 不是一个新的固定符号，而是“看你优化哪个目标”。</p>
+<table>
+  <thead>
+      <tr>
+          <th>目标</th>
+          <th>$J(\theta)$</th>
+          <th>状态分布 $\eta$</th>
+          <th>对应定理</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>折扣平均价值</td>
+          <td>$J(\theta)=d_0^Tv_\mu$</td>
+          <td>$\rho_\mu(s)=\sum_{s'}d_0(s')\Pr_\mu(s\mid s')$</td>
+          <td>Theorem 10.3</td>
+      </tr>
+      <tr>
+          <td>平均奖励</td>
+          <td>$J(\theta)=\bar r_\mu$</td>
+          <td>$d_\mu(s)$</td>
+          <td>Theorem 10.4</td>
+      </tr>
+  </tbody>
+</table>
+<p>折扣情形下，$\rho_\mu$ 的意思和第 9 章很像：从初始分布 $d_0$ 出发，在策略 $\mu$ 下，按折扣累计访问状态的总权重。</p>
+$$ \rho_\mu(s) = \sum_{s'}d_0(s')\Pr_\mu(s\mid s'), \qquad \Pr_\mu(s\mid s') = \sum_{k=0}^{\infty}\gamma^k[P_\mu^k]_{s's}. $$<p>平均奖励情形下，用的是 $\mu$ 诱导的平稳分布：</p>
+$$ d_\mu^TP_\mu=d_\mu^T. $$<p>所以可以把 Theorem 10.2 记成：</p>
+$$ \boxed{ \text{确定性策略梯度的局部形状不变，差别只在状态按什么分布加权} } $$<h3 id="5-lemma-101-在说什么">5. Lemma 10.1 在说什么？<a hidden class="anchor" aria-hidden="true" href="#5-lemma-101-在说什么">#</a></h3>
+<p>原书为了推导 Theorem 10.3，先给出 Lemma 10.1：</p>
+$$ \nabla_\theta v_\mu(s) = \sum_{s'\in\mathcal S} \Pr_\mu(s'\mid s) \nabla_\theta\mu(s') \left(\nabla_a q_\mu(s',a)\right)\big|_{a=\mu(s')}. \tag{10.16} $$<p>这条式子的直觉是：</p>
+<blockquote>
+<p>从当前状态 $s$ 出发，$v_\mu(s)$ 会受到未来所有可能访问到的状态 $s'$ 的影响。每个未来状态 $s'$ 上，actor 都可能因为 $\theta$ 改变动作 $\mu(s')$，从而改变价值。</p></blockquote>
+<p>所以右边有三层含义：</p>
+<table>
+  <thead>
+      <tr>
+          <th>项</th>
+          <th>含义</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>$\Pr_\mu(s'\mid s)$</td>
+          <td>从 $s$ 出发，将来折扣意义下访问到 $s'$ 的总权重</td>
+      </tr>
+      <tr>
+          <td>$\nabla_\theta\mu(s')$</td>
+          <td>参数 $\theta$ 对未来状态 $s'$ 的动作输出有什么影响</td>
+      </tr>
+      <tr>
+          <td>$\nabla_a q_\mu(s',a)\big\vert_{a=\mu(s')}$</td>
+          <td>在未来状态 $s'$，动作往哪边变会提高 critic 价值</td>
+      </tr>
+  </tbody>
+</table>
+<p>这和第 9 章你之前问过的“为什么 $\nabla v$ 会看到未来状态”是同一个结构。当前价值 $v_\mu(s)$ 不只由当前动作决定，还由策略在未来状态上的动作决定。</p>
+<h3 id="6-algorithm-104确定性-actor-critic-怎么跑">6. Algorithm 10.4：确定性 actor-critic 怎么跑？<a hidden class="anchor" aria-hidden="true" href="#6-algorithm-104确定性-actor-critic-怎么跑">#</a></h3>
+<p><strong>输入</strong>：</p>
+<ul>
+<li>behavior policy 行为策略 $\beta(a\mid s)$，负责探索并和环境交互</li>
+<li>deterministic target policy 确定性目标策略 $\mu(s,\theta_0)$</li>
+<li>critic 动作价值函数 $q(s,a,w_0)$</li>
+<li>学习率 $\alpha_\theta,\alpha_w\gt 0$</li>
+</ul>
+<p>每个时间步：</p>
+<ol>
+<li>用行为策略采样动作并和环境交互：</li>
+</ol>
+$$ a_t\sim\beta(\cdot\mid s_t), \qquad \text{observe } r_{t+1},s_{t+1}. $$<ol start="2">
+<li>critic 计算 TD error：</li>
+</ol>
+$$ \delta_t = r_{t+1} + \gamma q(s_{t+1},\mu(s_{t+1},\theta_t),w_t) - q(s_t,a_t,w_t). $$<ol start="3">
+<li>actor 用确定性策略梯度更新：</li>
+</ol>
+$$ \theta_{t+1} = \theta_t + \alpha_\theta \nabla_\theta\mu(s_t,\theta_t) \left(\nabla_a q(s_t,a,w_t)\right)\big|_{a=\mu(s_t)}. $$<ol start="4">
+<li>critic 更新：</li>
+</ol>
+$$ w_{t+1} = w_t + \alpha_w\delta_t\nabla_w q(s_t,a_t,w_t). $$<p>和前面算法并排看时，最好不要只看 actor 信号。actor-critic 每一步其实都在做同一件事：</p>
+$$ \boxed{ \text{先构造 critic 的 TD error }\delta_t \quad\Longrightarrow\quad \text{再分别更新 actor 的 }\theta\text{ 和 critic 的 }w } $$<p>先看 TD error 是怎么来的：</p>
+<table>
+  <thead>
+      <tr>
+          <th>算法</th>
+          <th>行为动作怎么来</th>
+          <th>TD error $\delta_t$</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>QAC</td>
+          <td>$a_t\sim\pi(\cdot\mid s_t,\theta_t)$，再采样 $a_{t+1}\sim\pi(\cdot\mid s_{t+1},\theta_t)$</td>
+          <td>$r_{t+1}+\gamma q(s_{t+1},a_{t+1},w_t)-q(s_t,a_t,w_t)$</td>
+      </tr>
+      <tr>
+          <td>A2C</td>
+          <td>$a_t\sim\pi(\cdot\mid s_t,\theta_t)$</td>
+          <td>$r_{t+1}+\gamma v(s_{t+1},w_t)-v(s_t,w_t)$</td>
+      </tr>
+      <tr>
+          <td>off-policy A2C / AC</td>
+          <td>$a_t\sim\beta(\cdot\mid s_t)$</td>
+          <td>$r_{t+1}+\gamma v(s_{t+1},w_t)-v(s_t,w_t)$</td>
+      </tr>
+      <tr>
+          <td>deterministic AC</td>
+          <td>$a_t\sim\beta(\cdot\mid s_t)$，但下一步用目标动作 $\mu(s_{t+1},\theta_t)$</td>
+          <td>$r_{t+1}+\gamma q(s_{t+1},\mu(s_{t+1},\theta_t),w_t)-q(s_t,a_t,w_t)$</td>
+      </tr>
+  </tbody>
+</table>
+<p>再看 $\theta_{t+1}$ 和 $w_{t+1}$ 分别怎么更新：</p>
+<table>
+  <thead>
+      <tr>
+          <th>算法</th>
+          <th>actor 更新 $\theta_{t+1}$</th>
+          <th>critic 更新 $w_{t+1}$</th>
+          <th>直观区别</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>QAC</td>
+          <td>$\theta_t+\alpha_\theta\nabla_\theta\ln\pi(a_t\mid s_t,\theta_t)q(s_t,a_t,w_t)$</td>
+          <td>$w_t+\alpha_w\delta_t\nabla_w q(s_t,a_t,w_t)$</td>
+          <td>actor 用“绝对动作价值”增强采样动作概率</td>
+      </tr>
+      <tr>
+          <td>A2C</td>
+          <td>$\theta_t+\alpha_\theta\delta_t\nabla_\theta\ln\pi(a_t\mid s_t,\theta_t)$</td>
+          <td>$w_t+\alpha_w\delta_t\nabla_w v(s_t,w_t)$</td>
+          <td>actor 用 TD error 近似 advantage，只奖励“比预期好”的动作</td>
+      </tr>
+      <tr>
+          <td>off-policy A2C / AC</td>
+          <td>$\theta_t+\alpha_\theta c_t\delta_t\nabla_\theta\ln\pi(a_t\mid s_t,\theta_t)$</td>
+          <td>$w_t+\alpha_w c_t\delta_t\nabla_w v(s_t,w_t)$</td>
+          <td>和 A2C 同形，但用 $c_t=\frac{\pi(a_t\mid s_t,\theta_t)}{\beta(a_t\mid s_t)}$ 校正样本来自 $\beta$</td>
+      </tr>
+      <tr>
+          <td>deterministic AC</td>
+          <td>$\theta_t+\alpha_\theta\nabla_\theta\mu(s_t,\theta_t)\nabla_a q(s_t,a,w_t)\big\vert_{a=\mu(s_t)}$</td>
+          <td>$w_t+\alpha_w\delta_t\nabla_w q(s_t,a_t,w_t)$</td>
+          <td>actor 不调概率，直接把动作输出往 critic 认为更好的方向移动</td>
+      </tr>
+  </tbody>
+</table>
+<p>这样看会更直观：</p>
+<ul>
+<li>$\delta_t$ 是 critic 的“当前估计错了多少”。</li>
+<li>$w_{t+1}$ 总是用 $\delta_t$ 修 critic，让价值估计更准。</li>
+<li>$\theta_{t+1}$ 是 actor 的策略更新；QAC/A2C/off-policy A2C 改动作概率，deterministic AC 改动作本身。</li>
+<li>off-policy A2C 的 $\delta_t$ 和 A2C 一样，真正新增的是 $c_t$：它不改变 TD target 的形状，而是改变这条样本对 actor 和 critic 更新的权重。</li>
+</ul>
+<h3 id="7-为什么这里-off-policy-却没有-importance-sampling">7. 为什么这里 off-policy 却没有 importance sampling？<a hidden class="anchor" aria-hidden="true" href="#7-为什么这里-off-policy-却没有-importance-sampling">#</a></h3>
+<p>10.3 的 off-policy actor-critic 要乘：</p>
+$$ \frac{\pi(a_t\mid s_t,\theta_t)}{\beta(a_t\mid s_t)}. $$<p>你很自然会问：10.4 明明也用了行为策略 $\beta$，为什么 Algorithm 10.4 没有这个比值？</p>
+<p>原因是两节修正的对象不一样。</p>
+<p>在 10.3 里，目标策略 $\pi$ 是随机策略。我们要估计的是：</p>
+$$ \mathbb E_{A\sim\pi(\cdot\mid S)} \left[ \nabla_\theta\ln\pi(A\mid S,\theta)\cdots \right]. $$<p>但样本动作 $a_t$ 来自 $\beta$，所以必须用 $\pi/\beta$ 把“动作分布不一致”校正回来。</p>
+<p>在 10.4 里，actor 的梯度没有 $A\sim\mu$ 这一层采样：</p>
+$$ \nabla_\theta\mu(s_t) \left(\nabla_aq(s_t,a,w_t)\right)\big|_{a=\mu(s_t)}. $$<p>给定 $s_t$ 后，目标动作就是 $\mu(s_t)$，不是从 $\beta$ 样本动作 $a_t$ 上做 log-policy 更新。因此 actor 不需要动作层面的 importance weight。</p>
+<p>critic 这边也要分清两个动作：</p>
+<table>
+  <thead>
+      <tr>
+          <th>符号</th>
+          <th>从哪里来</th>
+          <th>用来做什么</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>$a_t$</td>
+          <td>行为策略 $\beta$</td>
+          <td>真正与环境交互，产生 $r_{t+1},s_{t+1}$</td>
+      </tr>
+      <tr>
+          <td>$\tilde a_{t+1}=\mu(s_{t+1},\theta_t)$</td>
+          <td>目标策略 $\mu$</td>
+          <td>只放进 TD target，评价目标策略下一步会做什么</td>
+      </tr>
+  </tbody>
+</table>
+<p>critic 所需样本是：</p>
+$$ (s_t,a_t,r_{t+1},s_{t+1},\tilde a_{t+1}), \qquad \tilde a_{t+1}=\mu(s_{t+1},\theta_t). $$<p>这里 $\tilde a_{t+1}$ 不拿去和环境交互，只是用来计算：</p>
+$$ q(s_{t+1},\mu(s_{t+1},\theta_t),w_t). $$<p>所以它是在用行为策略的数据，学习目标策略 $\mu$ 的价值，这就是 off-policy；但它不像 10.3 那样需要对“被采样动作来自哪个概率分布”做 $\pi/\beta$ 校正。</p>
+<p>⚠️ 易错点：$a_t$ 和 $\mu(s_t)$ 不一定相同。critic 的当前项是 $q(s_t,a_t,w_t)$，因为环境奖励来自行为动作 $a_t$；actor 的梯度项在 $a=\mu(s_t)$ 处求 $\nabla_a q$，因为 actor 要改的是目标策略输出的动作。</p>
+<h3 id="8-一个最小数值例子行为动作探索目标动作做-bootstrap">8. 一个最小数值例子：行为动作探索，目标动作做 bootstrap<a hidden class="anchor" aria-hidden="true" href="#8-一个最小数值例子行为动作探索目标动作做-bootstrap">#</a></h3>
+<p>考虑一维连续动作、两个状态 $s_0,s_1$。这个例子故意把两个动作分开：</p>
+<table>
+  <thead>
+      <tr>
+          <th>动作</th>
+          <th style="text-align: right">数值</th>
+          <th>来自哪里</th>
+          <th>用在哪里</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>行为动作 $a_t$</td>
+          <td style="text-align: right">$0.8$</td>
+          <td>$a_t\sim\beta(\cdot\mid s_0)$</td>
+          <td>真正和环境交互，产生 $r_{t+1},s_{t+1}$</td>
+      </tr>
+      <tr>
+          <td>当前目标动作 $\mu(s_0,\theta_t)$</td>
+          <td style="text-align: right">$1.5$</td>
+          <td>target policy $\mu$</td>
+          <td>actor 在这里看动作梯度</td>
+      </tr>
+      <tr>
+          <td>下一步目标动作 $\mu(s_1,\theta_t)$</td>
+          <td style="text-align: right">$2.0$</td>
+          <td>target policy $\mu$</td>
+          <td>critic 的 TD target 用它 bootstrap</td>
+      </tr>
+  </tbody>
+</table>
+<p>设 actor 很简单，只有一个参数，但不同状态有不同偏置：</p>
+$$ \mu(s_0,\theta)=\theta,\qquad \mu(s_1,\theta)=\theta+0.5. $$<p>当前：</p>
+$$ \theta_t=1.5,\qquad \gamma=0.9,\qquad \alpha_\theta=0.1,\qquad \alpha_w=0.2. $$<p>行为策略为了探索，在 $s_0$ 采到了一个不等于目标动作的动作：</p>
+$$ a_t=0.8\sim\beta(\cdot\mid s_0). $$<p>执行它以后，环境给出：</p>
+$$ r_{t+1}=1,\qquad s_{t+1}=s_1. $$<p>critic 当前给出的三个数值是：</p>
+$$ q(s_0,a_t,w_t)=q(s_0,0.8,w_t)=1.0, \qquad q(s_1,\mu(s_1,\theta_t),w_t)=q(s_1,2.0,w_t)=4.0. $$<p>注意第二个价值不是 $q(s_1,a_{t+1},w_t)$，因为下一步没有再从 $\beta$ 采一个动作来做 Sarsa 式 bootstrap；它直接用目标策略的动作：</p>
+$$ \tilde a_{t+1}=\mu(s_1,\theta_t)=2.0. $$<p>因此 deterministic AC 的 TD error 是：</p>
+$$ \begin{aligned} \delta_t &= r_{t+1} + \gamma q(s_{t+1},\mu(s_{t+1},\theta_t),w_t) - q(s_t,a_t,w_t)\\ &= 1+0.9\times 4.0-1.0\\ &= 3.6. \end{aligned} $$<p>读法：行为动作 $a_t=0.8$ 产生了这条真实经验；但 critic 在评价“目标策略下一步会怎样”时，看的不是行为策略下一步可能采什么，而是 $\mu(s_1,\theta_t)=2.0$。</p>
+<p>如果为了最小化计算，设 critic 对当前样本的参数梯度为：</p>
+$$ \nabla_w q(s_0,0.8,w_t)=1, $$<p>那么 critic 更新就是：</p>
+$$ w_{t+1} = w_t+\alpha_w\delta_t\nabla_wq(s_0,0.8,w_t) = w_t+0.2\times3.6\times1 = w_t+0.72. $$<p>critic 这一步只回答一个问题：</p>
+<blockquote>
+<p>对刚才真实发生的这条经验 $(s_0,0.8,r=1,s_1)$，我原来给 $q(s_0,0.8)$ 的估计准不准？</p></blockquote>
+<p>原来 critic 认为：</p>
+$$ q(s_0,0.8,w_t)=1.0. $$<p>但这条经验告诉它：执行 $0.8$ 以后，立刻拿到奖励 $1$，并且到了 $s_1$。如果从 $s_1$ 开始按目标策略 $\mu$ 继续走，下一步目标动作是 $\mu(s_1)=2.0$，critic 对这个后续价值的估计是 $4.0$。所以“执行 $0.8$ 这件事”的新目标应该是：</p>
+$$ \underbrace{1}_{\text{立即奖励}} + \underbrace{0.9\times4.0}_{\text{到 }s_1\text{ 后，按目标策略继续的估计价值}} =4.6. $$<p>也就是说，critic 原来把 $q(s_0,0.8)$ 估成 $1.0$，现在发现它应该更接近 $4.6$。因此 $\delta_t=4.6-1.0=3.6\gt 0$，critic 就把 $q(s_0,0.8)$ 往上修。</p>
+<p>这里要特别分清：critic 更新 $q(s_0,0.8)$，不是因为 actor 想输出 $0.8$；只是因为 $0.8$ 是这次由行为策略 $\beta$ 真正拿去和环境交互的动作，所以我们有它的真实后果。</p>
+<p>现在再看 actor。actor 回答的是另一个问题：</p>
+<blockquote>
+<p>如果目标策略自己在 $s_0$ 选动作，它现在会输出 $1.5$；那这个输出应该往左调还是往右调？</p></blockquote>
+<p>actor 不沿着行为动作 $a_t=0.8$ 更新，也不试图“提高 $0.8$ 这个动作的概率”。原因是 deterministic actor 根本不维护“动作概率表”；它只维护一个函数 $\mu(s,\theta)$。当前在 $s_0$，这个函数输出的是：</p>
+$$ \mu(s_0,\theta_t)=1.5 $$<p>所以 actor 要改的是 $\mu(s_0,\theta)$ 这个输出值，而不是刚才 $\beta$ 偶然采到的 $0.8$。</p>
+<p>怎么知道 $1.5$ 该往哪边改？让 critic 在 $a=1.5$ 附近看一眼“动作价值曲线”的斜率。设在 $s_0$ 附近，critic 对动作的局部形状可以写成：</p>
+$$ q(s_0,a,w_t)=-(a-2)^2+5. $$<p>这个局部 critic 的意思是：在 $s_0$，动作越接近 $a=2$，价值越高。</p>
+<p>因为在 $s_0$：</p>
+$$ \nabla_\theta\mu(s_0,\theta)=1, $$<p>且：</p>
+$$ \nabla_aq(s,a,w) = -2(a-2). $$<p>在当前目标动作 $a=\mu(s_0,\theta_t)=1.5$ 处：</p>
+$$ \nabla_aq(s_0,a,w_t)\big|_{a=1.5} = -2(1.5-2) =1. $$<p>actor 更新：</p>
+$$ \begin{aligned} \theta_{t+1} &= \theta_t + \alpha_\theta \nabla_\theta\mu(s_0,\theta_t) \nabla_aq(s_0,a,w_t)\big|_{a=\mu(s_0)}\\ &= 1.5+0.1\times1\times1\\ &= 1.6. \end{aligned} $$<p>读法：在 $a=1.5$ 这里，$\nabla_a q=1\gt 0$，说明动作稍微变大，critic 估计的价值会上升。所以 actor 把目标策略输出从 $1.5$ 推到 $1.6$。</p>
+<p>这就是这一步最容易混的地方：</p>
+<table>
+  <thead>
+      <tr>
+          <th>问题</th>
+          <th>用哪个动作</th>
+          <th>为什么</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>critic 要修正哪个 $q$ 值？</td>
+          <td>$a_t=0.8$</td>
+          <td>因为这是行为策略真实执行的动作，我们观察到了它导致的 $r,s_1$</td>
+      </tr>
+      <tr>
+          <td>TD target 的下一步动作是谁？</td>
+          <td>$\mu(s_1)=2.0$</td>
+          <td>因为 critic 要评价目标策略 $\mu$，所以 bootstrap 时假设下一步按 $\mu$ 走</td>
+      </tr>
+      <tr>
+          <td>actor 要移动哪个动作？</td>
+          <td>$\mu(s_0)=1.5$</td>
+          <td>因为 actor 的参数控制的是目标策略输出，不是行为策略采样出来的 $0.8$</td>
+      </tr>
+  </tbody>
+</table>
+<p>一句话：$0.8$ 用来产生经验、训练 critic；$2.0$ 用来构造 critic 的下一步目标；$1.5$ 才是 actor 当前真正要移动的策略输出。</p>
+<p>把整步串起来就是：</p>
+<table>
+  <thead>
+      <tr>
+          <th>部分</th>
+          <th>用的动作</th>
+          <th style="text-align: right">数值结果</th>
+          <th>含义</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>环境交互</td>
+          <td>$a_t=0.8\sim\beta$</td>
+          <td style="text-align: right">得到 $r=1,s_1$</td>
+          <td>行为策略负责探索</td>
+      </tr>
+      <tr>
+          <td>critic TD target</td>
+          <td>$\mu(s_1)=2.0$</td>
+          <td style="text-align: right">$1+0.9\times4.0=4.6$</td>
+          <td>下一步按目标策略评价</td>
+      </tr>
+      <tr>
+          <td>critic TD error</td>
+          <td>当前项 $q(s_0,0.8)=1.0$</td>
+          <td style="text-align: right">$\delta_t=3.6$</td>
+          <td>当前 critic 低估了这条经验</td>
+      </tr>
+      <tr>
+          <td>actor 梯度</td>
+          <td>$\mu(s_0)=1.5$</td>
+          <td style="text-align: right">$\theta:1.5\to1.6$</td>
+          <td>actor 直接移动目标动作</td>
+      </tr>
+  </tbody>
+</table>
+<p>所以这张图里的 deterministic AC 思想是：行为策略 $\beta$ 负责产生真实样本；critic 的 TD error 用“行为动作的当前项 + 目标动作的下一步 bootstrap”；actor 则完全不调动作概率，而是在 $\mu(s_t)$ 处沿着 $\nabla_a q$ 直接移动目标动作。</p>
+<h3 id="9-和前面三节的闭环">9. 和前面三节的闭环<a hidden class="anchor" aria-hidden="true" href="#9-和前面三节的闭环">#</a></h3>
+<p>10.1 到 10.4 可以看成 actor 更新形态一步步变化：</p>
+<table>
+  <thead>
+      <tr>
+          <th>小节</th>
+          <th>actor 是什么</th>
+          <th>critic 给什么信号</th>
+          <th>更新关键词</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>10.1 QAC</td>
+          <td>随机策略 $\pi$</td>
+          <td>$q(s_t,a_t,w_t)$</td>
+          <td>增强高价值动作概率</td>
+      </tr>
+      <tr>
+          <td>10.2 A2C</td>
+          <td>随机策略 $\pi$</td>
+          <td>advantage / TD error $\delta_t$</td>
+          <td>相对平均水平好才增强</td>
+      </tr>
+      <tr>
+          <td>10.3 Off-policy AC</td>
+          <td>随机策略 $\pi$，数据来自 $\beta$</td>
+          <td>$c_t\delta_t$</td>
+          <td>用 $\pi/\beta$ 校正行为策略</td>
+      </tr>
+      <tr>
+          <td>10.4 Deterministic AC</td>
+          <td>确定性策略 $\mu$</td>
+          <td>$\nabla_a q(s,a,w)$</td>
+          <td>直接移动动作输出</td>
+      </tr>
+  </tbody>
+</table>
+<p>这一节的核心可以压缩成：</p>
+$$ \boxed{ \text{stochastic actor 调动作概率；deterministic actor 调动作本身} } $$<hr>
+<h2 id="105-summary本章小结">10.5 Summary（本章小结）<a hidden class="anchor" aria-hidden="true" href="#105-summary本章小结">#</a></h2>
+<p><strong>要解决的问题</strong>：本节不是引入新算法，而是把 10.1-10.4 的 actor-critic 主线收束起来：第 9 章只有 actor 的策略梯度还缺一个价值估计器，第 10 章逐步把 critic 加进来，并从 on-policy、advantage、off-policy 一直走到 deterministic policy gradient。</p>
+<h3 id="1-本章真正合并了哪两条线">1. 本章真正合并了哪两条线？<a hidden class="anchor" aria-hidden="true" href="#1-本章真正合并了哪两条线">#</a></h3>
+<p>第 8 章讲的是 critic 的能力：</p>
+$$ q_\pi(s,a) \approx q(s,a,w), \qquad v_\pi(s) \approx v(s,w). $$<p>第 9 章讲的是 actor 的能力：</p>
+$$ \theta_{t+1} = \theta_t + \alpha_\theta \nabla_\theta\ln\pi(a_t\mid s_t,\theta_t) q_t(s_t,a_t). $$<p>第 10 章把二者合在一起：</p>
+$$ \boxed{ \text{actor 负责改策略} \quad+\quad \text{critic 负责给 actor 一个价值信号} } $$<p>读法：actor 不再单靠完整回报来判断“刚才动作好不好”，而是让 critic 在线学习一个价值函数，再把这个价值函数变成策略更新的信号。</p>
+<p>这也是 actor-critic 的核心妥协：</p>
+<table>
+  <thead>
+      <tr>
+          <th>方法</th>
+          <th>好处</th>
+          <th>代价</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>REINFORCE</td>
+          <td>Monte Carlo 回报通常是无偏估计</td>
+          <td>方差大，常要等 episode 结束</td>
+      </tr>
+      <tr>
+          <td>actor-critic</td>
+          <td>TD 信号可在线更新，方差通常更低</td>
+          <td>critic 近似会引入偏差</td>
+      </tr>
+  </tbody>
+</table>
+<p>所以 actor-critic 不是“比 REINFORCE 多一个模块”这么简单；它是把策略梯度中的价值估计问题，交给 TD learning 和函数近似来处理。</p>
+<h3 id="2-101qac把-monte-carlo-回报换成-td-critic">2. 10.1：QAC，把 Monte Carlo 回报换成 TD critic<a hidden class="anchor" aria-hidden="true" href="#2-101qac把-monte-carlo-回报换成-td-critic">#</a></h3>
+<p>10.1 的 QAC，Q actor-critic，做的替换很直接：</p>
+$$ q_t(s_t,a_t) \quad\Longleftarrow\quad q(s_t,a_t,w_t). $$<p>于是 actor 更新为：</p>
+$$ \theta_{t+1} = \theta_t + \alpha_\theta \nabla_\theta\ln\pi(a_t\mid s_t,\theta_t) q(s_t,a_t,w_t). $$<p>critic 则用 Sarsa with function approximation 学动作价值：</p>
+$$ \delta_t = r_{t+1} + \gamma q(s_{t+1},a_{t+1},w_t) - q(s_t,a_t,w_t), $$$$ w_{t+1} = w_t + \alpha_w\delta_t\nabla_wq(s_t,a_t,w_t). $$<p>读法：actor 问“这个动作值得增加概率吗”，critic 用 $q(s_t,a_t,w_t)$ 回答；critic 自己则用 TD error 不断修正。</p>
+<p>⚠️ 易错点：QAC 里的 $q(s,a,w)$ 是近似函数，不是真实 $q_\pi(s,a)$。它能指导 actor，但它本身也在学习，所以 actor 和 critic 是互相追着动的两个系统。</p>
+<h3 id="3-102a2c把绝对好改成比预期更好">3. 10.2：A2C，把“绝对好”改成“比预期更好”<a hidden class="anchor" aria-hidden="true" href="#3-102a2c把绝对好改成比预期更好">#</a></h3>
+<p>QAC 用的是动作价值 $q_\pi(S,A)$。但策略梯度有一个重要性质：加减一个只依赖状态的 baseline 基线，不改变梯度期望。</p>
+<p>也就是：</p>
+$$ \mathbb E \left[ \nabla_\theta\ln\pi(A\mid S,\theta)b(S) \right] =0. $$<p>所以可以把 $q_\pi(S,A)$ 换成：</p>
+$$ q_\pi(S,A)-b(S). $$<p>最自然的选择是：</p>
+$$ b(S)=v_\pi(S), $$<p>这时得到 advantage function 优势函数：</p>
+$$ a_\pi(S,A) = q_\pi(S,A)-v_\pi(S). $$<p>读法：A2C 不再问“这个动作的总价值高不高”，而是问“这个动作相对于当前状态的平均水平，是更好还是更差”。</p>
+<p>实际算法中，A2C 用 TD error 近似 advantage：</p>
+$$ \delta_t = r_{t+1} + \gamma v(s_{t+1},w_t) - v(s_t,w_t). $$<p>actor 更新为：</p>
+$$ \theta_{t+1} = \theta_t + \alpha_\theta \delta_t \nabla_\theta\ln\pi(a_t\mid s_t,\theta_t). $$<p>这里 $\delta_t\gt 0$ 表示“实际看到的结果比 critic 对 $s_t$ 的预期更好”，于是增加 $a_t$ 的概率；$\delta_t\lt 0$ 表示“比预期差”，于是降低这类动作的概率。</p>
+<h3 id="4-103off-policy-ac样本来自-目标优化">4. 10.3：Off-policy AC，样本来自 $\beta$，目标优化 $\pi$<a hidden class="anchor" aria-hidden="true" href="#4-103off-policy-ac样本来自-目标优化">#</a></h3>
+<p>前两节默认数据来自当前 actor 自己，也就是 on-policy。10.3 放宽这一点：行为策略 behavior policy $\beta$ 负责采样，目标策略 target policy $\pi$ 负责被优化。</p>
+<p>问题是：策略梯度本来需要的是</p>
+$$ \mathbb E_{A\sim\pi(\cdot\mid S)} \left[ \nabla_\theta\ln\pi(A\mid S,\theta)\cdots \right], $$<p>但现在动作来自</p>
+$$ A\sim\beta(\cdot\mid S). $$<p>因此要用 importance sampling 重要性采样校正：</p>
+$$ c_t = \frac{\pi(a_t\mid s_t,\theta_t)} {\beta(a_t\mid s_t)}. $$<p>off-policy actor-critic 的更新形状就变成：</p>
+$$ \theta_{t+1} = \theta_t + \alpha_\theta c_t\delta_t \nabla_\theta\ln\pi(a_t\mid s_t,\theta_t), $$$$ w_{t+1} = w_t + \alpha_w c_t\delta_t \nabla_wv(s_t,w_t). $$<p>读法：$c_t$ 不是新的奖励，也不是新的 advantage；它只是告诉我们“这条由 $\beta$ 采来的样本，在 $\pi$ 的世界里应该占多大权重”。</p>
+<p>⚠️ 易错点：如果 $\beta(a_t\mid s_t)$ 很小而 $\pi(a_t\mid s_t)$ 不小，$c_t$ 会很大，更新方差也会变大。这是 off-policy policy gradient 经常需要小心处理的地方。</p>
+<h3 id="5-104deterministic-ac从调概率变成调动作本身">5. 10.4：Deterministic AC，从调概率变成调动作本身<a hidden class="anchor" aria-hidden="true" href="#5-104deterministic-ac从调概率变成调动作本身">#</a></h3>
+<p>10.1-10.3 都使用 stochastic policy 随机策略：</p>
+$$ \pi(a\mid s,\theta). $$<p>actor 的更新对象是动作概率，所以会出现：</p>
+$$ \nabla_\theta\ln\pi(a_t\mid s_t,\theta_t). $$<p>10.4 改成 deterministic policy 确定性策略：</p>
+$$ a=\mu(s,\theta). $$<p>这时 actor 不再问“怎样提高某个动作的概率”，而是问“怎样把当前输出动作往更高价值方向移动”。因此梯度变成链式法则：</p>
+$$ \nabla_\theta J(\theta) = \mathbb E \left[ \nabla_\theta\mu(S,\theta) \left(\nabla_a q(S,a,w)\right)\big|_{a=\mu(S,\theta)} \right]. $$<p>对应更新为：</p>
+$$ \theta_{t+1} = \theta_t + \alpha_\theta \nabla_\theta\mu(s_t,\theta_t) \left(\nabla_a q(s_t,a,w_t)\right)\big|_{a=\mu(s_t,\theta_t)}. $$<p>读法：critic 给出“动作往哪个方向变，价值会上升”，actor 再通过 $\nabla_\theta\mu$ 把这个动作空间里的方向传回参数空间。</p>
+<p>这一步尤其适合 continuous action space 连续动作空间。因为在连续动作中，对所有动作枚举概率或者求 $\arg\max_a q(s,a)$ 通常很困难；而 deterministic actor 可以直接输出一个动作。</p>
+<h3 id="6-四种算法放在一张表里">6. 四种算法放在一张表里<a hidden class="anchor" aria-hidden="true" href="#6-四种算法放在一张表里">#</a></h3>
+<p>本章四节不是四个孤立算法，而是一条逐步替换的链：</p>
+<table>
+  <thead>
+      <tr>
+          <th>小节</th>
+          <th>算法</th>
+          <th>actor 类型</th>
+          <th>critic 学什么</th>
+          <th>actor 用什么信号</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>10.1</td>
+          <td>QAC</td>
+          <td>随机策略 $\pi(a\mid s,\theta)$</td>
+          <td>$q(s,a,w)$</td>
+          <td>动作价值 $q(s_t,a_t,w_t)$</td>
+      </tr>
+      <tr>
+          <td>10.2</td>
+          <td>A2C</td>
+          <td>随机策略 $\pi(a\mid s,\theta)$</td>
+          <td>$v(s,w)$</td>
+          <td>TD error / advantage $\delta_t$</td>
+      </tr>
+      <tr>
+          <td>10.3</td>
+          <td>Off-policy AC</td>
+          <td>目标策略 $\pi$，行为策略 $\beta$</td>
+          <td>$v(s,w)$</td>
+          <td>$c_t\delta_t$</td>
+      </tr>
+      <tr>
+          <td>10.4</td>
+          <td>Deterministic AC</td>
+          <td>确定性策略 $\mu(s,\theta)$</td>
+          <td>$q(s,a,w)$</td>
+          <td>动作梯度 $\nabla_aq(s,a,w)$</td>
+      </tr>
+  </tbody>
+</table>
+<p>如果只记一句话，可以这样记：</p>
+$$ \boxed{ \text{QAC 用价值，A2C 用优势，off-policy AC 加重要性权重，deterministic AC 直接沿动作价值梯度移动动作。} } $$<h3 id="7-和现代强化学习算法的关系">7. 和现代强化学习算法的关系<a hidden class="anchor" aria-hidden="true" href="#7-和现代强化学习算法的关系">#</a></h3>
+<p>原书最后提醒：policy gradient 和 actor-critic 是现代强化学习里非常核心的基础。许多更高级算法都可以看成在本章基础上继续加稳定化技巧、约束或新的建模视角。</p>
+<p>比如：</p>
+<table>
+  <thead>
+      <tr>
+          <th>算法 / 方向</th>
+          <th>可以从本章哪条线理解</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>PPO</td>
+          <td>从 stochastic policy gradient / actor-critic 出发，限制策略每次更新幅度</td>
+      </tr>
+      <tr>
+          <td>TRPO</td>
+          <td>也是限制策略更新幅度，但用 trust region 的优化思想</td>
+      </tr>
+      <tr>
+          <td>SAC</td>
+          <td>actor-critic 加上 entropy 最大化，让策略既追求回报又保持探索</td>
+      </tr>
+      <tr>
+          <td>TD3</td>
+          <td>deterministic actor-critic / DDPG 路线上的改进，重点缓解 critic 过估计</td>
+      </tr>
+      <tr>
+          <td>multi-agent RL</td>
+          <td>把单智能体的 actor-critic 扩展到多个 agent</td>
+      </tr>
+      <tr>
+          <td>model-based RL</td>
+          <td>用经验样本学习环境模型，再借模型辅助决策</td>
+      </tr>
+      <tr>
+          <td>distributional RL</td>
+          <td>不只估计期望回报，而是估计回报分布</td>
+      </tr>
+  </tbody>
+</table>
+<p>这些内容本书不展开，但第 10 章已经给了读它们的最小骨架：看到 actor，就问它怎样参数化策略；看到 critic，就问它估计 $v$、$q$ 还是 advantage；看到 off-policy，就问行为策略和目标策略如何校正；看到 deterministic，就问动作梯度如何传回 actor 参数。</p>
+<h3 id="8-章末闭环">8. 章末闭环<a hidden class="anchor" aria-hidden="true" href="#8-章末闭环">#</a></h3>
+<p>从第 8 章到第 10 章，主线可以压缩成三步：</p>
+$$ \boxed{ \text{第 8 章：学会近似价值} \quad\Longrightarrow\quad \text{第 9 章：学会直接优化策略} \quad\Longrightarrow\quad \text{第 10 章：用价值估计辅助策略优化} } $$<p>到这里，我们已经有了深度强化学习很多算法的共同语言：</p>
+<ul>
+<li>policy 策略可以是表格、随机函数、确定性函数。</li>
+<li>value 价值可以是表格，也可以是函数近似。</li>
+<li>update 更新可以来自 Monte Carlo return、TD error、advantage、importance sampling 或 action gradient。</li>
+<li>actor-critic 的关键不是名字，而是 actor 和 critic 两个学习过程如何互相提供信号、互相影响稳定性。</li>
+</ul>
+<p>⚠️ 最后一个易错点：critic 并不是“裁判给分后就结束”。critic 的估计会影响 actor 的方向；actor 的变化又会改变 critic 要估计的目标分布。因此 actor-critic 的难点常常不是某一个公式，而是两个近似学习器同时更新时的稳定性。</p>
+<hr>
+<h2 id="106-qa问答">10.6 Q&amp;A（问答）<a hidden class="anchor" aria-hidden="true" href="#106-qa问答">#</a></h2>
+<p><strong>要解决的问题</strong>：本节用四个问题把第 10 章最容易混淆的概念收口：actor-critic 到底是不是 policy gradient，baseline 为什么能加，importance sampling 是否只属于策略梯度，以及 deterministic policy gradient 为什么天然可以 off-policy。</p>
+<h3 id="q1-actor-critic-和-policy-gradient-methods-是什么关系">Q1. Actor-critic 和 policy gradient methods 是什么关系？<a hidden class="anchor" aria-hidden="true" href="#q1-actor-critic-和-policy-gradient-methods-是什么关系">#</a></h3>
+<p>原书答案的核心是：</p>
+$$ \boxed{ \text{actor-critic methods are actually policy gradient methods} } $$<p>也就是说，actor-critic 本质上仍然是 policy gradient methods 策略梯度方法。有时二者甚至会被交替使用。</p>
+<p>为什么？因为 actor 的更新仍然来自策略梯度公式：</p>
+$$ \nabla_\theta J(\theta) = \mathbb E \left[ \nabla_\theta\ln\pi(A\mid S,\theta) q_\pi(S,A) \right]. $$<p>这个式子里真正麻烦的是 $q_\pi(S,A)$：我们不知道真实 action value 动作价值，所以必须估计它。</p>
+<p>不同方法的分叉点就在这里：</p>
+<table>
+  <thead>
+      <tr>
+          <th>方法</th>
+          <th>怎么估计 $q_\pi(S,A)$ 或相关价值信号</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>REINFORCE</td>
+          <td>用 Monte Carlo return 蒙特卡洛回报</td>
+      </tr>
+      <tr>
+          <td>QAC</td>
+          <td>用 TD learning 学到的 $q(s,a,w)$</td>
+      </tr>
+      <tr>
+          <td>A2C</td>
+          <td>用 TD error $\delta_t$ 近似 advantage</td>
+      </tr>
+      <tr>
+          <td>deterministic AC</td>
+          <td>用 critic 的 $q(s,a,w)$ 提供动作梯度</td>
+      </tr>
+  </tbody>
+</table>
+<p>所以 actor-critic 不是另一类和 policy gradient 平行的方法，而是 policy gradient 的一种实现结构：</p>
+$$ \boxed{ \text{policy gradient 给目标方向；critic 用 TD + function approximation 提供价值估计。} } $$<p>名字里的 actor-critic 强调的是算法结构：</p>
+<ul>
+<li>actor 演员：更新策略参数 $\theta$。</li>
+<li>critic 评论家：更新价值参数 $w$。</li>
+</ul>
+<p>读法：policy gradient 是“要沿什么数学方向更新策略”；actor-critic 是“用一个 actor 和一个 critic 怎样在算法上实现这个方向”。</p>
+<p>⚠️ 易错点：不是所有 policy gradient 都叫 actor-critic。只有当动作价值、状态价值或优势信号由 TD learning + value function approximation 这类 critic 模块在线估计时，才通常称为 actor-critic。</p>
+<h3 id="q2-为什么要给-actor-critic-引入额外-baseline">Q2. 为什么要给 actor-critic 引入额外 baseline？<a hidden class="anchor" aria-hidden="true" href="#q2-为什么要给-actor-critic-引入额外-baseline">#</a></h3>
+<p>baseline 基线最重要的性质是：只要它不依赖动作 $A$，把它从动作价值里减掉，不会改变策略梯度的期望。</p>
+<p>也就是：</p>
+$$ \mathbb E \left[ \nabla_\theta\ln\pi(A\mid S,\theta)b(S) \right] =0. $$<p>因此：</p>
+$$ \mathbb E \left[ \nabla_\theta\ln\pi(A\mid S,\theta)q_\pi(S,A) \right] = \mathbb E \left[ \nabla_\theta\ln\pi(A\mid S,\theta) \left(q_\pi(S,A)-b(S)\right) \right]. $$<p>这说明 baseline 不改变“平均更新方向”。那为什么要加？因为它可以降低 estimation variance 估计方差。</p>
+<p>最常用的 baseline 是：</p>
+$$ b(S)=v_\pi(S). $$<p>于是得到 advantage 优势函数：</p>
+$$ a_\pi(S,A) = q_\pi(S,A)-v_\pi(S). $$<p>它的读法很关键：</p>
+$$ \boxed{ \text{advantage 不是问这个动作好不好，而是问它比当前状态的平均动作好多少。} } $$<p>一个最小直觉例子：</p>
+<table>
+  <thead>
+      <tr>
+          <th>状态 $S$</th>
+          <th style="text-align: right">动作 $A$</th>
+          <th style="text-align: right">$q_\pi(S,A)$</th>
+          <th style="text-align: right">$v_\pi(S)$</th>
+          <th style="text-align: right">$a_\pi(S,A)$</th>
+          <th>actor 应该怎么理解</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>同一个状态</td>
+          <td style="text-align: right">$a_1$</td>
+          <td style="text-align: right">100</td>
+          <td style="text-align: right">95</td>
+          <td style="text-align: right">5</td>
+          <td>比平均好，应该提高概率</td>
+      </tr>
+      <tr>
+          <td>同一个状态</td>
+          <td style="text-align: right">$a_2$</td>
+          <td style="text-align: right">90</td>
+          <td style="text-align: right">95</td>
+          <td style="text-align: right">-5</td>
+          <td>比平均差，应该降低概率</td>
+      </tr>
+  </tbody>
+</table>
+<p>如果只看 $q_\pi(S,A)$，两个动作的价值都是正的，容易都被“奖励”；但看 advantage，就能分出谁比当前状态下的正常水平更好。</p>
+<p>所以 A2C 的 actor 更新写成：</p>
+$$ \theta_{t+1} = \theta_t + \alpha_\theta \delta_t \nabla_\theta\ln\pi(a_t\mid s_t,\theta_t), $$<p>其中：</p>
+$$ \delta_t = r_{t+1} + \gamma v(s_{t+1},w_t) - v(s_t,w_t) $$<p>被用来近似 advantage。</p>
+<p>⚠️ 易错点：baseline 不是为了改变最优策略，也不是为了加入新的偏好；它主要是为了让梯度估计更稳定、方差更小。</p>
+<h3 id="q3-importance-sampling-只能用在-policy-based-algorithms-吗">Q3. Importance sampling 只能用在 policy-based algorithms 吗？<a hidden class="anchor" aria-hidden="true" href="#q3-importance-sampling-只能用在-policy-based-algorithms-吗">#</a></h3>
+<p>答案是否定的。importance sampling 重要性采样是一个通用的期望估计技巧，不只属于 policy gradient。</p>
+<p>它解决的问题是：</p>
+$$ \text{目标期望属于分布 }p, \quad \text{但样本来自分布 }q. $$<p>如果要估计：</p>
+$$ \mathbb E_{X\sim p}[f(X)], $$<p>但手里只有：</p>
+$$ X\sim q, $$<p>则可以写成：</p>
+$$ \mathbb E_{X\sim p}[f(X)] = \mathbb E_{X\sim q} \left[ \frac{p(X)}{q(X)}f(X) \right]. $$<p>这就是 importance sampling 的基本形状。</p>
+<p>强化学习里到处都是 expectation 期望，所以它自然能用在很多地方：</p>
+<table>
+  <thead>
+      <tr>
+          <th>场景</th>
+          <th>被估计的东西为什么是期望</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>state value 状态价值 $v_\pi(s)$</td>
+          <td>它是从状态 $s$ 出发的 expected return</td>
+      </tr>
+      <tr>
+          <td>action value 动作价值 $q_\pi(s,a)$</td>
+          <td>它是从状态动作 $(s,a)$ 出发的 expected return</td>
+      </tr>
+      <tr>
+          <td>policy gradient 策略梯度</td>
+          <td>真实梯度本身写成对状态、动作的期望</td>
+      </tr>
+  </tbody>
+</table>
+<p>因此 importance sampling 可以用于 value-based methods 价值型方法，也可以用于 policy-based methods 策略型方法。</p>
+<p>10.3 里它的作用是把来自 behavior policy 行为策略 $\beta$ 的动作样本，校正成 target policy 目标策略 $\pi$ 下的期望：</p>
+$$ c_t = \frac{\pi(a_t\mid s_t,\theta_t)} {\beta(a_t\mid s_t)}. $$<p>原书还特别指出：Algorithm 10.3 的 value-based component，也就是 critic 更新部分，也用了这个思想。</p>
+<p>⚠️ 易错点：importance sampling 的本质不是“策略梯度专用修正项”，而是“换分布估计期望”的通用工具。只要有“目标分布”和“采样分布”不一致，就可能需要它。</p>
+<h3 id="q4-为什么-deterministic-policy-gradient-method-是-off-policy">Q4. 为什么 deterministic policy gradient method 是 off-policy？<a hidden class="anchor" aria-hidden="true" href="#q4-为什么-deterministic-policy-gradient-method-是-off-policy">#</a></h3>
+<p>随机策略的 actor 更新含有动作随机变量：</p>
+$$ \nabla_\theta\ln\pi(A\mid S,\theta), \qquad A\sim\pi(\cdot\mid S). $$<p>因此如果动作其实来自 $\beta$，就会出现动作分布不一致，需要 importance sampling。</p>
+<p>但 deterministic policy gradient 确定性策略梯度不一样。确定性 actor 是：</p>
+$$ a=\mu(s,\theta). $$<p>给定状态 $s$ 后，目标动作不是随机采样出来的，而是直接算出来的。对应梯度为：</p>
+$$ \nabla_\theta J(\theta) = \mathbb E \left[ \nabla_\theta\mu(S,\theta) \left(\nabla_aq(S,a,w)\right)\big|_{a=\mu(S,\theta)} \right]. $$<p>注意这里没有：</p>
+$$ A\sim\mu(\cdot\mid S), $$<p>也没有：</p>
+$$ \nabla_\theta\ln\pi(A\mid S,\theta). $$<p>因此估计 deterministic policy gradient 时，不需要让样本动作来自目标策略 $\mu$。实际与环境交互的动作可以来自任意 behavior policy 行为策略，比如：</p>
+$$ a_t\sim\beta(\cdot\mid s_t), $$<p>或者工程里常见的：</p>
+$$ a_t=\mu(s_t,\theta_t)+\text{exploration noise}. $$<p>actor 更新时真正用的是：</p>
+$$ \nabla_\theta\mu(s_t,\theta_t) \left(\nabla_aq(s_t,a,w_t)\right)\big|_{a=\mu(s_t,\theta_t)}. $$<p>读法：行为策略 $\beta$ 负责“带我去收集状态和奖励样本”；目标策略 $\mu$ 负责“在这些状态上，我应该把动作输出往哪个方向改”。</p>
+<p>所以 deterministic policy gradient 可以 off-policy 的原因是：</p>
+$$ \boxed{ \text{它的真实梯度不含动作随机变量；给定状态后，目标动作由 }\mu(s,\theta)\text{ 直接确定。} } $$<p>⚠️ 易错点：这不表示 deterministic actor-critic 完全不需要探索。它仍然需要行为策略或噪声去探索环境；只是 actor 梯度本身不要求动作样本来自目标策略。</p>
+<h3 id="本节闭环">本节闭环<a hidden class="anchor" aria-hidden="true" href="#本节闭环">#</a></h3>
+<p>第 10 章最后这组 Q&amp;A 可以整理成四句话：</p>
+<ul>
+<li>actor-critic 是 policy gradient 的一种结构化实现，因为 actor 仍然沿策略梯度更新。</li>
+<li>baseline 不改变策略梯度期望，但能降低方差，于是得到 A2C。</li>
+<li>importance sampling 是通用的换分布估计期望技巧，value-based 和 policy-based 方法都可以用。</li>
+<li>deterministic policy gradient 的梯度不含动作随机变量，所以它可以使用 off-policy 数据。</li>
+</ul>
+<p>这也把本章的核心骨架彻底闭上了：actor 负责优化策略，critic 负责提供价值信号；baseline、importance sampling、deterministic gradient 都是在解决“这个价值信号怎样更稳定、更通用、更适合连续动作空间”的问题。</p>
+<hr>
+<h2 id="我的疑问与解答">我的疑问与解答<a hidden class="anchor" aria-hidden="true" href="#我的疑问与解答">#</a></h2>
+<p>暂无。</p>
+<hr>
+<h2 id="脉络总结--要点速记">脉络总结 / 要点速记<a hidden class="anchor" aria-hidden="true" href="#脉络总结--要点速记">#</a></h2>
+<p>10.1：最简单的 actor-critic（QAC）来自对 REINFORCE 的替换：把 Monte Carlo 回报 $q_t(s_t,a_t)$ 换成 TD 学出来的 $q(s_t,a_t,w_t)$。actor 用策略梯度更新 $\theta$，critic 用 Sarsa 更新 $w$。</p>
+<p>10.2：A2C 引入 baseline。减去只依赖状态的 $b(S)$ 不改变策略梯度期望，但能降低方差。实用选择是 $b(S)=v_\pi(S)$，于是 actor 用 advantage $q_\pi(S,A)-v_\pi(S)$ 更新；实际算法里用 TD error $\delta_t=r_{t+1}+\gamma v(s_{t+1},w_t)-v(s_t,w_t)$ 来近似 advantage。</p>
+<p>10.3：off-policy actor-critic 允许样本来自行为策略 $\beta$，但目标仍是优化 $\pi$。核心工具是 importance sampling，把更新乘上 $\frac{\pi(a_t\mid s_t,\theta_t)}{\beta(a_t\mid s_t)}$，用来校正“样本来自 $\beta$、目标期望属于 $\pi$”之间的分布差异。</p>
+<p>10.4：deterministic actor-critic 把 actor 从随机策略 $\pi(a\mid s,\theta)$ 改成确定性策略 $\mu(s,\theta)$。随机 actor 调整动作概率；确定性 actor 用 $\nabla_\theta\mu(s)\nabla_a q(s,a,w)$ 直接移动动作输出。它天然适合连续动作空间，也常用行为策略 $\beta$ 加噪声探索、目标策略 $\mu$ 做价值评估。</p>
+<p>10.5：本章总结把四条路线串起来：QAC 用 TD critic 替换 REINFORCE 的 Monte Carlo 回报；A2C 用 baseline / advantage 降低方差；off-policy actor-critic 用 importance sampling 处理样本来自 $\beta$ 而目标是 $\pi$ 的差异；deterministic actor-critic 把策略从“动作概率”改成“直接输出动作”，用 $\nabla_a q$ 指导动作移动。第 10 章因此把第 8 章的价值函数近似和第 9 章的策略梯度真正合到了一起。</p>
+<p>10.6：Q&amp;A 收束四个易混点：actor-critic 本质上仍是 policy gradient，只是用 TD critic 估计价值信号；baseline 不改变梯度期望但能降方差；importance sampling 是通用的换分布估计期望技巧，不只属于策略梯度；deterministic policy gradient 的梯度不含动作随机变量，所以能用 off-policy 数据学习。</p>
+
+
+    </div>
+  </div>
+<div class="post-meme-tail">
+  <button class="post-meme-trigger" type="button" aria-label="触发表情彩蛋">
+    <img src="/images/memes/wave-fast.gif" alt="" loading="lazy">
+  </button>
+</div>
+
+<style>
+.like-pop{position:fixed;pointer-events:none;z-index:1000;width:50px;animation:likeFloat .8s ease-out forwards}
+@keyframes likeFloat{0%{opacity:1;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(var(--dx),-80px) scale(1.4)}}
+</style>
+<script>
+var memeMode=false;
+function spawnPop(src,x,y){
+  var pop=document.createElement('img');
+  pop.src=src;
+  pop.className='like-pop';
+  pop.style.left=(x-25)+'px';
+  pop.style.top=(y-25)+'px';
+  document.body.appendChild(pop);
+  setTimeout(function(){pop.remove()},800);
+}
+document.addEventListener('DOMContentLoaded',function(){
+  document.querySelectorAll('.post-meme-trigger').forEach(function(trigger){
+    trigger.addEventListener('click',function(e){
+      e.stopPropagation();
+      memeMode=!memeMode;
+      trigger.setAttribute('aria-pressed',memeMode?'true':'false');
+      trigger.classList.toggle('active',memeMode);
+    });
+  });
+
+  document.addEventListener('click',function(e){
+    if(!memeMode){return;}
+    if(e.target.closest('a,button,input,textarea,select,label,summary,iframe,.giscus,.post-meme-tail')){return;}
+    spawnPop('/images/like.jpg',e.clientX,e.clientY);
+    var mirrorX=window.innerWidth-e.clientX;
+    setTimeout(function(){spawnPop('/images/like2.jpg',mirrorX,e.clientY);},200);
+  });
+});
+</script>
+
+<script src="https://giscus.app/client.js"
+        data-repo="qshf/qshf.github.io"
+        data-repo-id="R_kgDOOF9BTA"
+        data-category="Announcements"
+        data-category-id="DIC_kwDOOF9BTM4C8uBn"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="0"
+        data-emit-metadata="0"
+        data-input-position="bottom"
+        data-theme="preferred_color_scheme"
+        data-lang="zh-CN"
+        crossorigin="anonymous"
+        async>
+</script>
+
+
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="http://localhost:1313/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/">强化学习</a></li>
+      <li><a href="http://localhost:1313/tags/%E6%95%B0%E5%AD%A6%E5%8E%9F%E7%90%86/">数学原理</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="prev" href="http://localhost:1313/books/reinforcement-learning-math/notes/09_supplement-why-gradient-of-v-sees-future-states/">
+    <span class="title">« Prev</span>
+    <span>补充：为什么 $\nabla_\theta v_\pi(s)$ 不是只看当前状态 $s$</span>
+  </a>
+  <a class="next" href="http://localhost:1313/books/reinforcement-learning-math/notes/10_supplement-policy-gradient-formula-origins/">
+    <span class="title">Next »</span>
+    <span>补充：随机策略梯度与确定性策略梯度公式来源</span>
+  </a>
+</nav>
+
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2026 <a href="http://localhost:1313/">撒手 &gt;_O </a></span> · 
+
+    
+    
+    <span>
+        Powered by
+        <a href="https://gohugo.io/?utm_source=papermod" rel="noopener" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" id="top-link" class="top-link hidden" aria-label="go to top" title="Go to Top (Alt + G)" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevrons-up">
+        <polyline points="17 11 12 6 7 11"></polyline>
+        <polyline points="17 18 12 13 7 18"></polyline>
+    </svg>
+</a>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.querySelector('.post-content') || document.body, {
+    delimiters: [
+      {left:'$$', right:'$$', display:true},
+      {left:'\\\\[', right:'\\\\]', display:true},
+      {left:'\\\\(', right:'\\\\)', display:false},
+      {left:'$', right:'$', display:false}
+    ],
+    ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+    throwOnError: false,
+    strict: 'warn'
+  })">
+</script>
+
+
+
+<script type="module">
+import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('pre > code.language-mermaid').forEach(function (code) {
+    var diagram = document.createElement('div');
+    diagram.className = 'mermaid';
+    diagram.textContent = code.textContent;
+    code.parentElement.replaceWith(diagram);
+  });
+
+  mermaid.initialize({
+    startOnLoad: false,
+    securityLevel: 'loose',
+    theme: document.documentElement.dataset.theme === 'dark' ? 'dark' : 'default'
+  });
+  mermaid.run({ querySelector: '.mermaid' });
+});
+</script>
+
+
+
+<script>
+    let menu = document.getElementById('menu');
+    if (menu) {
+        
+        const scrollPosition = localStorage.getItem("menu-scroll-position");
+        if (scrollPosition) {
+            menu.scrollLeft = parseInt(scrollPosition, 10);
+        }
+        
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var toplink = document.getElementById("top-link");
+    window.onscroll = function () {
+        const scrollThreshold = window.innerHeight;
+        if (document.body.scrollTop > scrollThreshold || document.documentElement.scrollTop > scrollThreshold) {
+            toplink.classList.remove("hidden");
+        } else {
+            toplink.classList.add("hidden");
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        const html = document.querySelector("html");
+        if (html.dataset.theme === "dark") {
+            html.dataset.theme = 'light';
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            html.dataset.theme = 'dark';
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

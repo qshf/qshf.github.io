@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto" data-theme="auto">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="noindex, nofollow">
+<title>二轮总结 | 撒手 &gt;_O </title>
+<meta name="keywords" content="强化学习, 数学原理">
+<meta name="description" content="全书地图、概念对比、证明索引与复习问题">
+<meta name="author" content="qshf">
+<link rel="canonical" href="http://localhost:1313/books/reinforcement-learning-math/summary/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.ac9d367ca23e95d58bd22c4cec025f14e1ceb180140a759f9ff38ae3d70d961d.css" integrity="sha256-rJ02fKI&#43;ldWL0ixM7AJfFOHOsYAUCnWfn/OK49cNlh0=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" type="application/rss+xml" href="http://localhost:1313/books/reinforcement-learning-math/summary/index.xml" title="rss">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/books/reinforcement-learning-math/summary/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+                color-scheme: dark;
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .toc {
+                background: var(--entry);
+            }
+        }
+
+    </style>
+</noscript>
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.querySelector("html").dataset.theme = 'dark';
+    } else if (localStorage.getItem("pref-theme") === "light") {
+       document.querySelector("html").dataset.theme = 'light';
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.querySelector("html").dataset.theme = 'dark';
+    } else {
+        document.querySelector("html").dataset.theme = 'light';
+    }
+
+</script>
+
+</head>
+<body class="list" id="top">
+    <header class="header">
+    <nav class="header-nav">
+        <div class="logo">
+            <a href="http://localhost:1313/" accesskey="h" title="撒手 &gt;_O  (Alt + H)">撒手 &gt;_O </a>
+            <div class="logo-switches">
+                <button id="theme-toggle" class="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu" class="menu">
+            <li>
+                <a href="http://localhost:1313/papers/" title="论文笔记">
+                    <span>论文笔记</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/books/" title="书籍笔记">
+                    <span>书籍笔记</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/life/" title="生活">
+                    <span>生活</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main"> 
+<header class="page-header"><nav class="breadcrumbs" role="navigation" aria-label="Breadcrumb">
+            <a href="/">Home</a>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+            <a href="/books/">书籍笔记</a>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+            <a href="/books/reinforcement-learning-math/">强化学习的数学原理</a>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+        <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+</nav>
+  <h1>
+    二轮总结
+  </h1>
+  <div class="post-description">
+    全书地图、概念对比、证明索引与复习问题
+  </div>
+</header>
+<div class="post-content md-content"><p>这里汇总二轮复习材料。</p>
+
+
+</div>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">00 · 全书地图与问题链（全局综合层）
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p> 这是全局层：把 10 章串成一条线。要看某一章内部怎么展开，点下面的「章节地图」下钻。 配套：01 概念对比表 · 02 证明推导索引 · 03 易错点与统一符号表 · 04 二刷问题清单
+章节地图（下钻：每章一张内部结构图） 章 主题 章节地图 章笔记 1 基本概念 / MDP ch01 地图 笔记 2 贝尔曼方程 ch02 地图 笔记 3 最优策略与 BOE ch03 地图 笔记 4 值迭代 / 策略迭代 ch04 地图 笔记 5 蒙特卡洛 ch05 地图 笔记 6 随机近似 ★ ch06 地图 笔记 7 时序差分 TD ch07 地图 笔记 8 值函数近似 ch08 地图 笔记 9 策略梯度 ch09 地图 笔记 10 Actor-Critic ch10 地图 笔记 建议读法：先扫这一页的「问题链」建立全局骨架 → 复习某章时点开它的「章节地图」看内部脉络 → 仍卡住再进「章笔记」抠细节。
+...</p>
+  </div>
+  <footer class="entry-footer">
+
+<span>2 min</span>&nbsp;·&nbsp;<span>qshf</span></footer>
+  <a class="entry-link" aria-label="post link to 00 · 全书地图与问题链（全局综合层）" href="http://localhost:1313/books/reinforcement-learning-math/summary/00_book-map/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">01 · 概念对比表
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p> 全书最容易混淆的概念，集中辨析。每张表统一用：共同点 / 核心区别 / 适用 / 优缺点 / 典型算法 / 一句话记忆。 入口见 00 全书地图。
+算法家族全景（先看这张图定位） flowchart TD ROOT[&#34;求解策略&#34;] ROOT --&gt; VAL[&#34;值方法 value-based&lt;br/&gt;先学 v/q，再贪心导出策略&#34;] ROOT --&gt; POL[&#34;策略方法 policy-based&lt;br/&gt;直接参数化并优化策略&#34;] ROOT --&gt; AC2[&#34;合体：Actor-Critic&lt;br/&gt;critic 估值 &#43; actor 改策略&#34;] VAL --&gt; MB[&#34;模型已知 (DP)&lt;br/&gt;值迭代 / 策略迭代 · Ch4&#34;] VAL --&gt; MF[&#34;模型未知 (免模型)&#34;] MF --&gt; MCv[&#34;蒙特卡洛 MC · Ch5&#34;] MF --&gt; TDv[&#34;时序差分 TD · Ch7&lt;br/&gt;Sarsa / Q-learning&#34;] TDv --&gt; FAv[&#34;&#43; 函数近似 · Ch8&lt;br/&gt;DQN&#34;] POL --&gt; RF[&#34;REINFORCE · Ch9&lt;br/&gt;(MC 式策略梯度)&#34;] AC2 --&gt; QAC[&#34;QAC / A2C / off-policy / deterministic · Ch10&#34;] RF -.演化.-&gt; QAC FAv -.提供 critic.-&gt; QAC 1. 贝尔曼方程 BE vs 贝尔曼最优方程 BOE （ch2 vs ch3） 维度 贝尔曼方程 BE 贝尔曼最优方程 BOE 共同点 都把价值写成「即时奖励 &#43; 折扣的未来价值」的自洽方程 同左 针对对象 给定一个策略 $\pi$，求它的值 $v_\pi$ 求最优值 $v^*$ 与最优策略 $\pi^*$ 有无 max 无，对动作按 $\pi$ 求期望 有 $\max_a$，对动作取最优 线性性 线性方程，$(I-\gamma P_\pi)v_\pi=r_\pi$ 可直接求逆 非线性，不能求逆 解的保证 唯一解（$I-\gamma P_\pi$ 可逆） 压缩映射定理保证唯一解 &#43; 迭代收敛 解法 闭式求逆 / 迭代 只能迭代（值迭代就是反复套 BOE 右侧） 一句话记忆 评估一个已知策略 寻找最优策略 2. 值迭代 VI vs 策略迭代 PI vs 截断策略迭代 （ch4 &#43; 04_supplement） 维度 值迭代 VI 策略迭代 PI 截断策略迭代 共同点 都在「评估 ↔ 改进」之间循环求最优策略（GPI 框架） 同左 同左 策略评估 只做一步 Bellman 更新 评估到收敛（内层迭代到底） 评估有限 j 步（介于两者间） 是两端点 GPI 的一个端点（评估走 1 步） GPI 另一个端点（评估走 ∞ 步） 中间地带，最实用 每轮代价 低 高（内层要跑到收敛） 可调 收敛保证 压缩映射 → 收敛到 $v^*$ Lemma 4.1 策略单调改进 → 收敛 Proposition 4.1 价值仍改进 一句话记忆 评估「浅尝一步」 评估「一评到底」 评估「评 j 步够用就走」 3. model-based vs model-free （ch4 / ch5） 维度 model-based model-free 共同点 目标都是求最优策略 同左 是否需要 $p,r$ 需要已知环境模型（转移概率、奖励） 不需要，靠与环境交互采样 核心手段 直接算期望（动态规划） 用样本平均/自举估计期望 代表 值迭代、策略迭代（ch4） MC（ch5）、TD（ch7） 一句话记忆 有地图，直接规划 没地图，靠试错 ⚠️ 别和 on-policy/off-policy 混（见表 6）：model-based/free 问「要不要模型」，on/off-policy 问「采样策略 = 目标策略吗」。
+...</p>
+  </div>
+  <footer class="entry-footer">
+
+<span>3 min</span>&nbsp;·&nbsp;<span>qshf</span></footer>
+  <a class="entry-link" aria-label="post link to 01 · 概念对比表" href="http://localhost:1313/books/reinforcement-learning-math/summary/01_concept-comparison/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">02 · 证明 / 推导索引
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p> 主笔记负责结构，本表负责定位细节。 二刷时不必重看所有证明——先看「难点一句话」回忆，卡住了再点链接进对应文件。 「状态」列自己维护：✅已懂 / 🟡半懂 / 🔴待重看。入口见 00 全书地图。
+用法 复习一个推导前，先盖住链接，看自己能不能复述「难点一句话」。 能复述 → 标 ✅，跳过；卡在某步 → 标 🟡，只重看那一步；完全没印象 → 标 🔴，整篇重读。 索引表 # 定理 / 推导 位置（章节 &#43; 文件） 前置知识 难点一句话 状态 1 全期望恒等式 $\mathbb E[q_\pi(S_{t&#43;1},A_{t&#43;1})\mid s,a]=\mathbb E[v_\pi(S_{t&#43;1})\mid s,a]$ ch2/ch7 · 全期望(直觉) &#43; 严格版 条件期望、嵌套期望、$v$–$q$ 关系 引入中间变量 $Z=S_{t&#43;1}$，内层把 $q$ 收成 $v_\pi(S_{t&#43;1})$，外层按转移概率加权 2 回报自举 $G_t=R_{t&#43;1}&#43;\gamma G_{t&#43;1}$ → 贝尔曼方程 ch2 2.4 · ch2 return 定义、马尔可夫性、线代 把 $v_\pi$ 定义代入、拆成「即时奖励项 &#43; 折扣未来项」 3 BE 矩阵形式与闭式解 $(I-\gamma P_\pi)v_\pi=r_\pi$ ch2 2.6–2.7 · ch2 矩阵求逆、谱半径 为什么 $I-\gamma P_\pi$ 必可逆（$\gamma\lt 1$ 且 $P_\pi$ 行随机） 4 压缩映射定理 &#43; BOE 右侧 $f(v)$ 是压缩映射 ch3 3.3.5–3.3.6 · ch3 度量空间、不动点、$\max$ 的非扩张性 $\lVert f(v_1)-f(v_2)\rVert_\infty\le\gamma\lVert v_1-v_2\rVert_\infty$，靠 $\max$ 的 1-Lipschitz 5 奖励仿射变换不改变最优策略（定理 3.6） ch3 3.5.5 · ch3 BOE、几何级数 常数项在所有动作上同量平移，$\arg\max$ 不变 6 Lemma 4.1 策略改进单调不变差 &#43; PI/VI 收敛 ch4 4.2 · ch4 BE、贪心改进、单调性 贪心新策略的 $q$ 不小于旧 $v$，逐步逼近 $v^*$ 7 三算法同骨架 &#43; 截断 PI 价值改进（Prop 4.1） ch4 4.3 · VI vs PI 对比 GPI、Lemma 4.1 VI/PI 是「评估走几步」的两端点，截断在中间仍改进 8 均值估计无偏 &#43; 方差随样本数下降（大数定律） ch5 5.1 · ch5 i.i.d.、期望/方差线性性 $\mathrm{Var}(\bar X)=\sigma^2/n$；i.i.d. 是关键前提 9 增量均值公式 $w_{k&#43;1}=w_k&#43;\frac1k(x_k-w_k)$ ch6 6.1 · ch6 &#43; 结构梳理 代数变形 非增量平均改写成「旧估计 &#43; 步长×(新样本−旧估计)」 10 Robbins-Monro 定理（求根收敛） ch6 6.2 · ch6 随机过程、$\sum\alpha=\infty,\sum\alpha^2\lt \infty$ 步长「走得够远又收得住」；看正值往下调、负值往上调 11 Dvoretzky 收敛定理（误差=压缩旧误差&#43;小噪声） ch6 6.3 · ch6 &#43; 结构梳理 RM、上鞅/收敛引理 模板 $\Delta_{k&#43;1}=(1-\alpha_k)\Delta_k&#43;\beta_k\eta_k$ 何时 $\to0$ 12 SGD 收敛回到 RM；BGD/SGD/mini-batch 关系 ch6 6.4 · ch6 梯度下降、RM 用单样本梯度代替真梯度 = 带噪声求根问题 13 TD 是 RM 的具体化 &#43; Theorem 7.1 TD 收敛 ch7 7.1 · ch7 &#43; v/q/RM 形式 RM 定理、BE TD 更新对应求解 BE 的 RM 算法，故继承其收敛条件 14 统一视角：四算法同壳、不同 target 解不同方程 ch7 7.5 · ch7 BE、BOE、RM 新=旧&#43;α(q̄−旧)，$\bar q$ 决定解 BE 还是 BOE 15 Q-learning 求解的是 BOE（Box 7.5） ch7 7.4 · ch7 &#43; on/off-policy BOE、off-policy target 里的 $\max_{a&#39;}$ 让它求 $q^*$ 而非 $q_\pi$ 16 TD-Linear 收敛点 &#43; Lemma 8.1 $b-Aw_t$ 推导 ch8 8.2 · ch8 &#43; Lemma 8.1 平稳分布、线性近似、投影 期望形式整理成 $b-Aw_t$，定点 $w^*=A^{-1}b$ 17 真误差 → Bellman target；projected Bellman error ch8 8.2 · 从真误差到 target &#43; 几何理解(HTML⚠️) TD target、投影算子 真值未知，用 TD target 替代，最小化的其实是 $J_{PBE}$ 18 Policy Gradient Theorem 主公式 &#43; 为何出现 $\ln\pi$ ch9 9.3 · ch9 目标 $J(\theta)$、log-trick $\nabla\pi=\pi\nabla\ln\pi$ 把概率梯度变成可采样期望 19 Lemma 9.2 折扣总概率 $\Pr_\pi(s&#39;\mid s)=\sum_k\gamma^k[P_\pi^k]_{ss&#39;}$ ch9 9.3 · Lemma 9.2 &#43; 为何看未来态 转移矩阵幂、几何级数 $\nabla v_\pi(s)$ 递归展开，牵出所有未来可达状态 20 Theorem 9.2 / 9.3 两种状态分布视角推导 ch9 9.3 · Thm 9.2/9.3 推导 Lemma 9.2、$d_0$ vs $d_\pi$ 固定初分布 $d_0$ 与平稳分布 $d_\pi$ 给出两种等价梯度 21 确定性策略梯度推导（链式 &#43; Bellman 递归） ch10 10.4 · 策略梯度公式来源 链式法则、$(I-\gamma P_\mu)^{-1}$ 从 $v_\mu(s)=q_\mu(s,\mu(s,\theta))$ 出发，两条参数路径 22 A2C：baseline 不改梯度均值、只降方差；advantage ch10 10.2 · ch10 期望线性性、方差 $\mathbb E[\nabla\ln\pi\cdot b(s)]=0$，故减 baseline 无偏 23 重要性采样 &#43; off-policy 策略梯度 ch10 10.3 · ch10 重要性采样、$\rho$ 分布 用 $\beta$ 的样本估 $\pi$ 的期望，加权 $\pi/\beta$ 重复 / 格式待办（非证明，但放这里方便追踪） 条目 1：全期望直觉版 与 严格版 内容重叠，二刷确认后可二选一或合并。 条目 17：08_几何理解补充.html 是 HTML 格式，夹在 md 笔记里无法统一检索/链接，建议后续转为 markdown。 </p>
+  </div>
+  <footer class="entry-footer">
+
+<span>2 min</span>&nbsp;·&nbsp;<span>qshf</span></footer>
+  <a class="entry-link" aria-label="post link to 02 · 证明 / 推导索引" href="http://localhost:1313/books/reinforcement-learning-math/summary/02_proof-index/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">03 · 易错点与统一符号表
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p> 跨章节的符号容易记混、概念容易踩坑。这一页把它们统一。入口见 00 全书地图。
+一、统一符号表 「易混对象」一列是重点——很多卡壳来自把这两个记号当成一回事。
+符号 含义 首次出现 易混对象 / 提醒 $s,\ \mathcal S$ 状态、状态空间 ch1 — $a,\ \mathcal A(s)$ 动作、动作空间 ch1 $\mathcal A(s)$ 带括号：原则上依赖状态；本书统一为同一套 5 动作 $r,\ R$ 奖励（小写定值/大写随机变量） ch1 奖励 $r$ ≠ 回报 $G$ $p(s&#39;\mid s,a)$ 状态转移概率 ch1 表格是特例，概率是通用语言 $p(r\mid s,a)$ 奖励概率 ch1 — $\pi(a\mid s)$ 策略 ch1 表格策略 vs 参数化 $\pi(a\mid s,\theta)$（ch9） $\gamma\in[0,1)$ 折扣因子 ch1 $\gamma$ 小→短视，$\gamma$→1→远视（ch3.5） $G_t$ 回报（从 t 起的折扣奖励和） ch1 $G_t=R_{t&#43;1}&#43;\gamma G_{t&#43;1}$（自举关系） $v_\pi(s)$ 状态值（在 $s$ 起按 $\pi$ 的期望回报） ch2 评价状态；$v_\pi(s)=\sum_{a&#39;}\pi(a&#39;\mid s)q_\pi(s,a&#39;)$ 中 $a&#39;$ 是求和哑变量，不是当前采样动作 $A_t$ $q_\pi(s,a)$ 动作值（在 $s$ 取 $a$ 后按 $\pi$） ch2 评价状态-动作对；不是即时奖励 $v^*,\ q^*$ 最优状态值 / 动作值 ch3 由 BOE 定义，与具体 $\pi$ 无关 $P_\pi$ 策略 $\pi$ 下的状态转移矩阵 ch2 行随机矩阵；$(I-\gamma P_\pi)$ 可逆 $r_\pi$ 策略 $\pi$ 下的期望奖励向量 ch2 — $\alpha_k,\ \alpha_t$ 步长 / 学习率 ch6 RM 条件 $\sum\alpha=\infty,\ \sum\alpha^2\lt \infty$ $\bar q_t$ TD target（统一视角） ch7 不同算法换不同 $\bar q_t$（见 01 表5） $\delta_t$ TD error $=\bar q_t-q_t$ ch7 在 ch10 又当 advantage 的估计用 $w$ 值函数近似参数 ch8 拟合 $v/q$，与策略参数 $\theta$ 分开 $\theta$ 策略参数 ch9 拟合 $\pi$ 或 $\mu$；别和 $w$ 混 $J(\theta)$ 策略优化目标 ch9 可为 $\bar v_\pi$ 或 $\bar r_\pi$ $\mu(s,\theta)$ 确定性策略（直接输出动作） ch10 不是概率分布，无 $\ln\pi$ 项 $A(s,a)$ advantage $=q(s,a)-v(s)$ ch10 「比平均好多少」；减 baseline 得来 $\beta$ 行为策略（off-policy） ch10 target $\pi$ ≠ behavior $\beta$ ★ 最容易混的一组：各种状态分布 符号 含义 用在哪 $d_0$ 固定的初始状态分布（人为指定） ch9 Theorem 9.2 $d_\pi$ 策略 $\pi$ 的平稳分布（长期停留比例） ch8 平稳分布、ch9 Theorem 9.3 $\rho_\pi$ 折扣状态访问分布（带 $\gamma^k$ 加权的总访问强度） ch9 Lemma 9.2、ch10 $\eta$ 推导中对状态加权的统称（视目标而定为 $d_0/d_\pi/\rho_\pi$） ch9/ch10 通用记号 这四个都是「状态上的权重」，区别只在怎么加权。读策略梯度公式时，先认清当前用的是哪一个，公式立刻清晰。
+...</p>
+  </div>
+  <footer class="entry-footer">
+
+<span>2 min</span>&nbsp;·&nbsp;<span>qshf</span></footer>
+  <a class="entry-link" aria-label="post link to 03 · 易错点与统一符号表" href="http://localhost:1313/books/reinforcement-learning-math/summary/03_pitfalls-symbols/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">04 · 二刷问题清单（主动回忆）
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p> 复习的正确姿势不是重读笔记，而是先盖住答案问自己。 每章 5~8 题，能不看笔记答出 → 跳过；卡住 → 点链接回原章节。 题目多取自各章 Q&amp;A 与「我应该能回答」节。入口见 00 全书地图。
+用法：给每题标记 ✅能答 / 🟡含糊 / 🔴不会，只重看 🟡🔴 对应章节。
+Ch1 基本概念 → 笔记 为什么强化学习问题可以建模成 MDP？MDP 由哪几个要素组成？ 为什么转移、奖励、策略都要用「条件概率」而不是表格来描述？ state 和 observation 有什么区别？马尔可夫性质说的是什么？ reward（奖励）和 return（回报）有什么区别？ 折扣因子 $\gamma$ 的作用是什么？$\gamma=0$ 和 $\gamma\to1$ 分别会怎样？ 为什么「知道地图」时就不需要强化学习了？ Ch2 贝尔曼方程 → 笔记 回报的自举关系 $G_t=R_{t&#43;1}&#43;\gamma G_{t&#43;1}$ 怎么来的？ 贝尔曼方程的矩阵形式是什么？为什么 $(I-\gamma P_\pi)$ 一定可逆？ $v_\pi$ 和 $q_\pi$ 怎么互相表示？（两条关系式） 闭式解和迭代解各自什么时候用？ 为什么说全期望公式是推导贝尔曼方程的关键一步？（见 02_证明索引 条目1） Ch3 最优策略与 BOE → 笔记 BOE 和普通贝尔曼方程的根本区别是什么？为什么 BOE 不能求逆？ 压缩映射定理保证了什么？为什么 BOE 右侧 $f(v)$ 是压缩映射？ 解出 $v^*$ 后，怎么得到 $\pi^*$？为什么贪心就够了？ 折扣率变小，策略会变「短视」还是「远视」？为什么？ 给所有奖励做仿射变换 $r\to ar&#43;b$，最优策略会变吗？ Ch4 值迭代 / 策略迭代 → 笔记 值迭代和策略迭代的核心区别是什么？为什么说它们是 GPI 的两个端点？ 截断策略迭代「截」的是哪一步？ 为什么策略改进一定不会变差？（Lemma 4.1 的直觉） 迭代中的 $v_k$ 为什么不是真正的状态值？ model-based 和 model-free 的分界在哪？本章属于哪类？ Ch5 蒙特卡洛 → 笔记 MC 怎么把策略迭代里「需要模型的那一步」替换掉？ 为什么 MC 必须等 episode 结束？ exploring starts 是什么？为什么需要它？怎么用 ε-greedy 替代？ initial-visit / first-visit / every-visit 有什么区别？ ε 越大，探索越强但代价是什么？最优 ε-greedy 一定等于 greedy 最优吗？ MC Basic、MC Exploring Starts、MC ε-Greedy 三者什么关系？ Ch6 随机近似 ★ → 笔记 增量均值公式 $w_{k&#43;1}=w_k&#43;\frac1k(x_k-w_k)$ 怎么推出来？它和 RL 更新式像在哪？ Robbins-Monro 算法解决什么问题？为什么要求 $\sum\alpha=\infty$ 且 $\sum\alpha^2\lt \infty$？ Dvoretzky 定理的「误差=被压缩的旧误差&#43;小噪声」模板长什么样？ SGD 和 BGD、mini-batch 的区别？为什么 SGD「前期快、后期抖」？ 为什么说这一章是后面几章收敛性的地基？ Ch7 时序差分 TD → 笔记 TD 更新式怎么从贝尔曼方程 &#43; RM 推出来？TD error 是什么？ Sarsa 名字怎么来的？它在数学上求解什么方程？ n-step Sarsa 在 $n=1$ 和 $n=\infty$ 时分别退化成什么？ Sarsa、Expected Sarsa、Q-learning 的 target 各自怎么处理「下一动作」？ 为什么 Sarsa 是 on-policy、Q-learning 是 off-policy？ on-policy/off-policy 和 online/offline 有什么区别？ 为什么 Q-learning 目标策略可以纯 greedy，而 Sarsa 要 ε-greedy？ Ch8 值函数近似 → 笔记 从表格到函数近似，「读取价值」和「更新价值」各发生了什么变化？ 为什么表格法是函数近似的特例？ 平稳分布（stationary distribution）是什么？为什么 TD-Linear 的收敛分析需要它？ TD-Linear 实际最小化的是什么误差？（projected Bellman error） DQN 为什么需要 target network？为什么需要 experience replay？ 训练 loss 为 0 是否意味着价值估计正确？ Ch9 策略梯度 → 笔记 策略梯度方法和值方法的根本区别？它适合什么场景？ policy gradient theorem 的主公式是什么？为什么会冒出 $\ln\pi$？ 定义最优策略的两个指标（$\bar v_\pi$、$\bar r_\pi$）各是什么？关系如何？ $d_0$、$d_\pi$、$\rho_\pi$ 这几个状态分布有什么区别？（见 03 符号表） 为什么 $\nabla_\theta v_\pi(s)$ 会牵扯到未来所有可达状态？ REINFORCE 的更新为什么会「奖励好动作」？ Ch10 Actor-Critic → 笔记 actor 和 critic 分别做什么？actor-critic 和 policy gradient 是什么关系？ REINFORCE 和 QAC 的分叉点在哪？ 为什么可以给 actor 减一个 baseline？它改变梯度均值吗？advantage 是什么？ off-policy actor-critic 为什么需要重要性采样？权重是什么？ 确定性策略梯度为什么不能直接把随机公式里的 $A$ 换成 $\mu(S)$？ 为什么确定性 AC 天然是 off-policy，却不需要重要性采样？ QAC / A2C / off-policy AC / deterministic AC 一句话各自的特点？（见 01 表10） 跨章「大问题」（真正消化的标志） 答得出这几个，说明你不是「读过」而是「消化」了这本书：
+...</p>
+  </div>
+  <footer class="entry-footer">
+
+<span>2 min</span>&nbsp;·&nbsp;<span>qshf</span></footer>
+  <a class="entry-link" aria-label="post link to 04 · 二刷问题清单（主动回忆）" href="http://localhost:1313/books/reinforcement-learning-math/summary/04_review-questions/"></a>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2026 <a href="http://localhost:1313/">撒手 &gt;_O </a></span> · 
+
+    
+    
+    <span>
+        Powered by
+        <a href="https://gohugo.io/?utm_source=papermod" rel="noopener" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" id="top-link" class="top-link hidden" aria-label="go to top" title="Go to Top (Alt + G)" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevrons-up">
+        <polyline points="17 11 12 6 7 11"></polyline>
+        <polyline points="17 18 12 13 7 18"></polyline>
+    </svg>
+</a>
+
+
+
+
+<script>
+    let menu = document.getElementById('menu');
+    if (menu) {
+        
+        const scrollPosition = localStorage.getItem("menu-scroll-position");
+        if (scrollPosition) {
+            menu.scrollLeft = parseInt(scrollPosition, 10);
+        }
+        
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var toplink = document.getElementById("top-link");
+    window.onscroll = function () {
+        const scrollThreshold = window.innerHeight;
+        if (document.body.scrollTop > scrollThreshold || document.documentElement.scrollTop > scrollThreshold) {
+            toplink.classList.remove("hidden");
+        } else {
+            toplink.classList.add("hidden");
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        const html = document.querySelector("html");
+        if (html.dataset.theme === "dark") {
+            html.dataset.theme = 'light';
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            html.dataset.theme = 'dark';
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

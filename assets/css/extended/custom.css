@@ -220,6 +220,27 @@ body:has(.papers-layout) .main {
   margin-bottom: 8px;
 }
 
+/* KaTeX math rendering, adapted from the local mermaid-viewer project. */
+.md-content .katex-display {
+  margin: 16px 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 2px 0 6px;
+}
+
+.md-content .katex-display > .katex {
+  text-align: center;
+  white-space: nowrap;
+}
+
+.md-content .katex {
+  font-size: 1.08em;
+}
+
+.md-content .katex-display > .katex > .katex-html {
+  text-align: center;
+}
+
 /* ── 文章末尾表情包 ── */
 .post-meme-tail {
   display: flex;

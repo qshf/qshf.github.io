@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>CRUD-RAG: A Comprehensive Chinese Benchmark for Retrieval-Augmented Generation on 撒手 &gt;_O </title>
-    <link>http://localhost:61927/papers/dataset-eval/crud-rag/</link>
+    <link>http://localhost:1313/papers/dataset-eval/crud-rag/</link>
     <description>Recent content in CRUD-RAG: A Comprehensive Chinese Benchmark for Retrieval-Augmented Generation on 撒手 &gt;_O </description>
     <generator>Hugo</generator>
     <language>zh-cn</language>
     <lastBuildDate>Fri, 01 May 2026 00:00:00 +0000</lastBuildDate>
-    <atom:link href="http://localhost:61927/papers/dataset-eval/crud-rag/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://localhost:1313/papers/dataset-eval/crud-rag/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Abstract &#43; 相关工作</title>
-      <link>http://localhost:61927/papers/dataset-eval/crud-rag/abstract/</link>
+      <link>http://localhost:1313/papers/dataset-eval/crud-rag/abstract/</link>
       <pubDate>Fri, 01 May 2026 00:00:00 +0000</pubDate>
-      <guid>http://localhost:61927/papers/dataset-eval/crud-rag/abstract/</guid>
+      <guid>http://localhost:1313/papers/dataset-eval/crud-rag/abstract/</guid>
       <description>&lt;blockquote&gt;
 &lt;p&gt;来源：&lt;a href=&#34;https://arxiv.org/abs/2401.17043&#34;&gt;arXiv:2401.17043&lt;/a&gt;&lt;/p&gt;&lt;/blockquote&gt;
 &lt;h2 id=&#34;图-1crud-四类任务示例&#34;&gt;图 1：CRUD 四类任务示例&lt;/h2&gt;
-&lt;p&gt;&lt;img alt=&#34;CRUD 四类任务示例&#34; loading=&#34;lazy&#34; src=&#34;http://localhost:61927/papers/dataset-eval/crud-rag/img-20260501123632.png&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt=&#34;CRUD 四类任务示例&#34; loading=&#34;lazy&#34; src=&#34;http://localhost:1313/papers/dataset-eval/crud-rag/img-20260501123632.png&#34;&gt;&lt;/p&gt;
 &lt;h2 id=&#34;1-图-1-的含义&#34;&gt;1. 图 1 的含义&lt;/h2&gt;
 &lt;p&gt;作者将 RAG 的应用分成四个方面：&lt;/p&gt;
 &lt;ul&gt;
@@ -64,9 +64,9 @@
     </item>
     <item>
       <title>主要方法：数据集构建</title>
-      <link>http://localhost:61927/papers/dataset-eval/crud-rag/method/</link>
+      <link>http://localhost:1313/papers/dataset-eval/crud-rag/method/</link>
       <pubDate>Fri, 01 May 2026 00:00:00 +0000</pubDate>
-      <guid>http://localhost:61927/papers/dataset-eval/crud-rag/method/</guid>
+      <guid>http://localhost:1313/papers/dataset-eval/crud-rag/method/</guid>
       <description>&lt;h2 id=&#34;31-新闻数据收集&#34;&gt;3.1 新闻数据收集&lt;/h2&gt;
 &lt;h3 id=&#34;为什么选择新闻数据&#34;&gt;为什么选择新闻数据？&lt;/h3&gt;
 &lt;table&gt;
@@ -122,7 +122,7 @@
       &lt;/tr&gt;
   &lt;/tbody&gt;
 &lt;/table&gt;
-&lt;p&gt;&lt;img alt=&#34;数据集统计&#34; loading=&#34;lazy&#34; src=&#34;http://localhost:61927/papers/dataset-eval/crud-rag/img-20260501133904.png&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img alt=&#34;数据集统计&#34; loading=&#34;lazy&#34; src=&#34;http://localhost:1313/papers/dataset-eval/crud-rag/img-20260501133904.png&#34;&gt;&lt;/p&gt;
 &lt;hr&gt;
 &lt;h2 id=&#34;表-2crud-rag-数据集组成&#34;&gt;表 2：CRUD-RAG 数据集组成&lt;/h2&gt;
 &lt;table&gt;
@@ -175,9 +175,9 @@
     </item>
     <item>
       <title>四类任务构造逻辑</title>
-      <link>http://localhost:61927/papers/dataset-eval/crud-rag/tasks/</link>
+      <link>http://localhost:1313/papers/dataset-eval/crud-rag/tasks/</link>
       <pubDate>Fri, 01 May 2026 00:00:00 +0000</pubDate>
-      <guid>http://localhost:61927/papers/dataset-eval/crud-rag/tasks/</guid>
+      <guid>http://localhost:1313/papers/dataset-eval/crud-rag/tasks/</guid>
       <description>&lt;blockquote&gt;
 &lt;p&gt;本节重点不是复述原文，而是把 4 类任务的数据构造思路讲清楚。&lt;/p&gt;&lt;/blockquote&gt;
 &lt;h2 id=&#34;总览&#34;&gt;总览&lt;/h2&gt;
@@ -228,9 +228,9 @@
     </item>
     <item>
       <title>实验结论与调参逻辑</title>
-      <link>http://localhost:61927/papers/dataset-eval/crud-rag/experiments/</link>
+      <link>http://localhost:1313/papers/dataset-eval/crud-rag/experiments/</link>
       <pubDate>Fri, 01 May 2026 00:00:00 +0000</pubDate>
-      <guid>http://localhost:61927/papers/dataset-eval/crud-rag/experiments/</guid>
+      <guid>http://localhost:1313/papers/dataset-eval/crud-rag/experiments/</guid>
       <description>&lt;blockquote&gt;
 &lt;p&gt;这一章真正想说明的实验逻辑：&lt;strong&gt;RAG 的效果不是只由 LLM 决定的，而是和 chunk、retriever、embedding、top-k 等组件强相关，并且不同任务的最优配置并不一样。&lt;/strong&gt;&lt;/p&gt;&lt;/blockquote&gt;
 &lt;hr&gt;
@@ -322,9 +322,9 @@
     </item>
     <item>
       <title>补充：UHGEval 数据集</title>
-      <link>http://localhost:61927/papers/dataset-eval/crud-rag/uhgeval/</link>
+      <link>http://localhost:1313/papers/dataset-eval/crud-rag/uhgeval/</link>
       <pubDate>Fri, 01 May 2026 00:00:00 +0000</pubDate>
-      <guid>http://localhost:61927/papers/dataset-eval/crud-rag/uhgeval/</guid>
+      <guid>http://localhost:1313/papers/dataset-eval/crud-rag/uhgeval/</guid>
       <description>&lt;p&gt;&lt;strong&gt;UHGEval&lt;/strong&gt;（Unconstrained Hallucination Generation Evaluation）是一个专门用于评估中文大语言模型幻觉问题的基准数据集。&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;数据集主页：&lt;a href=&#34;https://huggingface.co/datasets/Ki-Seki/UHGEvalDataset&#34;&gt;Ki-Seki/UHGEvalDataset&lt;/a&gt;&lt;/li&gt;

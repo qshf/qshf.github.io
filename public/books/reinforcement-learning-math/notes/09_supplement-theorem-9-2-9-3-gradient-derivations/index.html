@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto" data-theme="auto">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="noindex, nofollow">
+<title>第 9 章补充：Theorem 9.2 和 9.3 的梯度推导 | 撒手 &gt;_O </title>
+<meta name="keywords" content="强化学习, 数学原理">
+<meta name="description" content="《强化学习的数学原理》学习笔记">
+<meta name="author" content="qshf">
+<link rel="canonical" href="http://localhost:1313/books/reinforcement-learning-math/notes/09_supplement-theorem-9-2-9-3-gradient-derivations/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.ac9d367ca23e95d58bd22c4cec025f14e1ceb180140a759f9ff38ae3d70d961d.css" integrity="sha256-rJ02fKI&#43;ldWL0ixM7AJfFOHOsYAUCnWfn/OK49cNlh0=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/books/reinforcement-learning-math/notes/09_supplement-theorem-9-2-9-3-gradient-derivations/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+                color-scheme: dark;
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .toc {
+                background: var(--entry);
+            }
+        }
+
+    </style>
+</noscript>
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.querySelector("html").dataset.theme = 'dark';
+    } else if (localStorage.getItem("pref-theme") === "light") {
+       document.querySelector("html").dataset.theme = 'light';
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.querySelector("html").dataset.theme = 'dark';
+    } else {
+        document.querySelector("html").dataset.theme = 'light';
+    }
+
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var tocLinks = document.querySelectorAll('.papers-toc a, .toc-sidebar a');
+  if (!tocLinks.length) return;
+
+  var headings = Array.from(tocLinks).map(function (a) {
+    var id = decodeURIComponent(a.getAttribute('href').slice(1));
+    return document.getElementById(id);
+  }).filter(Boolean);
+
+  function onScroll() {
+    var scrollY = window.scrollY + 80;
+    var current = headings[0];
+    for (var i = 0; i < headings.length; i++) {
+      if (headings[i].offsetTop <= scrollY) current = headings[i];
+    }
+    tocLinks.forEach(function (a) { a.classList.remove('active'); });
+    var activeLink = document.querySelector('.papers-toc a[href="#' + CSS.escape(current.id) + '"], .toc-sidebar a[href="#' + CSS.escape(current.id) + '"]');
+    if (activeLink) activeLink.classList.add('active');
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+});
+</script>
+
+
+</head>
+<body id="top">
+    <header class="header">
+    <nav class="header-nav">
+        <div class="logo">
+            <a href="http://localhost:1313/" accesskey="h" title="撒手 &gt;_O  (Alt + H)">撒手 &gt;_O </a>
+            <div class="logo-switches">
+                <button id="theme-toggle" class="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg class="moon" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg class="sun" xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu" class="menu">
+            <li>
+                <a href="http://localhost:1313/papers/" title="论文笔记">
+                    <span>论文笔记</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/books/" title="书籍笔记">
+                    <span>书籍笔记</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/life/" title="生活">
+                    <span>生活</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <nav class="breadcrumbs" role="navigation" aria-label="Breadcrumb">
+            <a href="/">Home</a>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+            <a href="/books/">书籍笔记</a>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+            <a href="/books/reinforcement-learning-math/">强化学习的数学原理</a>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+            <a href="/books/reinforcement-learning-math/notes/">章笔记与补充</a>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+        <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+</nav>
+    <h1 class="post-title entry-hint-parent">
+      第 9 章补充：Theorem 9.2 和 9.3 的梯度推导
+    </h1>
+    <div class="post-description">《强化学习的数学原理》学习笔记</div>
+    <div class="post-meta">
+
+<span>3 min</span>&nbsp;·&nbsp;<span>qshf</span>
+
+</div>
+  </header> 
+  <div class="post-with-toc">
+    <aside class="toc-sidebar"><details class="toc" >
+    <summary accesskey="c" title="(Alt + C)">
+        <span class="title">Table of Contents</span>
+    </summary>
+
+    <div class="inner"><ul>
+            <li>
+                <a href="#1-theorem-92%e5%9b%ba%e5%ae%9a%e5%88%9d%e5%a7%8b%e5%88%86%e5%b8%83--%e6%97%b6%e7%9a%84%e4%b8%a5%e6%a0%bc%e6%8e%a8%e5%af%bc" aria-label="1. Theorem 9.2：固定初始分布 $d_0$ 时的严格推导">1. Theorem 9.2：固定初始分布 $d_0$ 时的严格推导</a></li>
+            <li>
+                <a href="#2-theorem-93%e5%b9%b3%e7%a8%b3%e5%88%86%e5%b8%83--%e6%97%b6%e7%9a%84%e8%bf%91%e4%bc%bc%e6%8e%a8%e5%af%bc" aria-label="2. Theorem 9.3：平稳分布 $d_\pi$ 时的近似推导">2. Theorem 9.3：平稳分布 $d_\pi$ 时的近似推导</a></li>
+            <li>
+                <a href="#3-%e9%80%9f%e8%ae%b0" aria-label="3. 速记">3. 速记</a>
+            </li>
+        </ul>
+    </div>
+</details>
+
+    </aside>
+
+    <div class="post-content md-content"><blockquote>
+<p>对应主笔记：<a href="/books/reinforcement-learning-math/notes/09_chapter9-policy-gradient-methods/">第 9 章策略梯度方法</a> · 补充主题：把 Theorem 9.2 / 9.3 的代数推导单独展开</p></blockquote>
+<h2 id="1-theorem-92固定初始分布--时的严格推导">1. Theorem 9.2：固定初始分布 $d_0$ 时的严格推导<a hidden class="anchor" aria-hidden="true" href="#1-theorem-92固定初始分布--时的严格推导">#</a></h2>
+<p>先把 $\bar v_\pi$ 的概念垫一下。策略 $\pi$ 不只在一个状态上有表现，而是在很多状态上都有 state value 状态价值：</p>
+$$ v_\pi(s_1),\ v_\pi(s_2),\ \cdots $$<p>策略梯度需要一个 scalar objective 标量目标 $J(\theta)$，不能拿一整列状态价值直接做最大化。所以我们先选一个状态分布 $d$，说明“我更关心哪些状态”，再把这些状态价值加权平均：</p>
+$$ \bar v_\pi = \sum_{s\in\mathcal S}d(s)v_\pi(s) = d^Tv_\pi. $$<p>Theorem 9.2 讨论的是一个特殊选择：把这个权重分布 $d$ 固定为 initial distribution 初始分布 $d_0$。于是平均状态价值写成：</p>
+$$ \bar v_\pi^0=d_0^Tv_\pi. $$<p>这里上标 $0$ 不是平方或幂，而是在提醒我们：这个平均价值用的是“时刻 0 的起点分布” $d_0$。</p>
+<p>展开看就是：</p>
+$$ \bar v_\pi^0 = \sum_{s_0}d_0(s_0)v_\pi(s_0). $$<p>因为 $d_0$ 不依赖策略参数 $\theta$，所以梯度只作用在 $v_\pi(s_0)$ 上：</p>
+$$ \nabla_\theta\bar v_\pi^0 = \sum_{s_0}d_0(s_0)\nabla_\theta v_\pi(s_0). $$<p>把 Lemma 9.2 代进来。为了避免符号撞车，把 Lemma 9.2 里的“起点状态”记成 $s_0$，把“未来访问到的状态”记成 $s$：</p>
+$$ \nabla_\theta v_\pi(s_0) = \sum_s \Pr_\pi(s\mid s_0) \sum_a \nabla_\theta\pi(a\mid s,\theta)q_\pi(s,a). $$<p>于是：</p>
+$$ \nabla_\theta\bar v_\pi^0 = \sum_{s_0}d_0(s_0) \sum_s \Pr_\pi(s\mid s_0) \sum_a \nabla_\theta\pi(a\mid s,\theta)q_\pi(s,a). $$<p>交换求和顺序：先固定未来会被访问到的状态 $s$，再把所有可能起点 $s_0$ 对它的贡献加起来：</p>
+$$ \nabla_\theta\bar v_\pi^0 = \sum_s \left[ \sum_{s_0}d_0(s_0)\Pr_\pi(s\mid s_0) \right] \sum_a \nabla_\theta\pi(a\mid s,\theta)q_\pi(s,a). $$<p>括号里的东西定义为：</p>
+$$ \rho_\pi(s) \doteq \sum_{s_0\in\mathcal S}d_0(s_0)\Pr_\pi(s\mid s_0). \tag{9.19} $$<p>所以：</p>
+$$ \nabla_\theta\bar v_\pi^0 = \sum_s \rho_\pi(s) \sum_a \nabla_\theta\pi(a\mid s,\theta)q_\pi(s,a). $$<p>读法：$d_0$ 只告诉我们“从哪里开始”；但真正计算梯度时，要看“从这些起点出发后，整个折扣未来会访问哪些状态”。这些未来访问权重合起来，就是 $\rho_\pi$。</p>
+<p>再用 log-trick：</p>
+$$ \nabla_\theta\pi(a\mid s,\theta) = \pi(a\mid s,\theta)\nabla_\theta\ln\pi(a\mid s,\theta). $$<p>代入：</p>
+$$ \nabla_\theta\bar v_\pi^0 = \sum_s \rho_\pi(s) \sum_a \pi(a\mid s,\theta) \nabla_\theta\ln\pi(a\mid s,\theta)q_\pi(s,a). $$<p>把两层求和看成“先抽状态，再抽动作”：</p>
+$$ \sum_s \rho_\pi(s) \sum_a \pi(a\mid s,\theta) f(s,a) = \mathbb E_{S\sim\rho_\pi,\ A\sim\pi(S,\theta)} [f(S,A)]. $$<p>这里：</p>
+$$ f(s,a) = \nabla_\theta\ln\pi(a\mid s,\theta)q_\pi(s,a). $$<p>所以：</p>
+$$ \nabla_\theta\bar v_\pi^0 = \mathbb E_{S\sim\rho_\pi,\ A\sim\pi(S,\theta)} \left[ \nabla_\theta\ln\pi(A\mid S,\theta)q_\pi(S,A) \right]. $$<h2 id="2-theorem-93平稳分布--时的近似推导">2. Theorem 9.3：平稳分布 $d_\pi$ 时的近似推导<a hidden class="anchor" aria-hidden="true" href="#2-theorem-93平稳分布--时的近似推导">#</a></h2>
+<p>这里的 $\bar v_\pi$ 是用 stationary distribution 平稳分布 $d_\pi$ 加权的平均状态价值：</p>
+$$ \bar v_\pi=d_\pi^Tv_\pi=\sum_s d_\pi(s)v_\pi(s). $$<p>而 $\bar r_\pi$ 是 average reward 平均一步奖励：</p>
+$$ \bar r_\pi=d_\pi^Tr_\pi=\sum_s d_\pi(s)r_\pi(s). $$<p>由 Bellman 方程和平稳分布关系 $d_\pi^TP_\pi=d_\pi^T$ 可得：</p>
+$$ \bar r_\pi=(1-\gamma)\bar v_\pi, $$<p>所以：</p>
+$$ \nabla_\theta\bar r_\pi=(1-\gamma)\nabla_\theta\bar v_\pi. $$<p>真正需要小心的是下一步。因为</p>
+$$ \bar v_\pi=d_\pi^Tv_\pi $$<p>里不只是 $v_\pi$ 依赖 $\theta$，平稳分布 $d_\pi$ 也依赖 $\theta$。严格求导会有两项：</p>
+$$ \nabla_\theta\bar v_\pi = \sum_s\nabla_\theta d_\pi(s)v_\pi(s) + \sum_s d_\pi(s)\nabla_\theta v_\pi(s). \tag{9.20} $$<p>当 $\gamma$ 接近 1 时，原书近似忽略第一项，保留第二项：</p>
+$$ \nabla_\theta\bar v_\pi \approx \sum_s d_\pi(s)\nabla_\theta v_\pi(s). $$<p>现在把 Lemma 9.2 代进第二项：</p>
+$$ \nabla_\theta v_\pi(s) = \sum_{s'}\Pr_\pi(s'\mid s) \sum_a\nabla_\theta\pi(a\mid s',\theta)q_\pi(s',a). $$<p>代入：</p>
+$$ \sum_s d_\pi(s)\nabla_\theta v_\pi(s) = \sum_s d_\pi(s) \sum_{s'}\Pr_\pi(s'\mid s) \sum_a\nabla_\theta\pi(a\mid s',\theta)q_\pi(s',a). $$<p>交换求和顺序：</p>
+$$ \sum_s d_\pi(s)\nabla_\theta v_\pi(s) = \sum_{s'} \left[ \sum_s d_\pi(s)\Pr_\pi(s'\mid s) \right] \sum_a\nabla_\theta\pi(a\mid s',\theta)q_\pi(s',a). $$<p>关键是括号：</p>
+$$ \sum_s d_\pi(s)\Pr_\pi(s'\mid s). $$<p>由于</p>
+$$ \Pr_\pi(s'\mid s) = \sum_{k=0}^{\infty}\gamma^k[P_\pi^k]_{ss'}, $$<p>所以：</p>
+$$ \begin{aligned} \sum_s d_\pi(s)\Pr_\pi(s'\mid s) &= \sum_s d_\pi(s) \sum_{k=0}^{\infty}\gamma^k[P_\pi^k]_{ss'}\\ &= \sum_{k=0}^{\infty}\gamma^k \sum_s d_\pi(s)[P_\pi^k]_{ss'}. \end{aligned} $$<p>这里先做一个维度检查。设状态数为 $n=|\mathcal S|$，并采用本书的行向量转移约定：</p>
+$$ [P_\pi]_{ss'} = \Pr(S_{t+1}=s'\mid S_t=s,\pi). $$<p>也就是说，$P_\pi$ 的“行”是当前状态 $s$，“列”是下一状态 $s'$。各对象维度是：</p>
+<table>
+  <thead>
+      <tr>
+          <th>符号</th>
+          <th style="text-align: right">维度</th>
+          <th>读法</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>$d_\pi$</td>
+          <td style="text-align: right">$n\times 1$</td>
+          <td>平稳分布列向量</td>
+      </tr>
+      <tr>
+          <td>$d_\pi^T$</td>
+          <td style="text-align: right">$1\times n$</td>
+          <td>平稳分布行向量</td>
+      </tr>
+      <tr>
+          <td>$P_\pi^k$</td>
+          <td style="text-align: right">$n\times n$</td>
+          <td>按策略走 $k$ 步的转移矩阵</td>
+      </tr>
+      <tr>
+          <td>$d_\pi^TP_\pi^k$</td>
+          <td style="text-align: right">$1\times n$</td>
+          <td>从分布 $d_\pi$ 出发，走 $k$ 步后的状态分布</td>
+      </tr>
+  </tbody>
+</table>
+<p>所以矩阵乘法的第 $s'$ 个分量就是：</p>
+$$ \big[d_\pi^TP_\pi^k\big]_{s'} = \sum_{s\in\mathcal S} \underbrace{d_\pi(s)}_{\text{行向量第 }s\text{ 个分量}} \underbrace{[P_\pi^k]_{ss'}}_{\text{矩阵第 }s\text{ 行、第 }s'\text{ 列}}. $$<p>这正是上面出现的：</p>
+$$ \sum_s d_\pi(s)[P_\pi^k]_{ss'}. $$<p>因为 $d_\pi$ 是平稳分布：</p>
+$$ d_\pi^TP_\pi=d_\pi^T, $$<p>所以走 $k$ 步仍然有：</p>
+$$ d_\pi^TP_\pi^k=d_\pi^T. $$<p>因此：</p>
+$$ \sum_s d_\pi(s)[P_\pi^k]_{ss'}=d_\pi(s'). $$<p>代回去：</p>
+$$ \sum_s d_\pi(s)\Pr_\pi(s'\mid s) = \sum_{k=0}^{\infty}\gamma^k d_\pi(s') = \frac{1}{1-\gamma}d_\pi(s'). $$<p>于是：</p>
+$$ \sum_s d_\pi(s)\nabla_\theta v_\pi(s) = \frac{1}{1-\gamma} \sum_{s'} d_\pi(s') \sum_a\nabla_\theta\pi(a\mid s',\theta)q_\pi(s',a). $$<p>把哑变量 $s'$ 改名成 $s$：</p>
+$$ \sum_s d_\pi(s)\nabla_\theta v_\pi(s) = \frac{1}{1-\gamma} \sum_s d_\pi(s) \sum_a\nabla_\theta\pi(a\mid s,\theta)q_\pi(s,a). $$<p>所以得到的是：</p>
+$$ \nabla_\theta\bar v_\pi \approx \frac{1}{1-\gamma} \sum_s d_\pi(s) \sum_a\nabla_\theta\pi(a\mid s,\theta)q_\pi(s,a). $$<p>现在回到：</p>
+$$ \nabla_\theta\bar r_\pi = (1-\gamma)\nabla_\theta\bar v_\pi. $$<p>把上一行的近似代入：</p>
+$$ \nabla_\theta\bar r_\pi \approx (1-\gamma) \left[ \frac{1}{1-\gamma} \sum_s d_\pi(s) \sum_a\nabla_\theta\pi(a\mid s,\theta)q_\pi(s,a) \right]. $$<p>于是：</p>
+$$ \nabla_\theta\bar r_\pi \approx \sum_s d_\pi(s) \sum_a\nabla_\theta\pi(a\mid s,\theta)q_\pi(s,a). $$<p>也就是说，$(1-\gamma)$ 没丢，而是：</p>
+$$ (1-\gamma)\times\frac{1}{1-\gamma}=1. $$<p>再用 log-trick：</p>
+$$ \nabla_\theta\bar r_\pi \approx \mathbb E_{S\sim d_\pi,\ A\sim\pi(S,\theta)} \left[ \nabla_\theta\ln\pi(A\mid S,\theta)q_\pi(S,A) \right]. $$<h2 id="3-速记">3. 速记<a hidden class="anchor" aria-hidden="true" href="#3-速记">#</a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>关系</th>
+          <th>是否精确</th>
+          <th>原因</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>$\bar r_\pi=(1-\gamma)\bar v_\pi$</td>
+          <td>精确</td>
+          <td>来自 Bellman 方程和平稳分布等式 $d_\pi^TP_\pi=d_\pi^T$</td>
+      </tr>
+      <tr>
+          <td>$\nabla_\theta\bar r_\pi=(1-\gamma)\nabla_\theta\bar v_\pi$</td>
+          <td>精确</td>
+          <td>对上一个精确关系求导</td>
+      </tr>
+      <tr>
+          <td>$\nabla_\theta\bar r_\pi\approx\sum_s d_\pi(s)\sum_a\nabla_\theta\pi(a\mid s,\theta)q_\pi(s,a)$</td>
+          <td>近似</td>
+          <td>忽略了 $\nabla_\theta d_\pi$ 项，$\gamma\to1$ 时更合理</td>
+      </tr>
+  </tbody>
+</table>
+<p>⚠️ 易错点：Theorem 9.2 是固定初始分布 $d_0$ 下的严格形式；Theorem 9.3 是平稳分布 $d_\pi$ 下、折扣情形中的近似形式，$\gamma$ 越接近 1 越准。</p>
+
+
+    </div>
+  </div>
+<div class="post-meme-tail">
+  <button class="post-meme-trigger" type="button" aria-label="触发表情彩蛋">
+    <img src="/images/memes/wave-fast.gif" alt="" loading="lazy">
+  </button>
+</div>
+
+<style>
+.like-pop{position:fixed;pointer-events:none;z-index:1000;width:50px;animation:likeFloat .8s ease-out forwards}
+@keyframes likeFloat{0%{opacity:1;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(var(--dx),-80px) scale(1.4)}}
+</style>
+<script>
+var memeMode=false;
+function spawnPop(src,x,y){
+  var pop=document.createElement('img');
+  pop.src=src;
+  pop.className='like-pop';
+  pop.style.left=(x-25)+'px';
+  pop.style.top=(y-25)+'px';
+  document.body.appendChild(pop);
+  setTimeout(function(){pop.remove()},800);
+}
+document.addEventListener('DOMContentLoaded',function(){
+  document.querySelectorAll('.post-meme-trigger').forEach(function(trigger){
+    trigger.addEventListener('click',function(e){
+      e.stopPropagation();
+      memeMode=!memeMode;
+      trigger.setAttribute('aria-pressed',memeMode?'true':'false');
+      trigger.classList.toggle('active',memeMode);
+    });
+  });
+
+  document.addEventListener('click',function(e){
+    if(!memeMode){return;}
+    if(e.target.closest('a,button,input,textarea,select,label,summary,iframe,.giscus,.post-meme-tail')){return;}
+    spawnPop('/images/like.jpg',e.clientX,e.clientY);
+    var mirrorX=window.innerWidth-e.clientX;
+    setTimeout(function(){spawnPop('/images/like2.jpg',mirrorX,e.clientY);},200);
+  });
+});
+</script>
+
+<script src="https://giscus.app/client.js"
+        data-repo="qshf/qshf.github.io"
+        data-repo-id="R_kgDOOF9BTA"
+        data-category="Announcements"
+        data-category-id="DIC_kwDOOF9BTM4C8uBn"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="0"
+        data-emit-metadata="0"
+        data-input-position="bottom"
+        data-theme="preferred_color_scheme"
+        data-lang="zh-CN"
+        crossorigin="anonymous"
+        async>
+</script>
+
+
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="http://localhost:1313/tags/%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0/">强化学习</a></li>
+      <li><a href="http://localhost:1313/tags/%E6%95%B0%E5%AD%A6%E5%8E%9F%E7%90%86/">数学原理</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="prev" href="http://localhost:1313/books/reinforcement-learning-math/notes/09_supplement-lemma-9-2-discounted-total-probability/">
+    <span class="title">« Prev</span>
+    <span>补充：Lemma 9.2 里的 $\Pr_\pi(s&#39;|s)$ 到底是什么</span>
+  </a>
+  <a class="next" href="http://localhost:1313/books/reinforcement-learning-math/notes/09_supplement-why-gradient-of-v-sees-future-states/">
+    <span class="title">Next »</span>
+    <span>补充：为什么 $\nabla_\theta v_\pi(s)$ 不是只看当前状态 $s$</span>
+  </a>
+</nav>
+
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2026 <a href="http://localhost:1313/">撒手 &gt;_O </a></span> · 
+
+    
+    
+    <span>
+        Powered by
+        <a href="https://gohugo.io/?utm_source=papermod" rel="noopener" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" id="top-link" class="top-link hidden" aria-label="go to top" title="Go to Top (Alt + G)" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevrons-up">
+        <polyline points="17 11 12 6 7 11"></polyline>
+        <polyline points="17 18 12 13 7 18"></polyline>
+    </svg>
+</a>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.querySelector('.post-content') || document.body, {
+    delimiters: [
+      {left:'$$', right:'$$', display:true},
+      {left:'\\\\[', right:'\\\\]', display:true},
+      {left:'\\\\(', right:'\\\\)', display:false},
+      {left:'$', right:'$', display:false}
+    ],
+    ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+    throwOnError: false,
+    strict: 'warn'
+  })">
+</script>
+
+
+
+<script type="module">
+import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('pre > code.language-mermaid').forEach(function (code) {
+    var diagram = document.createElement('div');
+    diagram.className = 'mermaid';
+    diagram.textContent = code.textContent;
+    code.parentElement.replaceWith(diagram);
+  });
+
+  mermaid.initialize({
+    startOnLoad: false,
+    securityLevel: 'loose',
+    theme: document.documentElement.dataset.theme === 'dark' ? 'dark' : 'default'
+  });
+  mermaid.run({ querySelector: '.mermaid' });
+});
+</script>
+
+
+
+<script>
+    let menu = document.getElementById('menu');
+    if (menu) {
+        
+        const scrollPosition = localStorage.getItem("menu-scroll-position");
+        if (scrollPosition) {
+            menu.scrollLeft = parseInt(scrollPosition, 10);
+        }
+        
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var toplink = document.getElementById("top-link");
+    window.onscroll = function () {
+        const scrollThreshold = window.innerHeight;
+        if (document.body.scrollTop > scrollThreshold || document.documentElement.scrollTop > scrollThreshold) {
+            toplink.classList.remove("hidden");
+        } else {
+            toplink.classList.add("hidden");
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        const html = document.querySelector("html");
+        if (html.dataset.theme === "dark") {
+            html.dataset.theme = 'light';
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            html.dataset.theme = 'dark';
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

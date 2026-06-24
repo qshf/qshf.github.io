@@ -7,7 +7,7 @@ pagination:
 
 params:
   author: qshf
-  description: "论文笔记 & 生活随笔"
+  description: "论文笔记、书籍笔记 & 生活随笔"
   defaultTheme: auto
   ShowToc: true
   TocOpen: false
@@ -23,6 +23,8 @@ params:
     buttons:
       - name: 论文笔记
         url: /papers/
+      - name: 书籍笔记
+        url: /books/
       - name: 生活
         url: /life/
 
@@ -35,9 +37,12 @@ menu:
     - name: 论文笔记
       url: /papers/
       weight: 1
+    - name: 书籍笔记
+      url: /books/
+      weight: 2
     - name: 生活
       url: /life/
-      weight: 2
+      weight: 3
 
 taxonomies:
   tag: tags
@@ -45,6 +50,16 @@ taxonomies:
 
 markup:
   goldmark:
+    extensions:
+      passthrough:
+        enable: true
+        delimiters:
+          block:
+            - ["$$", "$$"]
+            - ["\\[", "\\]"]
+          inline:
+            - ["$", "$"]
+            - ["\\(", "\\)"]
     renderer:
       unsafe: true
   highlight:
